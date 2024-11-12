@@ -98,34 +98,35 @@ function displayResources(filteredResources) {
                 return category && category.subcategories[sub] || sub;
             });
         
-        // Разбиваем описание на параграфы и форматируем ссылки
         const paragraphs = resource.description.split('\n\n').filter(p => p.trim());
-        
-        // Создаём временный div для безопасного получения текста из HTML
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = formatDescription(paragraphs[0]); // Добавляем форматирование
+        tempDiv.innerHTML = formatDescription(paragraphs[0]);
         const truncatedDescription = tempDiv.textContent;
         
         const card = document.createElement('div');
-        card.className = 'resource-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200';
+        card.className = 'resource-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col h-full';
         
         card.innerHTML = `
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">${resource.title}</h3>
-            <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">${resource.type} • ${resource.author}</div>
-            <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">${truncatedDescription}</p>
-            <div class="flex flex-wrap gap-2 mb-4">
-                <span class="px-2 py-1 text-sm rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                    ${categoryName}
-                </span>
-                ${subcategoryNames.map(sub => `
-                    <span class="px-2 py-1 text-sm rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                        ${sub}
+            <div class="flex-grow">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">${resource.title}</h3>
+                <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">${resource.type} • ${resource.author}</div>
+                <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">${truncatedDescription}</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="px-2 py-1 text-sm rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                        ${categoryName}
                     </span>
-                `).join('')}
+                    ${subcategoryNames.map(sub => `
+                        <span class="px-2 py-1 text-sm rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                            ${sub}
+                        </span>
+                    `).join('')}
+                </div>
             </div>
-            <a href="#" class="resource-link inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" data-index="${index}">
-                Подробнее →
-            </a>
+            <div class="mt-auto pt-4">
+                <a href="#" class="resource-link inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" data-index="${index}">
+                    Подробнее →
+                </a>
+            </div>
         `;
         
         resourcesList.appendChild(card);
