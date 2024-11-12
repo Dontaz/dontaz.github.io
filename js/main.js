@@ -86,22 +86,22 @@ function displayResources(filteredResources) {
     resourcesList.innerHTML = '';
 
     filteredResources.forEach((resource, index) => {
-        const categoryName = categories[resource.category]?.name || resource.category;
-        const subcategoryNames = resource.subcategories
-            .filter(sub => {
-                const category = categories[resource.category];
-                const subcategoryDisplayName = category && category.subcategories[sub];
-                return subcategoryDisplayName !== categoryName;
-            })
-            .map(sub => {
-                const category = categories[resource.category];
-                return category && category.subcategories[sub] || sub;
-            });
+        // Получаем имена всех категорий
+        const categoryNames = resource.categories.map(cat => 
+            categories[cat]?.name || cat
+        );
         
-        const paragraphs = resource.description.split('\n\n').filter(p => p.trim());
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = formatDescription(paragraphs[0]);
-        const truncatedDescription = tempDiv.textContent;
+        const subcategoryNames = resource.subcategories
+            .map(sub => {
+                // Ищем подкатегорию во всех категориях ресурса
+                for (const cat of resource.categories) {
+                    const categorySubcats = categories[cat]?.subcategories;
+                    if (categorySubcats && categorySubcats[sub]) {
+                        return categorySubcats[sub];
+                    }
+                }
+                return sub;
+            });
         
         const card = document.createElement('div');
         card.className = 'resource-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col h-full';
@@ -110,11 +110,13 @@ function displayResources(filteredResources) {
             <div class="flex-grow">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">${resource.title}</h3>
                 <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">${resource.type} • ${resource.author}</div>
-                <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">${truncatedDescription}</p>
+                <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">${resource.description}</p>
                 <div class="flex flex-wrap gap-2 mb-4">
-                    <span class="px-2 py-1 text-sm rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                        ${categoryName}
-                    </span>
+                    ${categoryNames.map(cat => `
+                        <span class="px-2 py-1 text-sm rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                            ${cat}
+                        </span>
+                    `).join('')}
                     ${subcategoryNames.map(sub => `
                         <span class="px-2 py-1 text-sm rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                             ${sub}
@@ -123,56 +125,60 @@ function displayResources(filteredResources) {
                 </div>
             </div>
             <div class="mt-auto pt-4">
-                <a href="#" class="resource-link inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" data-index="${index}">
+                <button class="resource-link inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                     Подробнее →
-                </a>
+                </button>
             </div>
         `;
         
-        resourcesList.appendChild(card);
-    });
-
-    document.querySelectorAll('.resource-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const target = e.target.closest('.resource-link');
-            const index = parseInt(target.dataset.index);
-            showModal(filteredResources[index]);
+        // Добавляем обработчик для кнопки "Подробнее"
+        const detailsButton = card.querySelector('.resource-link');
+        detailsButton.addEventListener('click', () => {
+            showModal(resource);
         });
+        
+        resourcesList.appendChild(card);
     });
 }
 
 function showModal(resource) {
     const modal = document.getElementById('resourceModal');
     
-    // Разбиваем описание на параграфы и форматируем ссылки
+    // Устанавливаем заголовок
+    document.getElementById('modalTitle').textContent = resource.title;
+    
+    // Устанавливаем автора
+    document.getElementById('modalAuthor').textContent = resource.author;
+    
+    // Разбиваем описание на параграфы и форматируем
     const paragraphs = resource.description.split('\n\n').filter(p => p.trim());
     const formattedDescription = paragraphs
         .map(p => `<p class="mb-4">${formatDescription(p)}</p>`)
         .join('');
-    
-    // Обновляем заголовок и остальной контент
-    document.getElementById('modalTitle').textContent = resource.title;
-    document.getElementById('modalType').textContent = resource.type;
-    document.getElementById('modalAuthor').textContent = resource.author;
     document.getElementById('modalDescription').innerHTML = formattedDescription;
     
-    const categoryName = categories[resource.category]?.name || resource.category;
-    const subcategoryNames = resource.subcategories
-        .filter(sub => {
-            const category = categories[resource.category];
-            const subcategoryDisplayName = category && category.subcategories[sub];
-            return subcategoryDisplayName !== categoryName;
-        })
-        .map(sub => 
-            categories[resource.category]?.subcategories[sub] || sub
-        );
+    // Устанавливаем категории
+    const categoryNames = resource.categories.map(cat => 
+        categories[cat]?.name || cat
+    );
     
-    // Обновляем категории
+    const subcategoryNames = resource.subcategories
+        .map(sub => {
+            for (const cat of resource.categories) {
+                const categorySubcats = categories[cat]?.subcategories;
+                if (categorySubcats && categorySubcats[sub]) {
+                    return categorySubcats[sub];
+                }
+            }
+            return sub;
+        });
+    
     document.getElementById('modalCategories').innerHTML = `
-        <span class="px-2 py-1 text-sm rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-            ${categoryName}
-        </span>
+        ${categoryNames.map(cat => `
+            <span class="px-2 py-1 text-sm rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                ${cat}
+            </span>
+        `).join('')}
         ${subcategoryNames.map(sub => `
             <span class="px-2 py-1 text-sm rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                 ${sub}
@@ -224,22 +230,22 @@ function initializeFiltersAndSearch() {
     let currentSubcategory = null;
 
     function filterResources() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const filtered = resources.filter(resource => {
-            const matchesSearch = resource.title.toLowerCase().includes(searchTerm) ||
-                                resource.description.toLowerCase().includes(searchTerm) ||
-                                resource.author.toLowerCase().includes(searchTerm);
-            
-            const matchesCategory = currentCategory === 'all' || 
-                                  resource.category === currentCategory;
-            
-            const matchesSubcategory = !currentSubcategory || 
-                                     resource.subcategories.includes(currentSubcategory);
-            
-            return matchesSearch && matchesCategory && matchesSubcategory;
-        });
-        displayResources(filtered);
-    }
+		const searchTerm = searchInput.value.toLowerCase();
+		const filtered = resources.filter(resource => {
+			const matchesSearch = resource.title.toLowerCase().includes(searchTerm) ||
+                resource.description.toLowerCase().includes(searchTerm) ||
+                resource.author.toLowerCase().includes(searchTerm);
+        
+			const matchesCategory = currentCategory === 'all' || 
+                resource.categories.includes(currentCategory);
+        
+			const matchesSubcategory = !currentSubcategory || 
+                resource.subcategories.includes(currentSubcategory);
+        
+			return matchesSearch && matchesCategory && matchesSubcategory;
+		});
+		displayResources(filtered);
+	}
 
     searchInput.addEventListener('input', filterResources);
 
