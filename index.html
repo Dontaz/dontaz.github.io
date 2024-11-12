@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru" class="font-[Montserrat]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>База знаний</title>
+    
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+	
+    <!-- Скрипт для определения начальной темы -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Базовые стили -->
+    <style>
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <!-- Переключатель темы -->
+    <button id="themeToggle" class="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
+        <svg id="sunIcon" class="w-6 h-6 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg id="moonIcon" class="w-6 h-6 text-gray-700 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+    </button>
+
+    <div class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+        <div class="container mx-auto px-4 py-8">
+            <div class="section hero mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    База знаний
+                </h1>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Здесь вы найдете подборку полезных материалов по различным темам
+                </p>
+            </div>
+
+            <div class="search-panel mb-8">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Поиск по материалам..."
+                    class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 outline-none transition-all duration-200"
+                />
+                
+                <div id="filters" class="filters mt-4 flex flex-wrap gap-2">
+                    <!-- Фильтры будут добавлены динамически -->
+                </div>
+            </div>
+
+            <div id="resourcesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Ресурсы будут добавлены динамически -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    
+	<div id="resourceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center overflow-y-auto">
+    <div class="modal-content bg-white dark:bg-gray-800 max-w-2xl mx-4 my-8 rounded-lg shadow-xl relative">
+        <!-- Кнопка закрытия -->
+        <button id="closeModal" class="absolute right-4 top-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-100 transition-all duration-200 z-10">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <!-- Заголовок -->
+        <div class="modal-header p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 dark:text-white pr-8"></h2>
+            <p id="modalType" class="text-sm text-gray-600 dark:text-gray-400 mt-1"></p>
+        </div>
+
+        <!-- Тело модального окна -->
+        <div class="modal-body p-6 max-h-[60vh] overflow-y-auto">
+            <div class="resource-details space-y-4">
+                <!-- Автор -->
+                <div class="detail-item">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Автор</div>
+                    <div id="modalAuthor" class="text-gray-900 dark:text-white"></div>
+                </div>
+                
+                <!-- Описание -->
+                <div class="detail-item">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Описание</div>
+                    <div id="modalDescription" class="text-gray-700 dark:text-gray-300"></div>
+                </div>
+                
+                <!-- Категории -->
+                <div class="detail-item categories">
+                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Категории</div>
+                    <div id="modalCategories" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+	</div>
+
+    <!-- Добавляем новый JavaScript для работы с темой -->
+    <script>
+        // Функция для обновления иконок темы
+        function updateThemeIcons() {
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+
+        // Обработчик переключения темы
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark', !isDark);
+            localStorage.theme = isDark ? 'light' : 'dark';
+            updateThemeIcons();
+        });
+
+        // Инициализация состояния иконок
+        updateThemeIcons();
+    </script>
+
+    <!-- Основной JavaScript файл -->
+    <script src="js/data.js"></script>
+	<script src="js/main.js"></script>
+</body>
+</html>
