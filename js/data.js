@@ -704,14 +704,6 @@ const resources = [
         subcategories: ["УправлениеПроектами"]
     },
 	{	
-        title: "1",
-        type: "1",
-        author: "1",
-        description: "1",
-        categories: ["1"],
-        subcategories: ["1"]
-    },
-	{	
         title: "Deadline. Роман об управлении проектами",
         type: "Книга",
         author: "Том ДеМарко",
