@@ -43,15 +43,25 @@
     </style>
 </head>
 <body class="font-sans">
-    <!-- Переключатель темы -->
-    <button id="themeToggle" class="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
-        <svg id="sunIcon" class="w-6 h-6 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-        <svg id="moonIcon" class="w-6 h-6 text-gray-700 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
-    </button>
+	<div class="fixed top-4 right-4 flex flex-col gap-2">
+		<!-- Переключатель темы -->
+		<button id="themeToggle" class="self-end p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
+			<svg id="sunIcon" class="w-6 h-6 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+			</svg>
+			<svg id="moonIcon" class="w-6 h-6 text-gray-700 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+			</svg>
+		</button>
+
+		<!-- Кнопка предложения материала -->
+		<a href="https://docs.google.com/forms/d/e/1FAIpQLSdtW9ZKaYc0mFR3EqYuiA_0y5C9MJAgC_CCui3z6rbr4QNLfw/viewform?usp=dialog" 
+		   target="_blank"
+		   style="writing-mode: vertical-rl; text-orientation: mixed;"
+		   class="px-2 py-4 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium transition-colors duration-200 text-center">
+			Предложить материал
+		</a>
+	</div>
 
     <div class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
         <div class="container mx-auto px-4 py-8">
