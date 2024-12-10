@@ -1,18 +1,39 @@
 function createFilterMenu() {
     const filters = document.getElementById('filters');
+	const style = document.createElement('style');
+	style.textContent = `
+    .filter-btn.active {
+        background-color: rgb(219 234 254) !important;
+        color: rgb(30 64 175) !important;
+    }
+    
+    .dark .filter-btn.active {
+        background-color: rgb(30 58 138) !important;
+        color: rgb(191 219 254) !important;
+    }
+
+    .sub-btn.active {
+        background-color: rgb(219 234 254) !important;
+        color: rgb(30 64 175) !important;
+    }
+    
+    .dark .sub-btn.active {
+        background-color: rgb(30 58 138) !important;
+        color: rgb(191 219 254) !important;
+    }
+`;
+document.head.appendChild(style);	
     filters.innerHTML = `
-        <button class="filter-btn active px-4 py-2 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors duration-200" data-category="all">
+        <button class="filter-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 active" data-category="all">
             Все
         </button>
     `;
 
     Object.entries(categories).forEach(([categoryKey, categoryData]) => {
-        // Проверяем количество подкатегорий
         const subcategoriesCount = Object.keys(categoryData.subcategories).length;
         const hasMultipleSubcategories = subcategoriesCount > 1;
         
         if (hasMultipleSubcategories) {
-            // Создаем выпадающее меню для категорий с несколькими подкатегориями
             const dropdown = document.createElement('div');
             dropdown.className = 'filter-dropdown relative inline-block';
             
@@ -43,18 +64,15 @@ function createFilterMenu() {
                 e.stopPropagation();
                 const isVisible = !submenu.classList.contains('hidden');
                 
-                // Закрываем все другие подменю
                 document.querySelectorAll('.submenu').forEach(menu => {
                     menu.classList.add('hidden');
                 });
                 
-                // Открываем текущее подменю, если оно было закрыто
                 if (!isVisible) {
                     submenu.classList.remove('hidden');
                 }
             });
         } else {
-            // Создаем простую кнопку для категорий с одной подкатегорией
             const button = document.createElement('button');
             button.className = 'filter-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200';
             button.setAttribute('data-category', categoryKey);
@@ -63,7 +81,6 @@ function createFilterMenu() {
         }
     });
 
-    // Закрываем подменю при клике вне его
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.filter-dropdown')) {
             document.querySelectorAll('.submenu').forEach(submenu => {
@@ -74,7 +91,6 @@ function createFilterMenu() {
 }
 
 function formatDescription(description) {
-    // Заменяем [[текст ссылки>>url]] на HTML-ссылку
     return description.replace(
         /\[\[([^\]]+)>>([^\]]+)\]\]/g, 
         '<a href="$2" target="_blank" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">$1</a>'
@@ -86,14 +102,12 @@ function displayResources(filteredResources) {
     resourcesList.innerHTML = '';
 
     filteredResources.forEach((resource, index) => {
-        // Получаем имена всех категорий
         const categoryNames = resource.categories.map(cat => 
             categories[cat]?.name || cat
         );
         
         const subcategoryNames = resource.subcategories
             .map(sub => {
-                // Ищем подкатегорию во всех категориях ресурса
                 for (const cat of resource.categories) {
                     const categorySubcats = categories[cat]?.subcategories;
                     if (categorySubcats && categorySubcats[sub]) {
@@ -131,7 +145,6 @@ function displayResources(filteredResources) {
             </div>
         `;
         
-        // Добавляем обработчик для кнопки "Подробнее"
         const detailsButton = card.querySelector('.resource-link');
         detailsButton.addEventListener('click', () => {
             showModal(resource);
@@ -144,20 +157,16 @@ function displayResources(filteredResources) {
 function showModal(resource) {
     const modal = document.getElementById('resourceModal');
     
-    // Устанавливаем заголовок
     document.getElementById('modalTitle').textContent = resource.title;
     
-    // Устанавливаем автора
     document.getElementById('modalAuthor').textContent = resource.author;
     
-    // Разбиваем описание на параграфы и форматируем
     const paragraphs = resource.description.split('\n\n').filter(p => p.trim());
     const formattedDescription = paragraphs
         .map(p => `<p class="mb-4">${formatDescription(p)}</p>`)
         .join('');
     document.getElementById('modalDescription').innerHTML = formattedDescription;
     
-    // Устанавливаем категории
     const categoryNames = resource.categories.map(cat => 
         categories[cat]?.name || cat
     );
@@ -186,12 +195,10 @@ function showModal(resource) {
         `).join('')}
     `;
     
-    // Показываем модальное окно
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
 
-// Функция закрытия модального окна
 function closeModal() {
     const modal = document.getElementById('resourceModal');
     modal.classList.add('hidden');
@@ -200,13 +207,11 @@ function closeModal() {
 
 
 function initializeModalHandlers() {
-    // Закрытие по клику на крестик
     document.getElementById('closeModal').addEventListener('click', (e) => {
         e.preventDefault();
         closeModal();
     });
 
-    // Закрытие по клику вне модального окна
     const modal = document.getElementById('resourceModal');
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
@@ -214,7 +219,6 @@ function initializeModalHandlers() {
         }
     });
 
-    // Закрытие по нажатию Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
             closeModal();
@@ -250,18 +254,28 @@ function initializeFiltersAndSearch() {
     searchInput.addEventListener('input', filterResources);
 
     document.getElementById('filters').addEventListener('click', (e) => {
-        const button = e.target.closest('button');
-        if (!button || button.classList.contains('close-modal')) return;
+		const button = e.target.closest('button');
+		if (!button || button.classList.contains('close-modal')) return;
 
-        document.querySelectorAll('.filter-btn').forEach(btn => 
-            btn.classList.remove('active'));
-        
-        button.classList.add('active');
-        currentCategory = button.dataset.category;
-        currentSubcategory = button.dataset.subcategory || null;
-        
-        filterResources();
-    });
+		document.querySelectorAll('.filter-btn').forEach(btn => 
+			btn.classList.remove('active'));
+		
+		if (button.classList.contains('sub-btn')) {
+			const parentDropdown = button.closest('.filter-dropdown');
+			if (parentDropdown) {
+				const mainButton = parentDropdown.querySelector('button:not(.sub-btn)');
+				mainButton.classList.add('active');
+			}
+			button.classList.add('active');
+		} else {
+			button.classList.add('active');
+    }
+    
+    currentCategory = button.dataset.category;
+    currentSubcategory = button.dataset.subcategory || null;
+    
+    filterResources();
+	});
 
     document.getElementById('closeModal').addEventListener('click', closeModal);
     window.addEventListener('click', (e) => {
