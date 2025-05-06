@@ -256,7 +256,7 @@ function showModal(resource) {
                     </div>
                 </div>
                 
-                <div class="detail-item">
+                <div class="detail-item share-section">
                     <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Поделиться</div>
                     <button id="shareButton" class="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-800/40 rounded-md transition-colors duration-200">
                         <i class="fas fa-share-alt"></i>
@@ -267,19 +267,32 @@ function showModal(resource) {
         </div>
     `;
     
-    document.getElementById('shareButton').addEventListener('click', () => {
-        if (navigator.share) {
-            navigator.share({
-                title: resource.title,
-                text: `${resource.title} - ${resource.author}`,
-                url: shareUrl
-            }).catch(() => {
-                copyToClipboard(shareUrl);
-            });
-        } else {
-            copyToClipboard(shareUrl);
-        }
-    });
+    const shareButton = document.getElementById('shareButton');
+    if (shareButton) {
+        shareButton.addEventListener('click', () => {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareUrl)
+                    .then(() => {
+                        showCopyNotification('Ссылка скопирована в буфер обмена!');
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                        fallbackCopyToClipboard(shareUrl);
+                    });
+            } else {
+                fallbackCopyToClipboard(shareUrl);
+            }
+        });
+    } else {
+        console.error('Share button not found!');
+    }
+    
+    const closeModalButton = document.getElementById('closeModal');
+    if (closeModalButton) {
+        closeModalButton.addEventListener('click', () => {
+            closeModal();
+        });
+    }
     
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -539,7 +552,7 @@ function showCopyNotification(message, isError = false) {
     
     const notification = document.createElement('div');
     notification.id = 'copy-notification';
-    notification.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg text-sm font-medium transition-opacity duration-300 z-50 ${
+    notification.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg text-sm font-medium z-50 ${
         isError 
             ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
             : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
