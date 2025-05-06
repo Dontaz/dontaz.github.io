@@ -492,10 +492,29 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                showCopyNotification('Ссылка скопирована в буфер обмена!');
+            })
+            .catch(err => {
+                console.error('Failed to copy: ', err);
+                fallbackCopyToClipboard(text);
+            });
+    } else {
+        fallbackCopyToClipboard(text);
+    }
+}
+
+function fallbackCopyToClipboard(text) {
     const textarea = document.createElement('textarea');
     textarea.value = text;
     textarea.style.position = 'fixed';
+    textarea.style.left = '0';
+    textarea.style.top = '0';
+    textarea.style.opacity = '0';
     document.body.appendChild(textarea);
+    textarea.focus();
     textarea.select();
     
     try {
@@ -520,11 +539,13 @@ function showCopyNotification(message, isError = false) {
     
     const notification = document.createElement('div');
     notification.id = 'copy-notification';
-    notification.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg text-sm font-medium transition-opacity duration-300 ${
+    notification.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg text-sm font-medium transition-opacity duration-300 z-50 ${
         isError 
             ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
             : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
     }`;
+    notification.style.opacity = '1';
+    notification.style.zIndex = '9999';
     notification.textContent = message;
     
     document.body.appendChild(notification);
