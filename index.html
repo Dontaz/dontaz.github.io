@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>База знаний</title>
-    
+	
+	<link rel="icon" href="logo/logo.svg" type="logo/svg+xml">
+	<link rel="alternate icon" href="logo/logo.ico" type="logo/x-icon">
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 	
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,25 +33,7 @@
         }
     </script>
 
-    <style>
-        .truncate {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-        }
-		.scroll-to-top {
-			opacity: 0;
-			pointer-events: none;
-			transition: opacity 0.3s ease;
-		}
-
-		.scroll-to-top.visible {
-			opacity: 1;
-			pointer-events: auto;
-		}		
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="font-sans">
 	<div id="headerButtons" class="header-buttons fixed top-4 right-4 flex flex-row-reverse items-center gap-2 transition-transform duration-300">
@@ -139,24 +124,6 @@
 	</button>	
 
     <script>
-        function updateThemeIcons() {
-            const sunIcon = document.getElementById('sunIcon');
-            const moonIcon = document.getElementById('moonIcon');
-            const isDark = document.documentElement.classList.contains('dark');
-            
-            sunIcon.classList.toggle('hidden', !isDark);
-            moonIcon.classList.toggle('hidden', isDark);
-        }
-
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            const isDark = document.documentElement.classList.contains('dark');
-            document.documentElement.classList.toggle('dark', !isDark);
-            localStorage.theme = isDark ? 'light' : 'dark';
-            updateThemeIcons();
-        });
-
-        updateThemeIcons();
-		
         const headerButtons = document.getElementById('headerButtons');
 		const scrollToTopButton = document.getElementById('scrollToTop');
 
