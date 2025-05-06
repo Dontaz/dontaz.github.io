@@ -186,14 +186,6 @@ function displayResources(filteredResources) {
 
 function showModal(resource) {
     const modal = document.getElementById('resourceModal');
-    
-    const resourceSlug = resource.title
-        .toLowerCase()
-        .replace(/[^a-zа-яё0-9]/gi, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-    
-    const shareUrl = `${window.location.origin}${window.location.pathname}?resource=${encodeURIComponent(resourceSlug)}`;
 
     document.querySelector('.modal-content').innerHTML = `
         <button id="closeModal" class="absolute right-4 top-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-100 transition-all duration-200 z-10">
@@ -255,37 +247,9 @@ function showModal(resource) {
                         }).join('')}
                     </div>
                 </div>
-                
-                <div class="detail-item share-section">
-                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Поделиться</div>
-                    <button id="shareButton" class="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-800/40 rounded-md transition-colors duration-200">
-                        <i class="fas fa-share-alt"></i>
-                        Скопировать ссылку
-                    </button>
-                </div>
             </div>
         </div>
     `;
-    
-    const shareButton = document.getElementById('shareButton');
-    if (shareButton) {
-        shareButton.addEventListener('click', () => {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(shareUrl)
-                    .then(() => {
-                        showCopyNotification('Ссылка скопирована в буфер обмена!');
-                    })
-                    .catch(err => {
-                        console.error('Failed to copy: ', err);
-                        fallbackCopyToClipboard(shareUrl);
-                    });
-            } else {
-                fallbackCopyToClipboard(shareUrl);
-            }
-        });
-    } else {
-        console.error('Share button not found!');
-    }
     
     const closeModalButton = document.getElementById('closeModal');
     if (closeModalButton) {
@@ -330,22 +294,42 @@ function createFilterMenu() {
     filtersContainer.appendChild(filters);
     
     const mobileToggle = document.createElement('button');
-    mobileToggle.className = 'filter-toggle md:hidden';
-    mobileToggle.innerHTML = `
-        <span>Фильтры</span>
-        <i class="fas fa-chevron-down"></i>
-    `;
-    mobileToggle.addEventListener('click', () => {
-        const isHidden = filters.classList.contains('hidden');
-        filters.classList.toggle('hidden', !isHidden);
-        mobileToggle.querySelector('i').classList.toggle('fa-chevron-up', isHidden);
-        mobileToggle.querySelector('i').classList.toggle('fa-chevron-down', !isHidden);
-    });
-    filtersContainer.insertBefore(mobileToggle, filters);
-    
-    if (window.innerWidth < 768) {
-        filters.classList.add('hidden');
-    }
+		mobileToggle.className = 'filter-toggle md:hidden';
+		mobileToggle.innerHTML = `
+			<span>Фильтры</span>
+			<i class="fas fa-chevron-down"></i>
+		`;
+		mobileToggle.addEventListener('click', () => {
+			const filters = document.getElementById('filters');
+			if (filters) {
+				const isHidden = filters.classList.contains('hidden');
+				
+				if (isHidden) {
+					filters.classList.remove('hidden');
+					filters.style.display = 'flex';
+				} else {
+					filters.classList.add('hidden');
+					filters.style.display = 'none';
+				}
+				
+				const icon = mobileToggle.querySelector('i');
+				if (icon) {
+					if (isHidden) {
+						icon.classList.remove('fa-chevron-down');
+						icon.classList.add('fa-chevron-up');
+					} else {
+						icon.classList.remove('fa-chevron-up');
+						icon.classList.add('fa-chevron-down');
+					}
+				}
+			}
+		});
+		filtersContainer.insertBefore(mobileToggle, filters);
+
+		if (window.innerWidth < 768) {
+			filters.classList.add('hidden');
+			filters.style.display = 'none';
+		}
     
     filters.innerHTML = `
         <button class="filter-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 active" data-category="all">
@@ -503,72 +487,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 	
 });
-
-function copyToClipboard(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text)
-            .then(() => {
-                showCopyNotification('Ссылка скопирована в буфер обмена!');
-            })
-            .catch(err => {
-                console.error('Failed to copy: ', err);
-                fallbackCopyToClipboard(text);
-            });
-    } else {
-        fallbackCopyToClipboard(text);
-    }
-}
-
-function fallbackCopyToClipboard(text) {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.left = '0';
-    textarea.style.top = '0';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-    
-    try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            showCopyNotification('Ссылка скопирована в буфер обмена!');
-        } else {
-            showCopyNotification('Не удалось скопировать ссылку', true);
-        }
-    } catch (err) {
-        showCopyNotification('Ошибка при копировании: ' + err, true);
-    }
-    
-    document.body.removeChild(textarea);
-}
-
-function showCopyNotification(message, isError = false) {
-    const existingNotification = document.getElementById('copy-notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-    
-    const notification = document.createElement('div');
-    notification.id = 'copy-notification';
-    notification.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg text-sm font-medium z-50 ${
-        isError 
-            ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
-            : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-    }`;
-    notification.style.opacity = '1';
-    notification.style.zIndex = '9999';
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 3000);
-}

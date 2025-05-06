@@ -148,7 +148,47 @@
     transform: translateY(-3px);
 }
 
+.scroll-to-top {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.suggest-material-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-icon {
+    display: inline-flex;
+}
+
 @media (max-width: 768px) {
+	.suggest-material-btn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .btn-text {
+        display: none;
+    }
+    
+    .btn-icon {
+        font-size: 16px;
+    }	
+	
     .filters-container {
         flex-direction: column;
         align-items: stretch;
@@ -163,27 +203,69 @@
         width: 100%;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 12px;
-        padding: 10px 16px;
+		margin-top: 16px;
+        margin-bottom: 16px;
+        padding: 12px 16px;
         border-radius: 8px;
         background-color: rgb(243, 244, 246);
         color: rgb(55, 65, 81);
+    }
+	
+	#filters.hidden {
+        display: none !important;
     }
     
     .dark .filter-toggle {
         background-color: rgb(55, 65, 81);
         color: rgb(209, 213, 219);
     }
+	
+	#searchInput {
+		margin-bottom: 8px;
+	}
     
     #filters {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		max-height: 300px;
         margin-top: 12px;
         flex-wrap: nowrap;
         overflow-x: auto;
+		overflow-y: auto;
         padding-bottom: 12px;
     }
 	
-	#copy-notification {
-    z-index: 9999;
-    opacity: 1;
-	}
+	.filter-btn {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 12px 16px;
+  }
+  
+  .filter-dropdown {
+    width: 100%;
+  }
+  
+  .submenu {
+    position: static;
+    transform: none;
+    border: none;
+    border-left: 3px solid rgb(59, 130, 246);
+    margin-left: 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding-top: 0;
+    padding-bottom: 0;
+    width: calc(100% - 16px);
+  }
+  
+  .submenu.visible {
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .sub-btn {
+    padding-left: 24px;
+  }
 }
