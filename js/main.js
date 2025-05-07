@@ -265,27 +265,6 @@ function showModal(resource) {
 function createFilterMenu() {
     const filters = document.getElementById('filters');
     const style = document.createElement('style');
-    style.textContent = `
-        .filter-btn.active {
-            background-color: rgb(219 234 254) !important;
-            color: rgb(30 64 175) !important;
-        }
-        
-        .dark .filter-btn.active {
-            background-color: rgb(30 58 138) !important;
-            color: rgb(191 219 254) !important;
-        }
-
-        .sub-btn.active {
-            background-color: rgb(219 234 254) !important;
-            color: rgb(30 64 175) !important;
-        }
-        
-        .dark .sub-btn.active {
-            background-color: rgb(30 58 138) !important;
-            color: rgb(191 219 254) !important;
-        }
-    `;
     document.head.appendChild(style);
     
     const filtersContainer = document.createElement('div');
@@ -294,48 +273,48 @@ function createFilterMenu() {
     filtersContainer.appendChild(filters);
     
     const mobileToggle = document.createElement('button');
-		mobileToggle.className = 'filter-toggle md:hidden';
-		mobileToggle.innerHTML = `
-			<span>Фильтры</span>
-			<i class="fas fa-chevron-down"></i>
-		`;
-		mobileToggle.addEventListener('click', () => {
-			const filters = document.getElementById('filters');
-			if (filters) {
-				const isHidden = filters.classList.contains('hidden');
-				
-				if (isHidden) {
-					filters.classList.remove('hidden');
-					filters.style.display = 'flex';
-				} else {
-					filters.classList.add('hidden');
-					filters.style.display = 'none';
-				}
-				
-				const icon = mobileToggle.querySelector('i');
-				if (icon) {
-					if (isHidden) {
-						icon.classList.remove('fa-chevron-down');
-						icon.classList.add('fa-chevron-up');
-					} else {
-						icon.classList.remove('fa-chevron-up');
-						icon.classList.add('fa-chevron-down');
-					}
-				}
-			}
-		});
-		filtersContainer.insertBefore(mobileToggle, filters);
+    mobileToggle.className = 'filter-toggle md:hidden';
+    mobileToggle.innerHTML = `
+        <span>Фильтры</span>
+        <i class="fas fa-chevron-down"></i>
+    `;
+    mobileToggle.addEventListener('click', () => {
+        const filters = document.getElementById('filters');
+        if (filters) {
+            const isHidden = filters.classList.contains('hidden');
+            
+            if (isHidden) {
+                filters.classList.remove('hidden');
+                filters.style.display = 'flex';
+            } else {
+                filters.classList.add('hidden');
+                filters.style.display = 'none';
+            }
+            
+            const icon = mobileToggle.querySelector('i');
+            if (icon) {
+                if (isHidden) {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
+            }
+        }
+    });
+    filtersContainer.insertBefore(mobileToggle, filters);
 
-		if (window.innerWidth < 768) {
-			filters.classList.add('hidden');
-			filters.style.display = 'none';
-		}
+    if (window.innerWidth < 768) {
+        filters.classList.add('hidden');
+        filters.style.display = 'none';
+    }
     
     filters.innerHTML = `
         <button class="filter-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 active" data-category="all">
             Все
         </button>
-    `;
+    `;	
 
     const categoryIcons = {
         'Биология': '🧬',
@@ -379,9 +358,32 @@ function createFilterMenu() {
             mainButton.innerHTML = `${icon ? `<span class="mr-1">${icon}</span>` : ''}${categoryData.name} <i class="fas fa-chevron-down ml-1"></i>`;
             
             const submenu = document.createElement('div');
-            submenu.className = 'submenu absolute z-10 mt-2 py-2 w-48 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700';
-            submenu.style.left = '50%';
-            submenu.style.transform = 'translateX(-50%)';
+            submenu.className = 'submenu absolute z-10 mt-2 py-2 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg';
+            
+            const calculateSubmenuPosition = () => {
+                const buttonRect = mainButton.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                
+                if (viewportWidth < 768) return;
+                
+                const submenuWidth = Math.min(280, Math.max(200, buttonRect.width * 1.2));
+                submenu.style.width = `${submenuWidth}px`;
+                
+                const spaceOnRight = viewportWidth - buttonRect.right;
+                const spaceOnLeft = buttonRect.left;
+                
+                if (spaceOnRight >= submenuWidth || spaceOnRight >= spaceOnLeft) {
+                    submenu.style.left = '0';
+                    submenu.style.right = 'auto';
+                } else {
+                    submenu.style.left = 'auto';
+                    submenu.style.right = '0';
+                }
+            };
+            
+            setTimeout(calculateSubmenuPosition, 0);
+            
+            window.addEventListener('resize', calculateSubmenuPosition);
             
             Object.entries(categoryData.subcategories).forEach(([subKey, subName]) => {
                 const subButton = document.createElement('button');
@@ -408,6 +410,11 @@ function createFilterMenu() {
                 submenu.classList.toggle('visible');
                 mainButton.querySelector('i').classList.toggle('fa-chevron-up');
                 mainButton.querySelector('i').classList.toggle('fa-chevron-down');
+                
+                // При открытии подменю пересчитываем его позицию
+                if (submenu.classList.contains('visible')) {
+                    calculateSubmenuPosition();
+                }
             });
         } else {
             const button = document.createElement('button');
