@@ -1,3 +1,50 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const burgerMenu = document.getElementById('burgerMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    
+    if (burgerMenu && menuOverlay) {
+        burgerMenu.addEventListener('click', function() {
+            menuOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                const menuContent = document.querySelector('.menu-content');
+                if (menuContent) {
+                    menuContent.classList.add('visible');
+                }
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        });
+    }
+    
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+    
+    initializeModalHandlers();
+    initializeFiltersAndSearch();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const resourceParam = urlParams.get('resource');
+    
+    if (resourceParam) {
+        const matchedResource = resources.find(resource => {
+            const resourceSlug = resource.title
+                .toLowerCase()
+                .replace(/[^a-zа-яё0-9]/gi, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            return resourceSlug === resourceParam;
+        });
+        
+        if (matchedResource) {
+            setTimeout(() => {
+                showModal(matchedResource);
+            }, 500);
+        }
+    }
+});
+
 function formatDescription(description) {
     return description.replace(
         /\[\[([^\]]+)>>([^\]]+)\]\]/g, 
@@ -120,6 +167,10 @@ function displayResources(filteredResources) {
         return;
     }
 
+    const favorites = localStorage.getItem('favorites') ? 
+        JSON.parse(localStorage.getItem('favorites')) : 
+        [];
+
     filteredResources.forEach((resource, index) => {
         const categoryNames = resource.categories.map(cat => 
             categories[cat]?.name || cat
@@ -137,7 +188,9 @@ function displayResources(filteredResources) {
             });
         
         const card = document.createElement('div');
-        card.className = 'resource-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col h-full';
+        
+        const isFavorite = resource.id && favorites.includes(resource.id);
+        card.className = `resource-card ${isFavorite ? 'favorite' : ''} bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col h-full`;
         
         const shortDescription = resource.description
             .replace(/\[\[([^\]]+)>>([^\]]+)\]\]/g, '$1')
@@ -173,7 +226,12 @@ function displayResources(filteredResources) {
                     Подробнее
                 </button>
             </div>
+            ${isFavorite ? '<div class="favorite-indicator"><i class="fas fa-star"></i></div>' : ''}
         `;
+        
+        if (resource.id) {
+            card.dataset.resourceId = resource.id;
+        }
         
         const detailsButton = card.querySelector('.resource-link');
         detailsButton.addEventListener('click', () => {
@@ -182,16 +240,14 @@ function displayResources(filteredResources) {
         
         resourcesList.appendChild(card);
     });
+    
+    addFavoriteButtonsToCards();
 }
 
 function showModal(resource) {
     const modal = document.getElementById('resourceModal');
 
     document.querySelector('.modal-content').innerHTML = `
-        <button id="closeModal" class="absolute right-4 top-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-100 transition-all duration-200 z-10">
-            <i class="fas fa-times"></i>
-        </button>
-
         <div class="modal-header p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="modal-header-top">
                 <div class="pr-8 w-full">
@@ -251,12 +307,62 @@ function showModal(resource) {
         </div>
     `;
     
-    const closeModalButton = document.getElementById('closeModal');
-    if (closeModalButton) {
-        closeModalButton.addEventListener('click', () => {
-            closeModal();
+    const closeBtn = document.createElement('button');
+    closeBtn.id = 'closeModal';
+    closeBtn.className = 'p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-100 transition-all duration-200';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    document.querySelector('.modal-content').appendChild(closeBtn);
+    
+    if (resource.id) {
+        const isFavorite = localStorage.getItem('favorites') ? 
+            JSON.parse(localStorage.getItem('favorites')).includes(resource.id) : 
+            false;
+        
+        const favoriteBtn = document.createElement('button');
+        favoriteBtn.className = `favorite-btn ${isFavorite ? 'active' : ''}`;
+        favoriteBtn.dataset.resourceId = resource.id;
+        favoriteBtn.innerHTML = '<i class="fas fa-star"></i>';
+        
+        document.querySelector('.modal-content').appendChild(favoriteBtn);
+        
+        favoriteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const favorites = localStorage.getItem('favorites') ? 
+                JSON.parse(localStorage.getItem('favorites')) : 
+                [];
+            
+            const resourceId = favoriteBtn.dataset.resourceId;
+            const index = favorites.indexOf(resourceId);
+            
+            let isNowFavorite;
+            if (index === -1) {
+                favorites.push(resourceId);
+                isNowFavorite = true;
+                favoriteBtn.classList.add('active');
+            } else {
+                favorites.splice(index, 1);
+                isNowFavorite = false;
+                favoriteBtn.classList.remove('active');
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            
+            const icon = favoriteBtn.querySelector('i');
+            icon.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                icon.style.transform = 'scale(1)';
+            }, 200);
+            
+            showNotification(isNowFavorite ? 
+                'Добавлено в избранное' : 
+                'Удалено из избранного');
         });
     }
+    
+    closeBtn.addEventListener('click', () => {
+        closeModal();
+    });
     
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -275,7 +381,7 @@ function createFilterMenu() {
     const mobileToggle = document.createElement('button');
     mobileToggle.className = 'filter-toggle md:hidden';
     mobileToggle.innerHTML = `
-        <span>Фильтры</span>
+        <span>Фильтры (показать/скрыть)</span>
         <i class="fas fa-chevron-down"></i>
     `;
     mobileToggle.addEventListener('click', () => {
@@ -411,7 +517,6 @@ function createFilterMenu() {
                 mainButton.querySelector('i').classList.toggle('fa-chevron-up');
                 mainButton.querySelector('i').classList.toggle('fa-chevron-down');
                 
-                // При открытии подменю пересчитываем его позицию
                 if (submenu.classList.contains('visible')) {
                     calculateSubmenuPosition();
                 }
@@ -455,42 +560,499 @@ function updateThemeIcons() {
     localStorage.theme = isDark ? 'dark' : 'light';
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
+function initBurgerMenu() {
+    const burgerMenu = document.getElementById('burgerMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuContent = document.querySelector('.menu-content');
+    const closeMenu = document.getElementById('closeMenu');
+    const themeToggleMenu = document.getElementById('themeToggleMenu');
+    const randomMaterialBtn = document.getElementById('randomMaterialBtn');
+    const favoritesBtn = document.getElementById('favoritesBtn');
+    
+    function openMenu() {
+        menuOverlay.classList.remove('hidden');
+        setTimeout(() => {
+            menuContent.classList.add('visible');
+        }, 10);
+        document.body.style.overflow = 'hidden';
     }
-	
-	document.getElementById('themeToggle').addEventListener('click', () => {
+    
+    function closeMenuOnly() {
+        menuContent.classList.remove('visible');
+    }
+    
+    function closeMenuFull() {
+        menuContent.classList.remove('visible');
+        setTimeout(() => {
+            menuOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }, 150);
+    }
+    
+    burgerMenu.addEventListener('click', openMenu);
+    closeMenu.addEventListener('click', closeMenuFull);
+    
+    menuOverlay.addEventListener('click', (e) => {
+        if (e.target === menuOverlay) {
+            closeMenuFull();
+        }
+    });
+    
+    menuContent.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+    
+    themeToggleMenu.addEventListener('click', () => {
         const isDark = document.documentElement.classList.contains('dark');
         document.documentElement.classList.toggle('dark', !isDark);
         localStorage.theme = isDark ? 'light' : 'dark';
         updateThemeIcons();
+        closeMenuFull();
     });
     
-    updateThemeIcons();
-    initializeModalHandlers();
-    initializeFiltersAndSearch();
-	
-    const urlParams = new URLSearchParams(window.location.search);
-    const resourceParam = urlParams.get('resource');
+    randomMaterialBtn.addEventListener('click', () => {
+        if (resources.length > 0) {
+            closeMenuOnly();
+            
+            const randomIndex = Math.floor(Math.random() * resources.length);
+            const randomResource = resources[randomIndex];
+            
+            setTimeout(() => {
+                showModal(randomResource);
+                menuOverlay.classList.add('hidden');
+                document.body.style.overflow = 'hidden';
+            }, 200);
+        }
+    });
     
-    if (resourceParam) {
-        const matchedResource = resources.find(resource => {
-            const resourceSlug = resource.title
-                .toLowerCase()
-                .replace(/[^a-zа-яё0-9]/gi, '-')
-                .replace(/-+/g, '-')
-                .replace(/^-|-$/g, '');
-            return resourceSlug === resourceParam;
+    initFavorites();
+    
+    favoritesBtn.addEventListener('click', () => {
+        closeMenuOnly();
+        
+        setTimeout(() => {
+            showFavoritesModal();
+            menuOverlay.classList.add('hidden');
+        }, 200);
+    });
+}
+
+function initFavorites() {
+    function getFavorites() {
+        const favorites = localStorage.getItem('favorites');
+        return favorites ? JSON.parse(favorites) : [];
+    }
+    
+    function saveFavorites(favorites) {
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
+    
+    function isFavorite(resourceId) {
+        const favorites = getFavorites();
+        return favorites.includes(resourceId);
+    }
+    
+	function toggleFavorite(resourceId) {
+		const favorites = getFavorites();
+		const index = favorites.indexOf(resourceId);
+		let isNowFavorite;
+		
+		if (index === -1) {
+			favorites.push(resourceId);
+			isNowFavorite = true;
+		} else {
+			favorites.splice(index, 1);
+			isNowFavorite = false;
+		}
+		
+		saveFavorites(favorites);
+		
+		document.querySelectorAll(`.resource-card[data-resource-id="${resourceId}"]`).forEach(card => {
+			if (isNowFavorite) {
+				card.classList.add('favorite');
+				
+				if (!card.querySelector('.favorite-indicator')) {
+					const indicator = document.createElement('div');
+					indicator.className = 'favorite-indicator';
+					indicator.innerHTML = '<i class="fas fa-star"></i>';
+					card.appendChild(indicator);
+				}
+			} else {
+				card.classList.remove('favorite');
+				
+				const indicator = card.querySelector('.favorite-indicator');
+				if (indicator) {
+					indicator.remove();
+				}
+			}
+			
+			const favoriteBtn = card.querySelector('.card-favorite-btn');
+			if (favoriteBtn) {
+				if (isNowFavorite) {
+					favoriteBtn.classList.add('active');
+				} else {
+					favoriteBtn.classList.remove('active');
+				}
+			}
+		});
+		
+		return isNowFavorite;
+	}
+    
+    function updateFavoriteButtons() {
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            const resourceId = btn.dataset.resourceId;
+            if (isFavorite(resourceId)) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
         });
         
-        if (matchedResource) {
-            setTimeout(() => {
-                showModal(matchedResource);
-            }, 500);
-        }
+        document.querySelectorAll('.card-favorite-btn').forEach(btn => {
+            const resourceId = btn.dataset.resourceId;
+            if (isFavorite(resourceId)) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
     }
-	
-});
+    
+	function addFavoriteButtonsToCards() {
+		document.querySelectorAll('.card-favorite-btn').forEach(btn => {
+			btn.remove();
+		});
+		
+		document.querySelectorAll('.resource-card').forEach(card => {
+			const resourceId = card.dataset.resourceId;
+			if (!resourceId) return;
+			
+			const favBtn = document.createElement('button');
+			favBtn.className = 'card-favorite-btn';
+			favBtn.dataset.resourceId = resourceId;
+			favBtn.dataset.tooltip = isFavorite(resourceId) ? 'Удалить из избранного' : 'Добавить в избранное';
+			favBtn.innerHTML = '<i class="fas fa-star"></i>';
+			
+			if (isFavorite(resourceId)) {
+				favBtn.classList.add('active');
+				card.classList.add('favorite');
+				
+				if (!card.querySelector('.favorite-indicator')) {
+					const indicator = document.createElement('div');
+					indicator.className = 'favorite-indicator';
+					indicator.innerHTML = '<i class="fas fa-star"></i>';
+					card.appendChild(indicator);
+				}
+			}
+			
+			favBtn.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				const isNowFavorite = toggleFavorite(resourceId);
+				
+				favBtn.dataset.tooltip = isNowFavorite ? 'Удалить из избранного' : 'Добавить в избранное';
+				
+				if (isNowFavorite) {
+					favBtn.classList.add('active');
+				} else {
+					favBtn.classList.remove('active');
+				}
+				
+				if (isNowFavorite) {
+					card.classList.add('favorite');
+					
+					if (!card.querySelector('.favorite-indicator')) {
+						const indicator = document.createElement('div');
+						indicator.className = 'favorite-indicator';
+						indicator.innerHTML = '<i class="fas fa-star"></i>';
+						card.appendChild(indicator);
+					}
+				} else {
+					card.classList.remove('favorite');
+					
+					const indicator = card.querySelector('.favorite-indicator');
+					if (indicator) {
+						indicator.remove();
+					}
+				}
+				
+				const icon = favBtn.querySelector('i');
+				icon.style.transform = 'scale(1.3)';
+				setTimeout(() => {
+					icon.style.transform = 'scale(1)';
+				}, 200);
+				
+				showNotification(isNowFavorite ? 
+					'Добавлено в избранное' : 
+					'Удалено из избранного');
+			});
+			
+			card.appendChild(favBtn);
+		});
+	}
+    
+    const originalShowModal = window.showModal;
+    window.showModal = function(resource) {
+        originalShowModal(resource);
+        
+        if (!resource.id) return;
+        
+        const existingBtn = document.querySelector('.favorite-btn');
+        if (existingBtn) {
+            existingBtn.remove();
+        }
+        
+        const favoriteBtn = document.createElement('button');
+        favoriteBtn.className = 'favorite-btn';
+        favoriteBtn.dataset.resourceId = resource.id;
+        favoriteBtn.dataset.tooltip = isFavorite(resource.id) ? 'Удалить из избранного' : 'Добавить в избранное';
+        favoriteBtn.innerHTML = '<i class="fas fa-star"></i>';
+        
+        if (isFavorite(resource.id)) {
+            favoriteBtn.classList.add('active');
+        }
+        
+        favoriteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isNowFavorite = toggleFavorite(resource.id);
+            
+            favoriteBtn.dataset.tooltip = isNowFavorite ? 'Удалить из избранного' : 'Добавить в избранное';
+            favoriteBtn.classList.toggle('active', isNowFavorite);
+            
+            const icon = favoriteBtn.querySelector('i');
+            icon.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                icon.style.transform = 'scale(1)';
+            }, 200);
+            
+            showNotification(isNowFavorite ? 
+                'Добавлено в избранное' : 
+                'Удалено из избранного');
+        });
+        
+        document.querySelector('.modal-content').appendChild(favoriteBtn);
+    };
+    
+    function addResourceIds() {
+        resources.forEach((resource, index) => {
+            if (!resource.id) {
+                resource.id = `resource-${index}`;
+            }
+        });
+        
+        document.querySelectorAll('.resource-card').forEach((card, index) => {
+            if (index < resources.length) {
+                card.dataset.resourceId = resources[index].id;
+            }
+        });
+    }
+    
+    const originalDisplayResources = window.displayResources;
+    window.displayResources = function(filteredResources) {
+        originalDisplayResources(filteredResources);
+        
+        setTimeout(() => {
+            addResourceIds();
+            addFavoriteButtonsToCards();
+        }, 100);
+    };
+    
+    addResourceIds();
+    
+    setTimeout(addFavoriteButtonsToCards, 100);
+}
+
+function showFavoritesModal() {
+    function getFavorites() {
+        const favorites = localStorage.getItem('favorites');
+        return favorites ? JSON.parse(favorites) : [];
+    }
+    
+    const favoriteIds = getFavorites();
+    const favoriteResources = resources.filter(resource => 
+        favoriteIds.includes(resource.id)
+    );
+    
+    let modal = document.getElementById('favoritesModal');
+    
+    if (modal) {
+        updateFavoritesModal(modal, favoriteResources);
+    } else {
+        modal = document.createElement('div');
+        modal.className = 'modal fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50';
+        modal.id = 'favoritesModal';
+        document.body.appendChild(modal);
+        
+        updateFavoritesModal(modal, favoriteResources);
+        
+        setTimeout(() => {
+            const content = modal.querySelector('.favorites-modal-content');
+            if (content) content.classList.add('visible');
+        }, 10);
+    }
+    
+    function updateFavoritesModal(modal, favoriteResources) {
+        let modalContent = '';
+        
+        if (favoriteResources.length === 0) {
+            modalContent = `
+                <div class="favorites-modal-content bg-white dark:bg-gray-800 max-w-2xl mx-4 my-8 rounded-lg shadow-xl relative p-6">
+                    <button id="closeFavoritesModal" class="absolute right-0 top-0 transform translate-x-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-100 transition-all duration-200 shadow-md">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Избранное</h2>
+                    
+                    <div class="empty-favorites">
+                        <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                        <p class="text-gray-600 dark:text-gray-400">У вас пока нет избранных материалов</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            modalContent = `
+                <div class="favorites-modal-content bg-white dark:bg-gray-800 max-w-4xl mx-4 my-8 rounded-lg shadow-xl relative">
+                    <button id="closeFavoritesModal" class="absolute right-0 top-0 transform translate-x-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-100 transition-all duration-200 shadow-md">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Избранное</h2>
+                    </div>
+                    
+                    <div class="p-6 max-h-[60vh] overflow-y-auto">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${favoriteResources.map(resource => {
+                                return `
+                                    <div class="resource-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col h-full border border-gray-200 dark:border-gray-700 relative">
+                                        <button class="remove-favorite absolute top-2 right-2 p-1 rounded-full bg-white dark:bg-gray-700 text-yellow-500 dark:text-yellow-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200" data-resource-id="${resource.id}">
+                                            <i class="fas fa-star"></i>
+                                        </button>
+                                        <div class="flex gap-2 items-start mb-3">
+                                            <div class="resource-type-icon">
+                                                ${getResourceTypeIcon(resource.type)}
+                                            </div>
+                                            <div>
+                                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-1 line-clamp-2 pr-8">${resource.title}</h3>
+                                                <div class="text-sm text-gray-600 dark:text-gray-400">${resource.type} • ${resource.author}</div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-auto pt-4">
+                                            <button class="view-resource w-full py-2 rounded-md bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-800/40 transition-colors duration-200 font-medium" data-resource-id="${resource.id}">
+                                                Открыть
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        modal.innerHTML = modalContent;
+        
+        function closeFavoritesModal() {
+            const content = modal.querySelector('.favorites-modal-content');
+            if (content) content.classList.remove('visible');
+            setTimeout(() => {
+                modal.remove();
+                document.body.style.overflow = '';
+            }, 150);
+        }
+        
+        const closeBtn = modal.querySelector('#closeFavoritesModal');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeFavoritesModal);
+        }
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeFavoritesModal();
+            }
+        });
+        
+        modal.querySelectorAll('.view-resource').forEach(button => {
+            button.addEventListener('click', () => {
+                const resourceId = button.dataset.resourceId;
+                const resource = resources.find(r => r.id === resourceId);
+                if (resource) {
+                    closeFavoritesModal();
+                    showModal(resource);
+                }
+            });
+        });
+        
+        modal.querySelectorAll('.remove-favorite').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const resourceId = button.dataset.resourceId;
+                
+                const favorites = localStorage.getItem('favorites');
+                const favoritesList = favorites ? JSON.parse(favorites) : [];
+                
+                const index = favoritesList.indexOf(resourceId);
+                if (index !== -1) {
+                    favoritesList.splice(index, 1);
+                    localStorage.setItem('favorites', JSON.stringify(favoritesList));
+                    
+                    showNotification('Удалено из избранного');
+                    
+                    document.querySelectorAll('.favorite-btn, .card-favorite-btn').forEach(btn => {
+                        if (btn.dataset.resourceId === resourceId) {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    
+                    document.querySelectorAll('.resource-card').forEach(card => {
+                        if (card.dataset.resourceId === resourceId) {
+                            const indicator = card.querySelector('.favorite-indicator');
+                            if (indicator) {
+                                indicator.remove();
+                            }
+                        }
+                    });
+                    
+                    const newFavoritesList = favoritesList;
+                    const newFavoriteResources = resources.filter(resource => 
+                        newFavoritesList.includes(resource.id)
+                    );
+                    
+                    setTimeout(() => {
+                        updateFavoritesModal(modal, newFavoriteResources);
+                    }, 10);
+                }
+            });
+        });
+    }
+}
+
+function showNotification(message) {
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notif => notif.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = 'notification fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 dark:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-lg z-50 opacity-0 transition-opacity duration-300';
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.opacity = '1';
+    }, 10);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
+initBurgerMenu();
