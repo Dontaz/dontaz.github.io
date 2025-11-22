@@ -449,7 +449,7 @@
             <div class="control-group">
                 <div class="section-header">
                     <label id="ui-label-palette" style="margin:0">Цветовая палитра</label>
-                    <button type="button" id="ui-btn-add-color" class="btn-small" onclick="addNewColorInput()">+ Добавить цвет</button>
+                    <button type="button" id="ui-btn-add-color" class="btn-small" onclick="addNewColorInput(null, true)">+ Добавить цвет</button>
                 </div>
                 <div id="dataColorsList" class="color-inputs-list"></div>
             </div>
@@ -625,7 +625,22 @@
             }
             applyLanguage(currentLang);
 
-            defaultColors.forEach(c => addNewColorInput(c));
+            const savedColors = localStorage.getItem('chartBuilderColors');
+            let colorsLoaded = false;
+            if (savedColors) {
+                try {
+                    const parsedColors = JSON.parse(savedColors);
+                    if (Array.isArray(parsedColors) && parsedColors.length > 0) {
+                        parsedColors.forEach(c => addNewColorInput(c, false));
+                        colorsLoaded = true;
+                    }
+                } catch(e) { console.error("Error loading colors", e); }
+            }
+            
+            if (!colorsLoaded) {
+                defaultColors.forEach(c => addNewColorInput(c, false));
+            }
+
             updateChart();
         };
 
@@ -830,8 +845,12 @@
             syncTableToInputs(); 
         }
 
-        // === ЛОГИКА ЦВЕТОВ ===
         let draggedItem = null;
+
+        function saveColors() {
+            const colors = getActiveColors();
+            localStorage.setItem('chartBuilderColors', JSON.stringify(colors));
+        }
 
         function updateColorNumbers() {
             const rows = document.querySelectorAll('#dataColorsList .color-row');
@@ -840,7 +859,7 @@
             });
         }
 
-        function addNewColorInput(colorVal) {
+        function addNewColorInput(colorVal, save = true) {
             colorCounter++;
             const container = document.getElementById('dataColorsList');
             if (!colorVal) colorVal = defaultColors[colorCounter % defaultColors.length] || '#000000';
@@ -853,8 +872,8 @@
                 <span class="drag-handle" title="Drag">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
                 </span>
-                <input type="color" class="data-color-picker" value="${colorVal}" onchange="this.nextElementSibling.value = this.value.toUpperCase(); updateChart()">
-                <input type="text" class="hex-input" value="${colorVal}" oninput="this.previousElementSibling.value = this.value; updateChart()">
+                <input type="color" class="data-color-picker" value="${colorVal}" onchange="this.nextElementSibling.value = this.value.toUpperCase(); updateChart(); saveColors()">
+                <input type="text" class="hex-input" value="${colorVal}" oninput="this.previousElementSibling.value = this.value; updateChart(); saveColors()">
                 <span class="color-num"></span>
                 <button class="btn-remove" onclick="removeColorInput(this)" title="Remove">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -876,6 +895,7 @@
                 draggedItem = null;
                 updateColorNumbers();
                 updateChart();
+                saveColors();
             });
 
             div.addEventListener('dragenter', function(e) {
@@ -894,6 +914,7 @@
             container.appendChild(div);
             updateColorNumbers();
             if (chart) updateChart();
+            if (save) saveColors();
         }
 
         function removeColorInput(btn) {
@@ -902,6 +923,7 @@
             btn.closest('.color-row').remove();
             updateColorNumbers();
             updateChart();
+            saveColors();
         }
 
         function getActiveColors() { return Array.from(document.querySelectorAll('.data-color-picker')).map(i => i.value); }
@@ -911,7 +933,6 @@
             return result;
         }
 
-        // === ОБМЕН ЦВЕТОВ ===
         function swapThemeColors() {
             const bgInput = document.getElementById('bgColor');
             const textInput = document.getElementById('textColor');
@@ -925,7 +946,6 @@
             updateChart();
         }
 
-        // === CONFIG GENERATOR ===
         function resetFonts() {
             document.getElementById('fontSizeTitle').value = 20;
             document.getElementById('fontSizeLegend').value = 14;
@@ -1025,7 +1045,7 @@
                     indexAxis: (type === 'progressbar' || type === 'singleline') ? 'y' : 'x',
                     plugins: {
                         legend: {
-                            position: legendPos, // USE
+                            position: legendPos,
                             labels: { color: textColor, usePointStyle: true, padding: paddingLegend, font: { size: fontLegend, weight: 500 }, generateLabels: customLegendLabels },
                             onClick: (type === 'bar' || type === 'progressbar') ? null : Chart.defaults.plugins.legend.onClick
                         },
@@ -1128,6 +1148,81 @@ config.options.responsive=true;config.options.maintainAspectRatio=false;new Char
             document.getElementById('codeArea').value = htmlCode;
             document.getElementById('codeOutput').style.display = 'block';
             navigator.clipboard.writeText(htmlCode).then(() => showNotification('✅ ' + (currentLang === 'ru' ? 'HTML скопирован!' : 'HTML copied!')));
+        }
+        
+        function triggerImport() { document.getElementById('importFile').click(); }
+        function exportProject() {
+            const config = {
+                chartType: document.getElementById('chartType').value,
+                labels: document.getElementById('labels').value,
+                data: document.getElementById('data').value,
+                chartTitle: document.getElementById('chartTitle').value,
+                legendPosition: document.getElementById('legendPosition').value,
+                showLegendValues: document.getElementById('showLegendValues').checked,
+                fontSizeTitle: document.getElementById('fontSizeTitle').value,
+                fontSizeLegend: document.getElementById('fontSizeLegend').value,
+                fontSizeAxis: document.getElementById('fontSizeAxis').value,
+                bgColor: document.getElementById('bgColor').value,
+                textColor: document.getElementById('textColor').value,
+                colors: getActiveColors(),
+                lang: currentLang,
+                isDarkMode: document.body.classList.contains('dark-mode'),
+                isTableMode: isTableMode
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "chart-project.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            showNotification(currentLang === 'ru' ? '✅ Проект сохранен!' : '✅ Project saved!');
+        }
+        function importProject(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    if (config.lang && config.lang !== currentLang) {
+                        currentLang = config.lang;
+                        localStorage.setItem('chartBuilderLang', currentLang);
+                        applyLanguage(currentLang);
+                    }
+                    if (config.isDarkMode !== undefined && config.isDarkMode !== document.body.classList.contains('dark-mode')) toggleTheme();
+                    document.getElementById('chartType').value = config.chartType;
+                    document.getElementById('labels').value = config.labels;
+                    document.getElementById('data').value = config.data;
+                    document.getElementById('chartTitle').value = config.chartTitle || config.title;
+                    document.getElementById('legendPosition').value = config.legendPosition;
+                    document.getElementById('showLegendValues').checked = config.showLegendValues;
+                    document.getElementById('fontSizeTitle').value = config.fontSizeTitle || 20;
+                    document.getElementById('fontSizeLegend').value = config.fontSizeLegend || 14;
+                    document.getElementById('fontSizeAxis').value = config.fontSizeAxis || 12;
+                    document.getElementById('bgColor').value = config.bgColor;
+                    document.getElementById('hexBg').value = config.bgColor.toUpperCase();
+                    document.getElementById('textColor').value = config.textColor;
+                    document.getElementById('hexText').value = config.textColor.toUpperCase();
+                    
+                    const colorList = document.getElementById('dataColorsList');
+                    colorList.innerHTML = '';
+                    colorCounter = 0;
+                    if (config.colors && Array.isArray(config.colors)) { 
+                        config.colors.forEach(c => addNewColorInput(c, false)); 
+                    } else { 
+                        defaultColors.forEach(c => addNewColorInput(c, false)); 
+                    }
+                    saveColors();
+
+                    if (isTableMode) syncInputsToTable();
+                    if (config.isTableMode !== undefined && config.isTableMode !== isTableMode) toggleInputMode();
+                    updateChart();
+                    showNotification(currentLang === 'ru' ? '✅ Проект загружен!' : '✅ Project loaded!');
+                } catch (error) { showNotification(currentLang === 'ru' ? '❌ Ошибка файла' : '❌ File error'); }
+            };
+            reader.readAsText(file);
+            input.value = '';
         }
     </script>
 </body>
