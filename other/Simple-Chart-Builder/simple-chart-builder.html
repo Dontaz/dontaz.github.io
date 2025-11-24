@@ -19,6 +19,8 @@
             --shadow: rgba(0, 0, 0, 0.25);
             --btn-text: white;
             --select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            --danger-color: #fc8181;
+            --danger-hover: #f56565;
         }
 
         body.dark-mode {
@@ -259,12 +261,12 @@
         .btn-reverse-tall { height: 62px; width: 100%; }
 
         .btn-remove {
-            background: #fc8181; padding: 0; height: 40px; width: 40px; 
+            background: var(--danger-color); padding: 0; height: 40px; width: 40px; 
             border: none; color: white; border-radius: 10px; display: flex; 
             align-items: center; justify-content: center; cursor: pointer; 
             transition: background 0.2s, transform 0.1s; flex-shrink: 0;
         }
-        .btn-remove:hover { background: #f56565; transform: scale(1.05); }
+        .btn-remove:hover { background: var(--danger-hover); transform: scale(1.05); }
         .btn-remove svg { width: 18px; height: 18px; display: block; }
 
         .chart-container {
@@ -334,19 +336,27 @@
             background: rgba(0, 0, 0, 0.6); z-index: 2000;
             display: none; align-items: center; justify-content: center;
             opacity: 0; transition: opacity 0.2s;
+            backdrop-filter: blur(3px);
         }
         .modal-overlay.open { display: flex; opacity: 1; }
         .modal-content {
             background: var(--bg-container); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px;
-            text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); transform: scale(0.9); transition: transform 0.2s;
+            text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); transform: scale(0.9); transition: transform 0.2s, background 0.3s, color 0.3s;
             color: var(--text-main);
         }
         .modal-overlay.open .modal-content { transform: scale(1); }
         .modal-content h3 { color: var(--accent); margin-bottom: 15px; }
-        .modal-content p { margin-bottom: 10px; font-size: 15px; }
+        .modal-content p { margin-bottom: 10px; font-size: 15px; line-height: 1.5; color: var(--text-main); }
         .modal-content a { color: var(--accent); text-decoration: none; font-weight: bold; }
         .modal-content a:hover { text-decoration: underline; }
         .modal-close { margin-top: 20px; width: 100%; }
+        
+        .modal-buttons {
+            display: flex; gap: 15px; margin-top: 25px; justify-content: center;
+        }
+        .modal-buttons button {
+            flex: 1; min-width: 100px;
+        }
     </style>
 </head>
 <body>
@@ -358,6 +368,7 @@
                 <button class="icon-btn" onclick="triggerImport()" id="btn-load-proj" title="Загрузить проект">📂</button>
                 <button class="icon-btn" onclick="exportProject()" id="btn-save-proj" title="Сохранить проект">💾</button>
                 <button class="icon-btn" onclick="toggleInputMode()" id="modeToggleBtn" title="Переключить вид ввода">📝</button>
+                <button class="icon-btn" onclick="confirmReset()" id="btn-reset-all" title="Сбросить всё">🔄</button>
                 <button class="icon-btn" onclick="toggleInfo()" id="btn-info" title="Информация">ℹ️</button>
                 <button class="icon-btn" onclick="toggleTheme()" id="themeToggleBtn" title="Переключить тему">🌞</button>
             </div>
@@ -501,6 +512,17 @@
             <button class="primary-btn modal-close" id="ui-modal-close" onclick="toggleInfo()">Закрыть</button>
         </div>
     </div>
+    
+    <div id="resetModal" class="modal-overlay" onclick="closeResetModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 id="ui-modal-reset-title">Сброс настроек</h3>
+            <p id="ui-modal-reset-msg">Вы уверены? Это действие сбросит все данные и настройки к значениям по умолчанию.</p>
+            <div class="modal-buttons">
+                <button class="btn-small" id="ui-btn-cancel" onclick="closeResetModal()">Отмена</button>
+                <button class="primary-btn" id="ui-btn-confirm" style="background: var(--danger-color);" onclick="executeReset()">Сбросить</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         let chart = null;
@@ -559,7 +581,12 @@
                 tipSave: "Сохранить проект",
                 tipView: "Переключить вид ввода",
                 tipInfo: "Информация",
-                tipTheme: "Переключить тему"
+                tipTheme: "Переключить тему",
+                tipReset: "Сбросить всё",
+                modalResetTitle: "Сброс настроек",
+                msgReset: "Вы уверены? Это действие сбросит все данные и настройки к значениям по умолчанию.",
+                btnCancel: "Отмена",
+                btnConfirm: "Сбросить"
             },
             en: {
                 title: "📊 Chart Builder",
@@ -609,15 +636,23 @@
                 tipSave: "Save Project",
                 tipView: "Toggle Input View",
                 tipInfo: "Information",
-                tipTheme: "Toggle Theme"
+                tipTheme: "Toggle Theme",
+                tipReset: "Reset All",
+                modalResetTitle: "Reset Settings",
+                msgReset: "Are you sure? This will reset all data and settings to defaults.",
+                btnCancel: "Cancel",
+                btnConfirm: "Reset"
             }
         };
 
         window.onload = function() {
             const savedTheme = localStorage.getItem('chartBuilderTheme');
             if (savedTheme === 'dark') toggleTheme();
+            
             const savedMode = localStorage.getItem('chartBuilderInputMode');
-            if (savedMode === 'table') toggleInputMode();
+            if (savedMode === 'table' || !savedMode) {
+                toggleInputMode();
+            }
             
             const savedLang = localStorage.getItem('chartBuilderLang');
             if (savedLang && translations[savedLang]) {
@@ -685,6 +720,11 @@
             setTxt('ui-modal-title', t.mTitle);
             setTxt('ui-modal-github', t.mGithub);
             setTxt('ui-modal-close', t.mClose);
+            
+            setTxt('ui-modal-reset-title', t.modalResetTitle);
+            setTxt('ui-modal-reset-msg', t.msgReset);
+            setTxt('ui-btn-cancel', t.btnCancel);
+            setTxt('ui-btn-confirm', t.btnConfirm);
 
             const authorEl = document.getElementById('ui-modal-author');
             if(authorEl) authorEl.innerHTML = t.mAuthor;
@@ -700,6 +740,7 @@
             document.getElementById('modeToggleBtn').title = t.tipView;
             document.getElementById('btn-info').title = t.tipInfo;
             document.getElementById('themeToggleBtn').title = t.tipTheme;
+            document.getElementById('btn-reset-all').title = t.tipReset;
 
             const typeOpts = document.getElementById('chartType').options;
             typeOpts[0].text = t.optBar;
@@ -953,6 +994,55 @@
             updateChart();
         }
 
+        function confirmReset() {
+            document.getElementById('resetModal').classList.add('open');
+        }
+        
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.remove('open');
+        }
+
+        function executeReset() {
+            resetToDefaults();
+            closeResetModal();
+        }
+
+        function resetToDefaults() {
+            // Chart Settings
+            document.getElementById('chartType').value = 'bar';
+            document.getElementById('labels').value = "Abc, Bca, Cba";
+            document.getElementById('data').value = "50, 30, 20";
+            document.getElementById('chartTitle').value = "Распорядок дня";
+            document.getElementById('legendPosition').value = 'bottom';
+            document.getElementById('showLegendValues').checked = false;
+
+            // Fonts
+            document.getElementById('fontSizeTitle').value = 20;
+            document.getElementById('fontSizeLegend').value = 14;
+            document.getElementById('fontSizeAxis').value = 12;
+
+            // Appearance Colors
+            document.getElementById('bgColor').value = "#ffffff";
+            document.getElementById('hexBg').value = "#FFFFFF";
+            document.getElementById('textColor').value = "#4a5568";
+            document.getElementById('hexText').value = "#4A5568";
+
+            // Palette
+            const colorList = document.getElementById('dataColorsList');
+            colorList.innerHTML = '';
+            colorCounter = 0;
+            defaultColors.forEach(c => addNewColorInput(c, false));
+            saveColors();
+
+            // Sync Table if active
+            if (isTableMode) {
+                syncInputsToTable();
+            }
+
+            updateChart();
+            showNotification(currentLang === 'ru' ? '✅ Данные сброшены' : '✅ Data reset');
+        }
+
         function getChartConfiguration(scaleMultiplier = 1) {
             const type = document.getElementById('chartType').value;
             const labels = document.getElementById('labels').value.split(',').map(s => s.trim()).filter(s => s);
@@ -984,8 +1074,9 @@
 
             if (type === 'progressbar') {
                 chartTypeConfig = 'bar';
+                const dynamicMax = Math.max(100, ...data);
                 datasetExtra = { indexAxis: 'y', barThickness: 30 * scaleMultiplier, borderRadius: 20 * scaleMultiplier, backgroundColor: finalColors, borderSkipped: false };
-                scalesConfig = { x: { min: 0, max: 100, grid: { display: false }, ticks: { display: false } }, y: { grid: { display: false }, ticks: { color: textColor, font: { size: fontAxis, weight: 'bold' } } } };
+                scalesConfig = { x: { min: 0, max: dynamicMax, grid: { display: false }, ticks: { display: false } }, y: { grid: { display: false }, ticks: { color: textColor, font: { size: fontAxis, weight: 'bold' } } } };
                 chartData = { labels: labels, datasets: [{ label: title, data: data, ...datasetExtra }] };
             } else if (type === 'singleline') {
                 chartTypeConfig = 'bar';
@@ -1133,7 +1224,7 @@ if(type==='singleline'){
     config.options={indexAxis:'y',scales:{x:{stacked:true,display:false},y:{stacked:true,display:false}}};
 }else if(type==='progressbar'){
     config.data={labels:labels,datasets:[{label:title,data:dataArr,indexAxis:'y',barThickness:30,borderRadius:20,backgroundColor:finalColors}]};
-    config.options={indexAxis:'y',scales:{x:{min:0,max:100,display:false},y:{grid:{display:false},ticks:{color:textColor,font:{size:${sizeAxis},weight:'bold'}}}}};
+    config.options={indexAxis:'y',scales:{x:{min:0,max:Math.max(100,...dataArr),display:false},y:{grid:{display:false},ticks:{color:textColor,font:{size:${sizeAxis},weight:'bold'}}}}};
 }else{
     let ds={label:title,data:dataArr,backgroundColor:finalColors,borderColor:bgColor};
     if(type==='line'){ds.fill=true;ds.backgroundColor=finalColors[0]+'20';ds.borderColor=finalColors[0];ds.tension=0.4;}
