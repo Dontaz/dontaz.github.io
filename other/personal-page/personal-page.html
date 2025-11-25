@@ -45,7 +45,7 @@
 
         header {
             text-align: center;
-            padding: 80px 20px 60px;
+            padding: 80px 20px 50px;
         }
 
         header h1 {
@@ -64,6 +64,59 @@
             max-width: 600px;
             margin: 0 auto;
             font-size: 1.1rem;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            padding: 0 10px;
+            position: relative;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            width: 20px;
+            height: 20px;
+            color: var(--text-secondary);
+            pointer-events: none;
+            transition: color 0.3s ease;
+            z-index: 2;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 16px 20px 16px 55px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            font-size: 1.05rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            outline: none;
+        }
+
+        #search-input::placeholder {
+            color: #52525b;
+            font-weight: 400;
+        }
+
+        #search-input:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: var(--accent);
+            box-shadow: 0 0 25px var(--accent-glow), inset 0 0 10px rgba(124, 58, 237, 0.05);
+            transform: scale(1.01);
+        }
+
+        #search-input:focus + .search-icon {
+            color: var(--accent);
         }
 
         .projects-grid {
@@ -320,6 +373,15 @@
         </div>
     </header>
 
+    <div class="search-container">
+        <div class="search-wrapper">
+            <input type="text" id="search-input" placeholder="Поиск проектов...">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+        </div>
+    </div>
+
     <main class="container">
         <div class="projects-grid">
 			
@@ -467,6 +529,24 @@
                         tagsContainer.appendChild(span);
                     });
                 }
+            });
+            
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('.card');
+
+                cards.forEach(card => {
+                    const title = card.getAttribute('data-title').toLowerCase();
+                    const tags = card.getAttribute('data-tags').toLowerCase();
+                    const shortDesc = card.querySelector('.card-short-desc').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || tags.includes(searchTerm) || shortDesc.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
         });
 
