@@ -101,7 +101,6 @@
             flex-shrink: 0;
         }
         
-        /* СЛОЙ 1: Размытый фон (::before) */
         .card-image::before {
             content: '';
             position: absolute;
@@ -113,10 +112,9 @@
             
             filter: blur(20px) brightness(0.6);
             transform: scale(1.2);
-            z-index: -1; /* Уводим на задний план */
+            z-index: -1;
         }
         
-        /* СЛОЙ 2: Четкая картинка (::after) */
         .card-image::after {
             content: '';
             position: absolute;
@@ -127,14 +125,12 @@
             background-position: center;
             background-repeat: no-repeat;
             
-            z-index: 1; /* Выводим на передний план */
+            z-index: 1;
             transition: transform 0.3s ease, filter 0.3s ease;
             
-            /* Эффект затемнения по умолчанию (вместо оверлея) */
             filter: brightness(0.85); 
         }
 
-        /* Эффект при наведении: картинка становится яркой и чуть увеличивается */
         .card:hover .card-image::after {
             filter: brightness(1.05);
             transform: scale(1.03);
@@ -317,9 +313,9 @@
     <header>
         <div class="container">
             <h1>Dontaz</h1>
-            <p>Делаю всё подряд. Здесь вы можете увидеть мою деятельность.</p>
+            <p>Делаю всё подряд. Здесь вы можете увидеть результаты моей деятельности.</p>
             <p style="margin-top: 15px; font-size: 0.95rem; color: #6b7280;">
-                Приятного просмотра.
+                На карточки можно тыкать. Приятного просмотра.
             </p>
         </div>
     </header>
@@ -385,7 +381,7 @@
 				• <a href='https://dontaz.vercel.app/' target='_blank'>https://dontaz.vercel.app/</a>
 				• <a href='https://dontaz.pages.dev/' target='_blank'>https://dontaz.pages.dev/</a>">
                 
-                <div class="card-image" style="--bg-img: url('images/no_image.png');"></div>
+                <div class="card-image" style="--bg-img: url('images/knowledge_base.png');"></div>
                 <div class="card-content">
                     <h3 class="card-title">База знаний</h3>
                     <p class="card-short-desc">База знаний с рекомендациями литературы и источниками информации.</p>
@@ -405,10 +401,32 @@
 				• <a href='https://github.com/Dontaz/Simple-Chart-Builder' target='_blank'>Страница на GitHub</a>
 				• <a href='https://dontaz.github.io/other/Simple-Chart-Builder/simple-chart-builder.html' target='_blank'>Сайт с доступом к инструменту</a>">
                 
-                <div class="card-image" style="--bg-img: url('images/no_image_1.png');"></div>
+                <div class="card-image" style="--bg-img: url('images/chart.png');"></div>
                 <div class="card-content">
                     <h3 class="card-title">Simple Chart Builder</h3>
                     <p class="card-short-desc">Простой конструктор графиков.</p>
+                    <div class="card-tags"></div>
+                </div>
+            </div>
+			
+			<!-- ПРОЕКТ 5 -->
+			
+            <div class="card" 
+                onclick="openModal(this)"
+                data-title="Wanderstop — Русификатор" 
+                data-tags="Русификатор, Некоммерческий, 2025.10.05"
+                data-full-desc="Создал русификатор (перевод на русский) для игры «The Midnight Walk». Переведены только диалоги без имён, книг и меню.
+
+				Страницу русификатора можно найти на:
+				• <a href='https://www.zoneofgames.ru/games/wanderstop/files/10133.html' target='_blank'>Страница на Zone of Games</a>
+				• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3479356545' target='_blank'>Steam Руководство</a>
+
+				">
+                
+                <div class="card-image" style="--bg-img: url('images/wanderstop RU.png');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Wanderstop — Русификатор</h3>
+                    <p class="card-short-desc">Русификатор для игры Wanderstop.</p>
                     <div class="card-tags"></div>
                 </div>
             </div>
