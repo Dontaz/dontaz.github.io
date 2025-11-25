@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dontaz Page</title>
+    
+    <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><circle cx="512" cy="512" r="512" fill="%237c3aed"/><path fill="%23ffffff" d="M85.333 512C85.333 276.358 276.358 85.333 512 85.333c235.639 0 426.667 191.025 426.667 426.667 0 235.639-191.027 426.667-426.667 426.667C276.358 938.667 85.333 747.64 85.333 512zM512 128c-212.077 0-384 171.923-384 384 0 142.135 77.222 266.231 192 332.629V628.62c0-77.474 45.885-144.23 111.962-174.575-38.129-25.737-63.201-69.344-63.201-118.808 0-79.108 64.131-143.238 143.24-143.238s143.236 64.13 143.236 143.238c0 49.463-25.071 93.071-63.202 118.808 66.078 30.345 111.966 97.101 111.966 174.575v216.009c114.778-66.398 192-190.494 192-332.629 0-212.077-171.921-384-384-384zm149.333 737.882V628.621c0-82.475-66.859-149.333-149.333-149.333s-149.333 66.859-149.333 149.333v237.261C408.572 885.278 459.034 896 512 896s103.428-10.722 149.333-30.118zM512 234.667c-55.543 0-100.573 45.027-100.573 100.571S456.457 435.81 512 435.81c55.543 0 100.57-45.028 100.57-100.572S567.544 234.667 512 234.667z"/></svg>'>
+
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #171717; 
+            --text-main: #ededed;
+            --text-secondary: #a1a1aa;
+            
+            /* Акцентный цвет (Фиолетово-синий) */
+            --accent: #7c3aed; 
+            --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+            --accent-glow: rgba(124, 58, 237, 0.4); 
+            
+            --modal-overlay: rgba(0, 0, 0, 0.85);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at top center, #1e1e24 0%, #0a0a0a 60%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 80px 20px 60px;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 20px 0 60px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow), inset 0 0 10px rgba(0,0,0,0.5); 
+        }
+
+        .card-image {
+            height: 220px;
+            background-color: #262626;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .card-image::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+        .card:hover .card-image::after {
+            background: rgba(0,0,0,0);
+        }
+
+        .card-content {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .card-short-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.05);
+            color: #d4d4d8;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+        
+        .card:hover .tag {
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--modal-overlay);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: #121212;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 650px;
+            width: 100%;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 2.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+            line-height: 1;
+            font-weight: 300;
+        }
+
+        .close-btn:hover {
+            color: #ffffff;
+        }
+
+        #modal-title {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            margin-right: 40px;
+        }
+
+        #modal-desc {
+            color: #d1d5db;
+            font-size: 1rem;
+            line-height: 1.7;
+            white-space: pre-line;
+        }
+		
+		#modal-desc a {
+			color: var(--accent);
+			text-decoration: none;
+			border-bottom: 1px dashed var(--accent);
+			transition: all 0.2s ease;
+			font-weight: 600;
+		}
+
+		#modal-desc a:hover {
+			color: #fff;
+			border-bottom-style: solid;
+			background: rgba(124, 58, 237, 0.1);
+		}
+
+        #modal-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 30px;
+            border-top: 1px solid #333;
+            padding-top: 20px;
+        }
+        
+        #modal-tags .tag {
+             background: rgba(124, 58, 237, 0.15);
+             color: #a78bfa;
+             border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            border-top: 1px solid #262626;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px dotted var(--accent);
+            transition: 0.3s;
+        }
+        
+        footer a:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 2.2rem; }
+            .card-image { height: 180px; }
+            .modal-content { padding: 25px; }
+            .close-btn { top: 15px; right: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>Dontaz</h1>
+            <p>Делаю всё подряд. Здесь вы можете увидеть мою деятельность.</p>
+            <p style="margin-top: 15px; font-size: 0.95rem; color: #6b7280;">
+                Приятного просмотра.
+            </p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="projects-grid">
+
+            <!-- ПРОЕКТ 1 -->
+            
+			
+            <div class="card" 
+                onclick="openModal(this)"
+                data-title="Where Winds Meet — Русификатор" 
+                data-tags="Русификатор, Некоммерческий"
+                data-full-desc="Участвовал в создании русификатора для игры «Where Winds Meet». 
+
+				Страницу русификатора можно найти на:
+				• <a href='https://github.com/DOG729/wwm_russian' target='_blank'>Страница на GitHub</a>
+				• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3609472595' target='_blank'>Steam Руководство</a>
+				• <a href='https://www.zoneofgames.ru/games/where_winds_meet/files/10980.html' target='_blank'>Страница на Zone of Games</a>
+				• <a href='https://www.playground.ru/where_winds_meet/file/where_winds_meet_rusifikator_teksta_v0_0_3_dog729_i_zog-1806044' target='_blank'>Страница на PlayGround</a>">
+                
+                <div class="card-image" style="background-image: url('images/Where Winds Meet RU.png');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Where Winds Meet — Русификатор</h3>
+                    <p class="card-short-desc">Русификатор для игры Where Winds Meet.</p>
+                    <div class="card-tags"></div>
+                </div>
+            </div>
+
+            <!-- ПРОЕКТ 2 -->
+            
+            <div class="card" 
+                onclick="openModal(this)"
+                data-title="The Midnight Walk — Русификатор" 
+                data-tags="Русификатор, Некоммерческий"
+                data-full-desc="Участвовал в создании русификатора для игры «Where Winds Meet». 
+
+				Страницу русификатора можно найти на:
+				• <a href='https://github.com/Dontaz/TheMidnightWalk-RU' target='_blank'>Страница на GitHub</a>
+				• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3480297954' target='_blank'>Steam Руководство</a>
+				• <a href='https://www.zoneofgames.ru/games/midnight_walk_the/files/10124.html' target='_blank'>Страница на Zone of Games</a>
+				• <a href='https://www.playground.ru/midnight_walk/file/the_midnight_walk_rusifikator_teksta_v2_8_20251029_dontaz-1770014' target='_blank'>Страница на PlayGround</a>">
+                
+                <div class="card-image" style="background-image: url('images/The Midnight Walk RU.png');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">The Midnight Walk — Русификатор</h3>
+                    <p class="card-short-desc">Русификатор для игры The Midnight Walk.</p>
+                    <div class="card-tags"></div>
+                </div>
+            </div>
+
+            <!-- ПРОЕКТ 3 -->
+            
+            <div class="card" 
+                onclick="openModal(this)"
+                data-title="База знаний" 
+                data-tags="База знаний, Некоммерческий"
+                data-full-desc="База знаний с рекомендациями литературы и источниками информации по различным темам. На сайте можно найти подборку полезных материалов по различным темам и направлениям. Поддерживается поиск по названию, описанию и авторам.
+
+				Ссылки:
+				• <a href='https://github.com/Dontaz/dontaz.github.io' target='_blank'>Страница на GitHub</a>
+				• <a href='https://dontaz.github.io/' target='_blank'>https://dontaz.github.io/</a>
+				• <a href='https://dontaz.vercel.app/' target='_blank'>https://dontaz.vercel.app/</a>
+				• <a href='https://dontaz.pages.dev/' target='_blank'>https://dontaz.pages.dev/</a>">
+                
+                <div class="card-image" style="background-image: url('images/no_image.png');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">База знаний</h3>
+                    <p class="card-short-desc">База знаний с рекомендациями литературы и источниками информации.</p>
+                    <div class="card-tags"></div>
+                </div>
+            </div>
+
+            <!-- ПРОЕКТ 4 -->
+            
+            <div class="card" 
+                onclick="openModal(this)"
+                data-title="База знаний" 
+                data-tags="Инструмент, Некоммерческий"
+                data-full-desc="Простой конструктор графиков.
+
+				Ссылки:
+				• <a href='https://github.com/Dontaz/Simple-Chart-Builder' target='_blank'>Страница на GitHub</a>
+				• <a href='https://dontaz.github.io/other/Simple-Chart-Builder/simple-chart-builder.html' target='_blank'>Сайт с доступом к инструменту</a>">
+                
+                <div class="card-image" style="background-image: url('images/no_image.png');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">База знаний</h3>
+                    <p class="card-short-desc">Простой конструктор графиков.</p>
+                    <div class="card-tags"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Dontaz. <br>
+        <a href="https://steamcommunity.com/id/dontaz/">Steam</a> &bull; <a href="https://github.com/Dontaz">GitHub</a></p>
+    </footer>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModalBtn()">&times;</span>
+            <h2 id="modal-title">Заголовок</h2>
+            <p id="modal-desc">Описание...</p>
+            <div id="modal-tags"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                const tagsRaw = card.getAttribute('data-tags');
+                const tagsContainer = card.querySelector('.card-tags');
+                
+                if (tagsRaw && tagsContainer) {
+                    const tagsArray = tagsRaw.split(',');
+                    tagsArray.forEach(tagText => {
+                        const span = document.createElement('span');
+                        span.className = 'tag';
+                        span.textContent = tagText.trim();
+                        tagsContainer.appendChild(span);
+                    });
+                }
+            });
+        });
+
+        const modal = document.getElementById('modalOverlay');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const modalTags = document.getElementById('modal-tags');
+
+        function openModal(cardElement) {
+            const title = cardElement.getAttribute('data-title');
+            const desc = cardElement.getAttribute('data-full-desc');
+            const tagsRaw = cardElement.getAttribute('data-tags');
+
+            modalTitle.textContent = title;
+            modalDesc.innerHTML = desc;
+
+            modalTags.innerHTML = '';
+            if (tagsRaw) {
+                const tagsArray = tagsRaw.split(',');
+                tagsArray.forEach(tagText => {
+                    const tagSpan = document.createElement('span');
+                    tagSpan.classList.add('tag');
+                    tagSpan.textContent = tagText.trim();
+                    modalTags.appendChild(tagSpan);
+                });
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalBtn() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeModal(event) {
+            if (event.target === modal) {
+                closeModalBtn();
+            }
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if(e.key === "Escape") closeModalBtn();
+        });
+    </script>
+
+</body>
+</html>
