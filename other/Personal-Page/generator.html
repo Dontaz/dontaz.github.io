@@ -121,6 +121,7 @@
         .card-image {
             height: 220px;
             background-color: #262626;
+            background-image: var(--bg-img);
             background-size: cover;
             background-position: center;
         }
@@ -292,7 +293,7 @@
                 data-tags="${tags}"
                 data-full-desc="${safeFullDesc}">
                 
-                <div class="card-image" style="background-image: url('${img}');"></div>
+                <div class="card-image" style="--bg-img: url('${img}');"></div>
                 <div class="card-content">
                     <h3 class="card-title">${title}</h3>
                     <p class="card-short-desc">${shortDesc}</p>
@@ -310,9 +311,10 @@
                 });
             }
 
+            // ИСПРАВЛЕНО: Предпросмотр тоже использует style="--bg-img: url(...)"
             const previewHtml = `
             <div class="card">
-                <div class="card-image" style="background-image: url('${img}');"></div>
+                <div class="card-image" style="--bg-img: url('${img}');"></div>
                 <div class="card-content">
                     <h3 class="card-title">${title}</h3>
                     <p class="card-short-desc">${shortDesc}</p>
