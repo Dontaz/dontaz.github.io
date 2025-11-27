@@ -57,6 +57,7 @@
 			pointer-events: none;
 			mix-blend-mode: screen;
 			transform: translate3d(0, 0, 0);
+			will-change: transform;
 		}
 
 		.orb-1 {
@@ -431,6 +432,12 @@
 		
 		footer a:hover {
 			color: var(--accent);
+		}
+
+		@media (max-width: 768px) {
+			.gradient-orb {
+				display: none;
+			}
 		}
 
 		@media (max-width: 600px) {
