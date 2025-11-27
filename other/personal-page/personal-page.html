@@ -30,11 +30,190 @@
 
         body {
             background-color: var(--bg-color);
-            background-image: radial-gradient(circle at top center, #1e1e24 0%, #0a0a0a 60%);
-            background-attachment: fixed;
             color: var(--text-main);
             line-height: 1.6;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top center, #1e1e24 0%, #0a0a0a 60%);
+            z-index: -3;
+        }
+
+        .gradient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.25;
+            z-index: -2;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .orb-1 {
+            width: 1100px;
+            height: 900px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.15), transparent 60%);
+            top: -400px;
+            left: -350px;
+            animation: float1 28s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 950px;
+            height: 1050px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.12), transparent 60%);
+            bottom: -450px;
+            right: -400px;
+            animation: float2 32s ease-in-out infinite 5s;
+        }
+
+        .orb-3 {
+            width: 850px;
+            height: 850px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1), transparent 60%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: float3 38s ease-in-out infinite 10s;
+        }
+
+        .orb-4 {
+            width: 750px;
+            height: 900px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08), transparent 60%);
+            top: 20%;
+            right: 10%;
+            animation: float4 35s ease-in-out infinite 15s;
+        }
+
+        .orb-5 {
+            width: 1000px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.08), transparent 60%);
+            bottom: 15%;
+            left: 15%;
+            animation: float5 40s ease-in-out infinite 20s;
+        }
+
+        @keyframes float1 {
+            0%, 100% {
+                transform: translate(0, 0);
+                border-radius: 45% 55% 60% 40% / 50% 45% 55% 50%;
+            }
+            14% {
+                transform: translate(60px, 40px);
+                border-radius: 50% 50% 45% 55% / 55% 50% 50% 45%;
+            }
+            28% {
+                transform: translate(100px, 90px);
+                border-radius: 40% 60% 50% 50% / 45% 60% 40% 55%;
+            }
+            42% {
+                transform: translate(80px, 150px);
+                border-radius: 55% 45% 55% 45% / 50% 55% 45% 50%;
+            }
+            57% {
+                transform: translate(30px, 180px);
+                border-radius: 48% 52% 43% 57% / 53% 48% 52% 47%;
+            }
+            71% {
+                transform: translate(-40px, 140px);
+                border-radius: 52% 48% 58% 42% / 47% 52% 48% 53%;
+            }
+            85% {
+                transform: translate(-20px, 70px);
+                border-radius: 46% 54% 51% 49% / 54% 46% 54% 46%;
+            }
+        }
+
+        @keyframes float2 {
+            0%, 100% {
+                transform: translate(0, 0);
+                border-radius: 50% 50% 55% 45% / 45% 55% 45% 55%;
+            }
+            16% {
+                transform: translate(-50px, -60px);
+                border-radius: 43% 57% 48% 52% / 52% 43% 57% 48%;
+            }
+            33% {
+                transform: translate(-100px, -120px);
+                border-radius: 55% 45% 42% 58% / 48% 55% 45% 52%;
+            }
+            50% {
+                transform: translate(-140px, -90px);
+                border-radius: 47% 53% 55% 45% / 55% 47% 53% 45%;
+            }
+            66% {
+                transform: translate(-160px, -40px);
+                border-radius: 52% 48% 46% 54% / 43% 52% 48% 57%;
+            }
+            83% {
+                transform: translate(-100px, -20px);
+                border-radius: 49% 51% 53% 47% / 51% 49% 51% 49%;
+            }
+        }
+
+        @keyframes float4 {
+            0%, 100% {
+                transform: translate(0, 0);
+                border-radius: 51% 49% 47% 53% / 53% 51% 49% 47%;
+            }
+            20% {
+                transform: translate(-30px, 50px);
+                border-radius: 47% 53% 51% 49% / 49% 47% 53% 51%;
+            }
+            40% {
+                transform: translate(-60px, 100px);
+                border-radius: 53% 47% 49% 51% / 51% 53% 47% 49%;
+            }
+            60% {
+                transform: translate(-40px, 140px);
+                border-radius: 49% 51% 53% 47% / 47% 49% 51% 53%;
+            }
+            80% {
+                transform: translate(10px, 90px);
+                border-radius: 52% 48% 46% 54% / 54% 52% 48% 46%;
+            }
+        }
+
+        @keyframes float5 {
+            0%, 100% {
+                transform: translate(0, 0);
+                border-radius: 46% 54% 52% 48% / 48% 46% 54% 52%;
+            }
+            25% {
+                transform: translate(70px, -50px);
+                border-radius: 54% 46% 48% 52% / 52% 54% 46% 48%;
+            }
+            50% {
+                transform: translate(110px, -30px);
+                border-radius: 48% 52% 54% 46% / 46% 48% 52% 54%;
+            }
+            75% {
+                transform: translate(60px, 20px);
+                border-radius: 51% 49% 47% 53% / 53% 51% 49% 47%;
+            }
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            z-index: -1;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         .container {
@@ -362,6 +541,12 @@
     </style>
 </head>
 <body>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+    <div class="gradient-orb orb-4"></div>
+    <div class="gradient-orb orb-5"></div>
+    <div class="noise"></div>
 
     <header>
         <div class="container">
@@ -389,6 +574,26 @@
 			
             <div class="card" 
                 onclick="openModal(this)"
+                data-title="Скрипт «Timestamp Generator» для Discord" 
+                data-tags="Инструмент, Userscript, Некоммерческий"
+                data-full-desc="Скрипт для браузера, чтобы создавать timestamp для Discord. Timestamp позволяет делиться конкретным временем, которое динамично меняется для пользователей с учётом часового пояса.
+
+				Ссылки:
+
+				• <a href='https://github.com/Dontaz/dontaz-user_scripts?tab=readme-ov-file#discord-timestamp-generator' target='_blank'>GitHub</a>">
+                
+                <div class="card-image" style="--bg-img: url('images/discord_2.png');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Скрипт «Timestamp Generator» для Discord</h3>
+                    <p class="card-short-desc">Скрипт для браузера, чтобы создавать timestamp для Discord.</p>
+                    <div class="card-tags"></div>
+                </div>
+            </div>
+			
+			<!-- ПРОЕКТ 2 -->
+			
+            <div class="card" 
+                onclick="openModal(this)"
                 data-title="Where Winds Meet — Русификатор" 
                 data-tags="Русификатор, Некоммерческий, 2025.11.21"
                 data-full-desc="Участвовал в создании русификатора (перевод на русский) для игры «Where Winds Meet». 
@@ -407,7 +612,7 @@
                 </div>
             </div>
             
-			<!-- ПРОЕКТ 2 -->
+			<!-- ПРОЕКТ 3 -->
 			
             <div class="card" 
                 onclick="openModal(this)"
@@ -429,7 +634,7 @@
                 </div>
             </div>
             
-			<!-- ПРОЕКТ 3 -->
+			<!-- ПРОЕКТ 4 -->
 			
             <div class="card" 
                 onclick="openModal(this)"
@@ -451,7 +656,7 @@
                 </div>
             </div>
             
-			<!-- ПРОЕКТ 4 -->
+			<!-- ПРОЕКТ 5 -->
 			
             <div class="card" 
                 onclick="openModal(this)"
@@ -471,7 +676,7 @@
                 </div>
             </div>
 			
-			<!-- ПРОЕКТ 5 -->
+			<!-- ПРОЕКТ 6 -->
 			
             <div class="card" 
                 onclick="openModal(this)"
