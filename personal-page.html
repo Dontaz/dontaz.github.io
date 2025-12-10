@@ -1,930 +1,1517 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dontaz Page</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dontaz Page</title>
 
-<link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><circle cx="512" cy="512" r="512" fill="%237c3aed"/><path fill="%23ffffff" d="M85.333 512C85.333 276.358 276.358 85.333 512 85.333c235.639 0 426.667 191.025 426.667 426.667 0 235.639-191.027 426.667-426.667 426.667C276.358 938.667 85.333 747.64 85.333 512zM512 128c-212.077 0-384 171.923-384 384 0 142.135 77.222 266.231 192 332.629V628.62c0-77.474 45.885-144.23 111.962-174.575-38.129-25.737-63.201-69.344-63.201-118.808 0-79.108 64.131-143.238 143.24-143.238s143.236 64.13 143.236 143.238c0 49.463-25.071 93.071-63.202 118.808 66.078 30.345 111.966 97.101 111.966 174.575v216.009c114.778-66.398 192-190.494 192-332.629 0-212.077-171.921-384-384-384zm149.333 737.882V628.621c0-82.475-66.859-149.333-149.333-149.333s-149.333 66.859-149.333 149.333v237.261C408.572 885.278 459.034 896 512 896s103.428-10.722 149.333-30.118zM512 234.667c-55.543 0-100.573 45.027-100.573 100.571S456.457 435.81 512 435.81c55.543 0 100.57-45.028 100.57-100.572S567.544 234.667 512 234.667z"/></svg>'>
+	<link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><circle cx="512" cy="512" r="512" fill="%237c3aed"/><path fill="%23ffffff" d="M85.333 512C85.333 276.358 276.358 85.333 512 85.333c235.639 0 426.667 191.025 426.667 426.667 0 235.639-191.027 426.667-426.667 426.667C276.358 938.667 85.333 747.64 85.333 512zM512 128c-212.077 0-384 171.923-384 384 0 142.135 77.222 266.231 192 332.629V628.62c0-77.474 45.885-144.23 111.962-174.575-38.129-25.737-63.201-69.344-63.201-118.808 0-79.108 64.131-143.238 143.24-143.238s143.236 64.13 143.236 143.238c0 49.463-25.071 93.071-63.202 118.808 66.078 30.345 111.966 97.101 111.966 174.575v216.009c114.778-66.398 192-190.494 192-332.629 0-212.077-171.921-384-384-384zm149.333 737.882V628.621c0-82.475-66.859-149.333-149.333-149.333s-149.333 66.859-149.333 149.333v237.261C408.572 885.278 459.034 896 512 896s103.428-10.722 149.333-30.118zM512 234.667c-55.543 0-100.573 45.027-100.573 100.571S456.457 435.81 512 435.81c55.543 0 100.57-45.028 100.57-100.572S567.544 234.667 512 234.667z"/></svg>'>
 
-<style>
-	:root {
-		--bg-color: #050505;
-		--card-bg: #171717; 
-		--text-main: #ededed;
-		--text-secondary: #a1a1aa;
-		
-		--accent: #7c3aed; 
-		--accent-gradient: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
-		--accent-glow: rgba(124, 58, 237, 0.4); 
-		
-		--modal-overlay: rgba(0, 0, 0, 0.85);
-	}
+	<style>
+		:root {
+			--bg-color: #050505;
+			--card-bg: #0a0a0a;
+			--text-main: #ededed;
+			--text-secondary: #a1a1aa;
+			--accent: #7c3aed;
+			--accent-gradient: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+			--accent-glow: rgba(124, 58, 237, 0.6);
+			--modal-overlay: rgba(0, 0, 0, 0.85);
+		}
 
-	* {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-		font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-	}
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+		}
 
-	body {
-		background-color: var(--bg-color);
-		color: var(--text-main);
-		line-height: 1.6;
-		min-height: 100vh;
-		position: relative;
-		overflow-x: hidden;
-	}
+		body {
+			background-color: var(--bg-color);
+			color: var(--text-main);
+			line-height: 1.6;
+			min-height: 100vh;
+			position: relative;
+			overflow-x: hidden;
+		}
 
-	.gradient-bg {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		z-index: -2;
-		background: radial-gradient(circle at 50% 0%, #1e1e2e 0%, #050505 70%);
-	}
+		.gradient-bg {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -2;
+			background: radial-gradient(circle at 50% 0%, #1e1e2e 0%, #050505 70%);
+		}
 
-	.gradient-orb {
-		position: fixed;
-		border-radius: 50%;
-		filter: blur(90px);
-		opacity: 0.45;
-		z-index: -2;
-		pointer-events: none;
-		mix-blend-mode: screen;
-		animation: floatOrb 20s infinite alternate ease-in-out;
-	}
+			.gradient-bg::before, .gradient-bg::after {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-image: radial-gradient(1px 1px at 10% 10%, white, transparent), radial-gradient(1px 1px at 20% 30%, white, transparent), radial-gradient(2px 2px at 30% 60%, rgba(255,255,255,0.8), transparent), radial-gradient(1px 1px at 40% 80%, white, transparent), radial-gradient(1px 1px at 50% 40%, white, transparent), radial-gradient(2px 2px at 60% 20%, rgba(255,255,255,0.7), transparent), radial-gradient(1px 1px at 70% 50%, white, transparent), radial-gradient(1px 1px at 80% 90%, white, transparent), radial-gradient(2px 2px at 90% 10%, white, transparent);
+				background-size: 500px 500px;
+				opacity: 0.6;
+				animation: starMove 100s linear infinite;
+			}
 
-	@keyframes floatOrb {
-		0% { transform: translate(0, 0) scale(1); }
-		33% { transform: translate(30px, -50px) scale(1.1); }
-		66% { transform: translate(-20px, 20px) scale(0.95); }
-		100% { transform: translate(10px, -10px) scale(1.05); }
-	}
+			.gradient-bg::after {
+				background-size: 700px 700px;
+				background-image: radial-gradient(1px 1px at 15% 15%, rgba(255,255,255,0.5), transparent), radial-gradient(2px 2px at 55% 55%, rgba(255,255,255,0.4), transparent), radial-gradient(1px 1px at 85% 85%, rgba(255,255,255,0.5), transparent);
+				animation: starMove 150s linear infinite reverse;
+				opacity: 0.4;
+			}
 
-	.orb-1 {
-		width: 60vw;
-		height: 60vw;
-		background: radial-gradient(circle, rgba(124, 58, 237, 0.3), transparent 70%);
-		top: -15%;
-		left: -10%;
-		animation-delay: 0s;
-	}
+		@keyframes starMove {
+			from {
+				transform: translateY(0);
+			}
 
-	.orb-2 {
-		width: 50vw;
-		height: 50vw;
-		background: radial-gradient(circle, rgba(37, 99, 235, 0.25), transparent 70%);
-		bottom: -10%;
-		right: -10%;
-		animation-delay: -5s;
-	}
+			to {
+				transform: translateY(-500px);
+			}
+		}
 
-	.orb-3 {
-		width: 40vw;
-		height: 40vw;
-		background: radial-gradient(circle, rgba(168, 85, 247, 0.2), transparent 70%);
-		top: 40%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		animation-delay: -10s;
-	}
+		.gradient-orb {
+			position: fixed;
+			border-radius: 50%;
+			filter: blur(90px);
+			opacity: 0.45;
+			z-index: -2;
+			pointer-events: none;
+			mix-blend-mode: screen;
+			animation: floatOrb 20s infinite alternate ease-in-out;
+		}
 
-	.orb-4 {
-		width: 45vw;
-		height: 45vw;
-		background: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent 70%);
-		top: 10%;
-		right: 5%;
-		animation-delay: -2s;
-	}
+		@keyframes floatOrb {
+			0% {
+				transform: translate(0, 0) scale(1);
+			}
 
-	.orb-5 {
-		width: 55vw;
-		height: 55vw;
-		background: radial-gradient(circle, rgba(147, 51, 234, 0.2), transparent 70%);
-		bottom: 5%;
-		left: 5%;
-		animation-delay: -7s;
-	}
+			33% {
+				transform: translate(30px, -50px) scale(1.1);
+			}
 
-	.noise {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		opacity: 0.04;
-		z-index: -1;
-		pointer-events: none;
-		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-	}
+			66% {
+				transform: translate(-20px, 20px) scale(0.95);
+			}
 
-	.container {
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 20px;
-	}
+			100% {
+				transform: translate(10px, -10px) scale(1.05);
+			}
+		}
 
-	header {
-		text-align: center;
-		padding: 80px 20px 50px;
-	}
+		.orb-1 {
+			width: 60vw;
+			height: 60vw;
+			background: radial-gradient(circle, rgba(124, 58, 237, 0.3), transparent 70%);
+			top: -15%;
+			left: -10%;
+			animation-delay: 0s;
+		}
 
-	header h1 {
-		font-size: 3rem;
-		margin-bottom: 15px;
-		font-weight: 800;
-		letter-spacing: -1px;
-		background: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		display: inline-block;
-	}
+		.orb-2 {
+			width: 50vw;
+			height: 50vw;
+			background: radial-gradient(circle, rgba(37, 99, 235, 0.25), transparent 70%);
+			bottom: -10%;
+			right: -10%;
+			animation-delay: -5s;
+		}
 
-	header p {
-		color: var(--text-secondary);
-		max-width: 600px;
-		margin: 0 auto;
-		font-size: 1.1rem;
-	}
+		.orb-3 {
+			width: 40vw;
+			height: 40vw;
+			background: radial-gradient(circle, rgba(168, 85, 247, 0.2), transparent 70%);
+			top: 40%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			animation-delay: -10s;
+		}
 
-	.search-container {
-		max-width: 600px;
-		margin: 0 auto 30px;
-		padding: 0 10px;
-		position: relative;
-	}
+		.orb-4 {
+			width: 45vw;
+			height: 45vw;
+			background: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent 70%);
+			top: 10%;
+			right: 5%;
+			animation-delay: -2s;
+		}
 
-	.search-wrapper {
-		position: relative;
-		display: flex;
-		align-items: center;
-	}
+		.orb-5 {
+			width: 55vw;
+			height: 55vw;
+			background: radial-gradient(circle, rgba(147, 51, 234, 0.2), transparent 70%);
+			bottom: 5%;
+			left: 5%;
+			animation-delay: -7s;
+		}
 
-	.search-icon {
-		position: absolute;
-		left: 20px;
-		width: 20px;
-		height: 20px;
-		color: var(--text-secondary);
-		pointer-events: none;
-		transition: color 0.3s ease;
-		z-index: 2;
-	}
+		.noise {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			opacity: 0.04;
+			z-index: -1;
+			pointer-events: none;
+			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+		}
 
-	#search-input {
-		width: 100%;
-		padding: 16px 20px 16px 55px;
-		border-radius: 50px;
-		background: rgba(255, 255, 255, 0.03);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		color: var(--text-main);
-		font-size: 1.05rem;
-		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-		backdrop-filter: blur(10px);
-		outline: none;
-	}
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 20px;
+		}
 
-	#search-input::placeholder {
-		color: #52525b;
-		font-weight: 400;
-	}
+		header {
+			text-align: center;
+			padding: 80px 20px 20px;
+		}
 
-	#search-input:focus {
-		background: rgba(0, 0, 0, 0.4);
-		border-color: var(--accent);
-		box-shadow: 0 0 25px var(--accent-glow), inset 0 0 10px rgba(124, 58, 237, 0.05);
-		transform: scale(1.01);
-	}
+		.logo-title {
+			font-size: 6.5rem;
+			font-weight: 800;
+			letter-spacing: -2px;
+			line-height: 1;
+			margin-bottom: 15px;
+			cursor: text;
+			display: block;
+			background: var(--accent-gradient);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			text-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+		}
 
-	#search-input:focus + .search-icon {
-		color: var(--accent);
-	}
+		.letter-o-wrapper {
+			position: relative;
+			display: inline;
+			color: rgba(0,0,0,0);
+			-webkit-text-fill-color: transparent;
+			background: none;
+			text-shadow: none;
+		}
 
-	.projects-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-		gap: 30px;
-		padding: 20px 0 60px;
-	}
+		.loader {
+			--color-one: #ffffff;
+			--color-two: #7c3aed;
+			--color-three: rgba(124, 58, 237, 0.6);
+			--color-four: rgba(30, 27, 75, 0.9);
+			--color-five: rgba(167, 139, 250, 0.4);
+			--time-animation: 2s;
+			--size: 0.65;
+			position: absolute;
+			top: 60%;
+			left: 52%;
+			transform: translate(-50%, -50%) scale(var(--size));
+			width: 100px;
+			height: 100px;
+			border-radius: 50%;
+			box-shadow: 0 0 25px 0 var(--color-three), 0 20px 50px 0 var(--color-four);
+			z-index: 5;
+			pointer-events: none;
+			user-select: none;
+			display: block;
+			background-color: #050505;
+		}
 
-	.card {
-		background-color: var(--card-bg);
-		border-radius: 16px;
-		overflow: hidden;
-		cursor: pointer;
-		border: 2px solid transparent; 
-		transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-		position: relative;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-		display: flex;
-		flex-direction: column;
-	}
+			.loader::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100px;
+				height: 100px;
+				border-radius: 50%;
+				border-top: solid 3px var(--color-one);
+				border-bottom: solid 3px var(--color-two);
+				background: linear-gradient(180deg, var(--color-five), var(--color-four));
+				box-shadow: inset 0 10px 10px 0 var(--color-three), inset 0 -10px 10px 0 var(--color-four);
+			}
 
-	.card:hover {
-		transform: translateY(-7px);
-		border-color: var(--accent);
-		box-shadow: 0 0 20px var(--accent-glow), inset 0 0 10px rgba(0,0,0,0.5); 
-	}
+			.loader .box {
+				width: 100px;
+				height: 100px;
+				background: linear-gradient( 180deg, var(--color-one) 30%, var(--color-two) 70% );
+				mask: url(#clipping);
+				-webkit-mask: url(#clipping);
+				display: block;
+			}
 
-	.card-image {
-		height: 200px;
-		position: relative;
-		overflow: hidden;
-		background-color: #1a1a1a;
-		z-index: 0;
-		flex-shrink: 0;
-	}
-	
-	.card-image::before {
-		content: '';
-		position: absolute;
-		top: 0; left: 0; width: 100%; height: 100%;
-		
-		background-image: var(--bg-img);
-		background-size: cover;
-		background-position: center;
-		
-		filter: blur(20px) brightness(0.6);
-		transform: scale(1.2);
-		z-index: -1;
-	}
-	
-	.card-image::after {
-		content: '';
-		position: absolute;
-		top: 0; left: 0; width: 100%; height: 100%;
-		
-		background-image: var(--bg-img);
-		background-size: contain;
-		background-position: center;
-		background-repeat: no-repeat;
-		
-		z-index: 1;
-		transition: transform 0.3s ease, filter 0.3s ease;
-		
-		filter: brightness(1); 
-	}
+			.loader svg {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
 
-	.card:hover .card-image::after {
-		filter: brightness(1.05);
-		transform: scale(1.03);
-	}
+				.loader svg #clipping {
+					filter: contrast(15);
+					animation: roundness calc(var(--time-animation) / 2) linear infinite;
+				}
 
-	.card-content {
-		padding: 25px;
-		display: flex;
-		flex-direction: column;
-		flex-grow: 1;
-	}
+					.loader svg #clipping polygon {
+						filter: blur(7px);
+					}
 
-	.card-title {
-		font-size: 1.4rem;
-		margin-bottom: 8px;
-		font-weight: 700;
-		color: #fff;
-	}
+						.loader svg #clipping polygon:nth-child(1) {
+							transform-origin: 75% 25%;
+							transform: rotate(90deg);
+						}
 
-	.card-short-desc {
-		color: var(--text-secondary);
-		font-size: 0.95rem;
-		margin-bottom: 20px;
-		line-height: 1.5;
-		flex-grow: 1;
-	}
+						.loader svg #clipping polygon:nth-child(2) {
+							transform-origin: 50% 50%;
+							animation: rotation var(--time-animation) linear infinite reverse;
+						}
 
-	.card-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		margin-top: auto;
-	}
+						.loader svg #clipping polygon:nth-child(3) {
+							transform-origin: 50% 60%;
+							animation: rotation var(--time-animation) linear infinite;
+							animation-delay: calc(var(--time-animation) / -3);
+						}
 
-	.tag {
-		background: rgba(255, 255, 255, 0.05);
-		color: #d4d4d8;
-		padding: 6px 12px;
-		border-radius: 6px;
-		font-size: 0.75rem;
-		font-weight: 500;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		transition: 0.3s;
-	}
-	
-	.card:hover .tag {
-		border-color: var(--accent);
-		color: #fff;
-	}
+						.loader svg #clipping polygon:nth-child(4) {
+							transform-origin: 40% 40%;
+							animation: rotation var(--time-animation) linear infinite reverse;
+						}
 
-	.modal-overlay {
-		position: fixed;
-		top: 0; left: 0;
-		width: 100%; height: 100%;
-		background: var(--modal-overlay);
-		backdrop-filter: blur(8px);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		opacity: 0;
-		visibility: hidden;
-		transition: all 0.3s ease;
-		z-index: 2000;
-		padding: 20px;
-	}
+						.loader svg #clipping polygon:nth-child(5) {
+							transform-origin: 40% 40%;
+							animation: rotation var(--time-animation) linear infinite reverse;
+							animation-delay: calc(var(--time-animation) / -2);
+						}
 
-	.modal-overlay.active {
-		opacity: 1;
-		visibility: visible;
-	}
+						.loader svg #clipping polygon:nth-child(6) {
+							transform-origin: 60% 40%;
+							animation: rotation var(--time-animation) linear infinite;
+						}
 
-	.modal-content {
-		background-color: #121212;
-		border-radius: 20px;
-		max-width: 650px;
-		width: 100%;
-		position: relative;
-		transform: scale(0.9);
-		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-		border: 1px solid rgba(255,255,255,0.1);
-		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-		
-		display: flex;
-		flex-direction: column;
-		max-height: 85vh;
-		padding: 0;
-		overflow: hidden;
-	}
-	
-	.modal-header {
-		padding: 30px 40px 10px 40px;
-		flex-shrink: 0;
-		position: relative;
-		background-color: #121212;
-		z-index: 20;
-	}
+						.loader svg #clipping polygon:nth-child(7) {
+							transform-origin: 60% 40%;
+							animation: rotation var(--time-animation) linear infinite;
+							animation-delay: calc(var(--time-animation) / -1.5);
+						}
 
-	.modal-body {
-		padding: 10px 40px 40px 40px;
-		overflow-y: auto;
-		flex-grow: 1;
-	}
-	
-	.modal-body::-webkit-scrollbar {
-		width: 8px;
-	}
-	.modal-body::-webkit-scrollbar-track {
-		background: rgba(255, 255, 255, 0.02);
-		border-radius: 4px;
-	}
-	.modal-body::-webkit-scrollbar-thumb {
-		background: rgba(255, 255, 255, 0.15);
-		border-radius: 4px;
-	}
-	.modal-body::-webkit-scrollbar-thumb:hover {
-		background: rgba(255, 255, 255, 0.25);
-	}
+		@keyframes rotation {
+			0% {
+				transform: rotate(0deg);
+			}
 
-	.modal-overlay.active .modal-content {
-		transform: scale(1);
-	}
+			100% {
+				transform: rotate(360deg);
+			}
+		}
 
-	.close-btn {
-		position: absolute;
-		top: 25px;
-		right: 25px;
-		font-size: 2.5rem;
-		cursor: pointer;
-		color: var(--text-secondary);
-		transition: color 0.2s ease;
-		line-height: 1;
-		font-weight: 300;
-		z-index: 30;
-	}
+		@keyframes roundness {
+			0% {
+				filter: contrast(15);
+			}
 
-	.close-btn:hover {
-		color: #ffffff;
-	}
+			20% {
+				filter: contrast(3);
+			}
 
-	#modal-title {
-		margin-bottom: 10px;
-		font-size: 2rem;
-		background: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		display: inline-block;
-		margin-right: 40px;
-	}
+			40% {
+				filter: contrast(3);
+			}
 
-	#modal-desc {
-		color: #d1d5db;
-		font-size: 1rem;
-		line-height: 1.7;
-		white-space: pre-line;
-	}
-	
-	#modal-desc a {
-		color: var(--accent);
-		text-decoration: none;
-		border-bottom: 1px dashed var(--accent);
-		transition: all 0.2s ease;
-		font-weight: 600;
-	}
+			60% {
+				filter: contrast(15);
+			}
 
-	#modal-desc a:hover {
-		color: #fff;
-		border-bottom-style: solid;
-		background: rgba(124, 58, 237, 0.1);
-	}
+			100% {
+				filter: contrast(15);
+			}
+		}
 
-	#modal-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
-		margin-top: 30px;
-		border-top: 1px solid #333;
-		padding-top: 20px;
-	}
-	
-	#modal-tags .tag {
-		 background: rgba(124, 58, 237, 0.15);
-		 color: #a78bfa;
-		 border-color: rgba(124, 58, 237, 0.3);
-	}
+		header p {
+			color: var(--text-secondary);
+			max-width: 600px;
+			margin: 0 auto;
+			font-size: 1.1rem;
+		}
 
-	.btn-updates {
-		margin-top: 25px;
-		padding: 12px 24px;
-		background: rgba(255, 255, 255, 0.05);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		border-radius: 50px;
-		color: var(--text-main);
-		font-size: 1rem;
-		cursor: pointer;
-		display: inline-flex;
-		align-items: center;
-		gap: 10px;
-		transition: all 0.3s ease;
-		backdrop-filter: blur(5px);
-	}
+		.controls-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 20px;
+			margin-top: 40px;
+			flex-wrap: wrap;
+		}
 
-	.btn-updates:hover {
-		background: rgba(124, 58, 237, 0.15);
-		border-color: var(--accent);
-		box-shadow: 0 0 15px var(--accent-glow);
-		transform: translateY(-2px);
-	}
+		#poda, .btn-poda {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+		}
 
-	.sun-icon {
-		width: 22px;
-		height: 22px;
-		color: var(--accent);
-		animation: spinSun 12s linear infinite;
-	}
-	
-	@keyframes spinSun {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
-	}
+		.btn-poda {
+			cursor: pointer;
+			height: 56px;
+		}
 
-	.updates-list {
-		margin-top: 10px;
-		position: relative;
-		border-left: 2px solid rgba(255, 255, 255, 0.1);
-		padding-left: 20px;
-		margin-left: 10px;
-	}
+		.white,
+		.border,
+		.darkBorderBg,
+		.glow {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			overflow: hidden;
+			z-index: -1;
+			border-radius: 12px;
+			filter: blur(3px);
+			pointer-events: none;
+		}
 
-	.update-item {
-		margin-bottom: 30px;
-		position: relative;
-	}
+		.white {
+			width: calc(100% + 6px);
+			height: calc(100% + 7px);
+			border-radius: 10px;
+			filter: blur(2px);
+		}
 
-	.update-item::before {
-		content: '';
-		position: absolute;
-		left: -26px; 
-		top: 5px;
-		width: 10px;
-		height: 10px;
-		background: var(--accent);
-		border-radius: 50%;
-		box-shadow: 0 0 10px var(--accent);
-	}
+		.border {
+			width: calc(100% + 2px);
+			height: calc(100% + 3px);
+			border-radius: 11px;
+			filter: blur(0.5px);
+		}
 
-	.update-date {
-		font-size: 0.85rem;
-		color: var(--text-secondary);
-		margin-bottom: 5px;
-		display: block;
-		font-family: monospace;
-	}
+		.darkBorderBg {
+			width: calc(100% + 11px);
+			height: calc(100% + 9px);
+		}
 
-	.update-text {
-		font-size: 1rem;
-		color: #e5e5e5;
-		line-height: 1.5;
-	}
-	
-	.update-text a {
-		color: var(--accent);
-		text-decoration: none;
-	}
-	
-	.update-text a:hover {
-		text-decoration: underline;
-	}
+		.glow {
+			width: calc(100% + 40px);
+			height: calc(100% + 40px);
+			filter: blur(30px);
+			opacity: 0.4;
+		}
 
-	.update-item:last-child {
-		margin-bottom: 0;
-	}
+			.white::before,
+			.border::before,
+			.darkBorderBg::before,
+			.glow::before {
+				content: "";
+				z-index: -2;
+				text-align: center;
+				top: 50%;
+				left: 50%;
+				position: absolute;
+				width: 600px;
+				height: 600px;
+				background-repeat: no-repeat;
+				background-position: 0 0;
+				transition: all 6s;
+			}
 
-	footer {
-		text-align: center;
-		padding: 40px;
-		color: var(--text-secondary);
-		border-top: 1px solid #262626;
-		margin-top: auto;
-	}
+		.white::before {
+			transform: translate(-50%, -50%) rotate(83deg);
+			filter: brightness(1.4);
+			background-image: conic-gradient(rgba(0, 0, 0, 0) 0%, #a78bfa, rgba(0, 0, 0, 0) 8%, rgba(0, 0, 0, 0) 50%, #7c3aed, rgba(0, 0, 0, 0) 58%);
+		}
 
-	footer a {
-		color: #fff;
-		text-decoration: none;
-		border-bottom: 1px dotted var(--accent);
-		transition: 0.3s;
-	}
-	
-	footer a:hover {
-		color: var(--accent);
-	}
+		.border::before {
+			transform: translate(-50%, -50%) rotate(70deg);
+			filter: brightness(1.3);
+			background-image: conic-gradient(#1c191c, #2563eb 5%, #1c191c 14%, #1c191c 50%, #7c3aed 60%, #1c191c 64%);
+		}
 
-	@media (max-width: 600px) {
-		header h1 { font-size: 2.2rem; }
-		.card-image { height: 200px; }
-		.modal-content { max-height: 90vh; }
-		.modal-header { padding: 25px 60px 10px 25px; }
-		.modal-body { padding: 10px 25px 25px 25px; }
-		.close-btn { top: 20px; right: 20px; }
-	}
-</style>
+		.darkBorderBg::before {
+			transform: translate(-50%, -50%) rotate(82deg);
+			background-image: conic-gradient(rgba(0, 0, 0, 0), #1e1b4b, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0) 50%, #2e1065, rgba(0, 0, 0, 0) 60%);
+		}
+
+		.glow::before {
+			transform: translate(-50%, -50%) rotate(60deg);
+			width: 999px;
+			height: 999px;
+			background-image: conic-gradient(#000, #2563eb 5%, #000 38%, #000 50%, #7c3aed 60%, #000 87%);
+		}
+
+		.input {
+			background-color: #010201;
+			border: none;
+			width: 301px;
+			height: 56px;
+			border-radius: 10px;
+			color: white;
+			padding-inline: 59px;
+			font-size: 18px;
+			position: relative;
+			z-index: 10;
+		}
+
+		.btn-content-wrapper {
+			background-color: #010201;
+			z-index: 10;
+			height: 56px;
+			border-radius: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+			padding: 0 30px;
+			color: #fff;
+			font-size: 1rem;
+			font-weight: 500;
+			user-select: none;
+			white-space: nowrap;
+		}
+
+		#poda:hover > .white::before,
+		.btn-poda:hover > .white::before {
+			transform: translate(-50%, -50%) rotate(263deg);
+		}
+
+		#poda:hover > .border::before,
+		.btn-poda:hover > .border::before {
+			transform: translate(-50%, -50%) rotate(250deg);
+		}
+
+		#poda:hover > .darkBorderBg::before,
+		.btn-poda:hover > .darkBorderBg::before {
+			transform: translate(-50%, -50%) rotate(262deg);
+		}
+
+		#poda:hover > .glow::before,
+		.btn-poda:hover > .glow::before {
+			transform: translate(-50%, -50%) rotate(240deg);
+		}
+
+		#poda:hover > .darkBorderBg::before,
+		.btn-poda:hover > .darkBorderBg::before {
+			transform: translate(-50%, -50%) rotate(-98deg);
+		}
+
+		#poda:hover > .glow::before,
+		.btn-poda:hover > .glow::before {
+			transform: translate(-50%, -50%) rotate(-120deg);
+		}
+
+		#poda:hover > .white::before,
+		.btn-poda:hover > .white::before {
+			transform: translate(-50%, -50%) rotate(-97deg);
+		}
+
+		#poda:hover > .border::before,
+		.btn-poda:hover > .border::before {
+			transform: translate(-50%, -50%) rotate(-110deg);
+		}
+
+		#poda:focus-within > .white::before,
+		.btn-poda:active > .white::before {
+			transform: translate(-50%, -50%) rotate(443deg);
+			transition: all 12s;
+		}
+
+		#poda:focus-within > .border::before,
+		.btn-poda:active > .border::before {
+			transform: translate(-50%, -50%) rotate(430deg);
+			transition: all 12s;
+		}
+
+		#poda:focus-within > .darkBorderBg::before,
+		.btn-poda:active > .darkBorderBg::before {
+			transform: translate(-50%, -50%) rotate(442deg);
+			transition: all 12s;
+		}
+
+		#poda:focus-within > .glow::before,
+		.btn-poda:active > .glow::before {
+			transform: translate(-50%, -50%) rotate(420deg);
+			transition: all 12s;
+		}
+
+		.input::placeholder {
+			color: #c0b9c0;
+		}
+
+		.input:focus {
+			outline: none;
+		}
+
+		#filter-icon {
+			position: absolute;
+			top: 8px;
+			right: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 12;
+			max-height: 40px;
+			max-width: 38px;
+			height: 100%;
+			width: 100%;
+			isolation: isolate;
+			overflow: hidden;
+			border-radius: 10px;
+			background: linear-gradient(180deg, #161329, black, #1d1b4b);
+			border: 1px solid transparent;
+			cursor: pointer;
+		}
+
+		.filterBorder {
+			height: 42px;
+			width: 40px;
+			position: absolute;
+			overflow: hidden;
+			top: 7px;
+			right: 7px;
+			border-radius: 10px;
+			z-index: 11;
+		}
+
+			.filterBorder::before {
+				content: "";
+				text-align: center;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) rotate(90deg);
+				position: absolute;
+				width: 600px;
+				height: 600px;
+				background-repeat: no-repeat;
+				background-position: 0 0;
+				filter: brightness(1.35);
+				background-image: conic-gradient( rgba(0, 0, 0, 0), #1e1b4b, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, #7c3aed, rgba(0, 0, 0, 0) 100% );
+				animation: rotate 4s linear infinite;
+			}
+
+		#main {
+			position: relative;
+		}
+
+		#search-icon {
+			position: absolute;
+			left: 20px;
+			top: 15px;
+			pointer-events: none;
+			z-index: 12;
+		}
+
+		.sun-icon {
+			width: 22px;
+			height: 22px;
+			color: #a78bfa;
+			animation: spinSun 12s linear infinite;
+			filter: drop-shadow(0 0 5px var(--accent));
+		}
+
+		@keyframes spinSun {
+			from {
+				transform: rotate(0deg);
+			}
+
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		.filter-dropdown {
+			position: absolute;
+			top: 70px;
+			left: 0;
+			width: 314px;
+			background: rgba(10, 10, 10, 0.95);
+			backdrop-filter: blur(15px);
+			border: 1px solid rgba(124, 58, 237, 0.3);
+			border-radius: 16px;
+			padding: 15px;
+			display: none;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 8px;
+			z-index: 100;
+			box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+			animation: fadeIn 0.2s ease;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(-10px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.filter-dropdown.active {
+			display: grid;
+		}
+
+		.filter-tag-item {
+			background: rgba(255, 255, 255, 0.05);
+			color: #d4d4d8;
+			padding: 8px 12px;
+			border-radius: 8px;
+			font-size: 0.8rem;
+			text-align: center;
+			cursor: pointer;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			transition: all 0.2s;
+		}
+
+			.filter-tag-item:hover {
+				background: rgba(124, 58, 237, 0.2);
+				border-color: var(--accent);
+				color: white;
+			}
+
+		.projects-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+			gap: 30px;
+			padding: 20px 0 60px;
+		}
+
+		.card {
+			background-color: var(--card-bg);
+			border-radius: 16px;
+			overflow: hidden;
+			cursor: pointer;
+			position: relative;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+			display: flex;
+			flex-direction: column;
+			border: 1px solid transparent;
+			background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box, linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)) border-box;
+			transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+		}
+
+			.card:hover {
+				transform: translateY(-7px);
+				box-shadow: 0 0 30px rgba(124, 58, 237, 0.15), inset 0 0 20px rgba(0,0,0,0.8);
+				background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box, linear-gradient(var(--bg-angle, 135deg), #7c3aed, #2563eb, #6366f1, #7c3aed) border-box;
+				background-size: 200% 200%;
+				animation: gradientBorder 3s ease infinite;
+			}
+
+		@keyframes gradientBorder {
+			0% {
+				background-position: 0% 50%;
+			}
+
+			50% {
+				background-position: 100% 50%;
+			}
+
+			100% {
+				background-position: 0% 50%;
+			}
+		}
+
+		.card-image {
+			height: 200px;
+			position: relative;
+			overflow: hidden;
+			background-color: #1a1a1a;
+			z-index: 0;
+			flex-shrink: 0;
+			border-bottom: 1px solid rgba(255,255,255,0.05);
+		}
+
+			.card-image::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-image: var(--bg-img);
+				background-size: cover;
+				background-position: center;
+				filter: blur(20px) brightness(0.6);
+				transform: scale(1.2);
+				z-index: -1;
+			}
+
+			.card-image::after {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-image: var(--bg-img);
+				background-size: contain;
+				background-position: center;
+				background-repeat: no-repeat;
+				z-index: 1;
+				transition: transform 0.4s ease, filter 0.4s ease;
+				filter: brightness(1);
+			}
+
+		.card:hover .card-image::after {
+			filter: brightness(1.1);
+			transform: scale(1.05);
+		}
+
+		.card-content {
+			padding: 25px;
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
+			position: relative;
+			z-index: 2;
+		}
+
+		.card-title {
+			font-size: 1.4rem;
+			margin-bottom: 8px;
+			font-weight: 700;
+			color: #fff;
+			transition: color 0.3s;
+		}
+
+		.card:hover .card-title {
+			background: var(--accent-gradient);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		.card-short-desc {
+			color: var(--text-secondary);
+			font-size: 0.95rem;
+			margin-bottom: 20px;
+			line-height: 1.5;
+			flex-grow: 1;
+		}
+
+		.card-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			margin-top: auto;
+		}
+
+		.tag {
+			background: rgba(255, 255, 255, 0.03);
+			color: #d4d4d8;
+			padding: 6px 12px;
+			border-radius: 6px;
+			font-size: 0.75rem;
+			font-weight: 500;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			transition: 0.3s;
+		}
+
+		.card:hover .tag {
+			border-color: rgba(124, 58, 237, 0.5);
+			background: rgba(124, 58, 237, 0.1);
+			color: #fff;
+		}
+
+		.modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: var(--modal-overlay);
+			backdrop-filter: blur(8px);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.3s ease;
+			z-index: 2000;
+			padding: 20px;
+		}
+
+			.modal-overlay.active {
+				opacity: 1;
+				visibility: visible;
+			}
+
+		.modal-content {
+			background-color: #0f0f0f;
+			border-radius: 20px;
+			max-width: 650px;
+			width: 100%;
+			position: relative;
+			transform: scale(0.9);
+			transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+			border: 1px solid rgba(124, 58, 237, 0.2);
+			box-shadow: 0 0 50px -10px rgba(124, 58, 237, 0.2);
+			display: flex;
+			flex-direction: column;
+			max-height: 85vh;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		.modal-header {
+			padding: 30px 40px 10px 40px;
+			flex-shrink: 0;
+			position: relative;
+			background-color: #0f0f0f;
+			z-index: 20;
+		}
+
+		.modal-body {
+			padding: 10px 40px 40px 40px;
+			overflow-y: auto;
+			flex-grow: 1;
+		}
+
+			.modal-body::-webkit-scrollbar {
+				width: 8px;
+			}
+
+			.modal-body::-webkit-scrollbar-track {
+				background: rgba(255, 255, 255, 0.02);
+				border-radius: 4px;
+			}
+
+			.modal-body::-webkit-scrollbar-thumb {
+				background: rgba(255, 255, 255, 0.15);
+				border-radius: 4px;
+			}
+
+				.modal-body::-webkit-scrollbar-thumb:hover {
+					background: rgba(255, 255, 255, 0.25);
+				}
+
+		.modal-overlay.active .modal-content {
+			transform: scale(1);
+		}
+
+		.close-btn {
+			position: absolute;
+			top: 25px;
+			right: 25px;
+			font-size: 2.5rem;
+			cursor: pointer;
+			color: var(--text-secondary);
+			transition: color 0.2s ease;
+			line-height: 1;
+			font-weight: 300;
+			z-index: 30;
+		}
+
+			.close-btn:hover {
+				color: #ffffff;
+			}
+
+		#modal-title {
+			margin-bottom: 10px;
+			font-size: 2rem;
+			background: var(--accent-gradient);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			display: inline-block;
+			margin-right: 40px;
+		}
+
+		#modal-desc {
+			color: #d1d5db;
+			font-size: 1rem;
+			line-height: 1.7;
+			white-space: pre-line;
+		}
+
+			#modal-desc a {
+				color: var(--accent);
+				text-decoration: none;
+				border-bottom: 1px dashed var(--accent);
+				transition: all 0.2s ease;
+				font-weight: 600;
+			}
+
+				#modal-desc a:hover {
+					color: #fff;
+					border-bottom-style: solid;
+					background: rgba(124, 58, 237, 0.1);
+				}
+
+		#modal-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin-top: 30px;
+			border-top: 1px solid #333;
+			padding-top: 20px;
+		}
+
+			#modal-tags .tag {
+				background: rgba(124, 58, 237, 0.15);
+				color: #a78bfa;
+				border-color: rgba(124, 58, 237, 0.3);
+			}
+
+		.updates-list {
+			margin-top: 10px;
+			position: relative;
+			border-left: 2px solid rgba(255, 255, 255, 0.1);
+			padding-left: 20px;
+			margin-left: 10px;
+		}
+
+		.update-item {
+			margin-bottom: 30px;
+			position: relative;
+		}
+
+			.update-item::before {
+				content: '';
+				position: absolute;
+				left: -26px;
+				top: 5px;
+				width: 10px;
+				height: 10px;
+				background: var(--accent);
+				border-radius: 50%;
+				box-shadow: 0 0 10px var(--accent);
+			}
+
+		.update-date {
+			font-size: 0.85rem;
+			color: var(--text-secondary);
+			margin-bottom: 5px;
+			display: block;
+			font-family: monospace;
+		}
+
+		.update-text {
+			font-size: 1rem;
+			color: #e5e5e5;
+			line-height: 1.5;
+		}
+
+			.update-text a {
+				color: var(--accent);
+				text-decoration: none;
+			}
+
+				.update-text a:hover {
+					text-decoration: underline;
+				}
+
+		.update-item:last-child {
+			margin-bottom: 0;
+		}
+
+		footer {
+			text-align: center;
+			padding: 40px;
+			color: var(--text-secondary);
+			border-top: 1px solid #262626;
+			margin-top: auto;
+		}
+
+			footer a {
+				color: #fff;
+				text-decoration: none;
+				border-bottom: 1px dotted var(--accent);
+				transition: 0.3s;
+			}
+
+				footer a:hover {
+					color: var(--accent);
+				}
+
+		@media (max-width: 600px) {
+			.logo-title {
+				font-size: 3.5rem;
+			}
+
+			.loader {
+				--size: 0.35;
+			}
+
+			.controls-container {
+				flex-direction: column;
+				gap: 15px;
+			}
+
+			#poda {
+				margin-right: 0;
+				width: 100%;
+			}
+
+			#main, .border, .filter-dropdown, .darkBorderBg, .white, .glow, .btn-poda {
+				width: 100%;
+				max-width: 320px;
+			}
+
+			.card-image {
+				height: 200px;
+			}
+
+			.modal-content {
+				max-height: 90vh;
+			}
+
+			.modal-header {
+				padding: 25px 60px 10px 25px;
+			}
+
+			.modal-body {
+				padding: 10px 25px 25px 25px;
+			}
+
+			.close-btn {
+				top: 20px;
+				right: 20px;
+			}
+		}
+	</style>
 
 </head>
 <body>
-<div class="gradient-bg"></div>
-<div class="gradient-orb orb-1"></div>
-<div class="gradient-orb orb-2"></div>
-<div class="gradient-orb orb-3"></div>
-<div class="gradient-orb orb-4"></div>
-<div class="gradient-orb orb-5"></div>
-<div class="noise"></div>
+	<div class="gradient-bg"></div>
+	<div class="gradient-orb orb-1"></div>
+	<div class="gradient-orb orb-2"></div>
+	<div class="gradient-orb orb-3"></div>
+	<div class="gradient-orb orb-4"></div>
+	<div class="gradient-orb orb-5"></div>
+	<div class="noise"></div>
 
-<header>
-	<div class="container">
-		<h1>Dontaz</h1>
-		<p>Делаю всё подряд. Здесь вы можете увидеть результаты моей деятельности.</p>
-		<p style="margin-top: 15px; font-size: 0.95rem; color: #6b7280;">
-			На карточки можно тыкать. Приятного просмотра.
+	<header>
+		<div class="container">
+			<h1 class="logo-title"><span class="logo-text">D</span><span class="letter-o-wrapper">o<span class="loader"><svg width="100" height="100" viewBox="0 0 100 100"><defs><mask id="clipping"><polygon points="0,0 100,0 100,100 0,100" fill="black"></polygon><polygon points="25,25 75,25 50,75" fill="white"></polygon><polygon points="50,25 75,75 25,75" fill="white"></polygon><polygon points="35,35 65,35 50,65" fill="white"></polygon><polygon points="35,35 65,35 50,65" fill="white"></polygon><polygon points="35,35 65,35 50,65" fill="white"></polygon><polygon points="35,35 65,35 50,65" fill="white"></polygon></mask></defs></svg><span class="box"></span></span></span><span class="logo-text">ntaz</span></h1>
+
+			<p>Делаю всё подряд. Здесь вы можете увидеть результаты моей деятельности.</p>
+			<p style="margin-top: 15px; font-size: 0.95rem; color: #6b7280;">
+				На карточки можно тыкать. Приятного просмотра.
+			</p>
+
+			<div class="controls-container">
+				<div id="poda">
+					<div class="glow"></div>
+					<div class="darkBorderBg"></div>
+					<div class="darkBorderBg"></div>
+					<div class="darkBorderBg"></div>
+					<div class="white"></div>
+					<div class="border"></div>
+					<div id="main">
+						<input placeholder="Поиск по проектам..." type="text" name="text" class="input" id="search-input" />
+						<div class="filterBorder"></div>
+						<div id="filter-icon">
+							<svg preserveAspectRatio="none" height="27" width="27" viewBox="4.8 4.56 14.832 15.408" fill="none">
+								<path d="M8.16 6.65002H15.83C16.47 6.65002 16.99 7.17002 16.99 7.81002V9.09002C16.99 9.56002 16.7 10.14 16.41 10.43L13.91 12.64C13.56 12.93 13.33 13.51 13.33 13.98V16.48C13.33 16.83 13.1 17.29 12.81 17.47L12 17.98C11.24 18.45 10.2 17.92 10.2 16.99V13.91C10.2 13.5 9.97 12.98 9.73 12.69L7.52 10.36C7.23 10.08 7 9.55002 7 9.20002V7.87002C7 7.17002 7.52 6.65002 8.16 6.65002Z" stroke="currentColor" stroke-width="1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+							</svg>
+						</div>
+						<div id="search-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" height="24" fill="none" class="feather feather-search">
+								<circle stroke="url(#search)" r="8" cy="11" cx="11"></circle>
+								<line stroke="url(#searchl)" y2="16.65" y1="22" x2="16.65" x1="22"></line>
+								<defs>
+									<linearGradient gradientTransform="rotate(50)" id="search">
+										<stop stop-color="#f8e7f8" offset="0%"></stop>
+										<stop stop-color="#b6a9b7" offset="50%"></stop>
+									</linearGradient>
+									<linearGradient id="searchl">
+										<stop stop-color="#b6a9b7" offset="0%"></stop>
+										<stop stop-color="#837484" offset="50%"></stop>
+									</linearGradient>
+								</defs>
+							</svg>
+						</div>
+					</div>
+
+					<div id="filter-dropdown" class="filter-dropdown">
+					</div>
+				</div>
+
+				<div class="btn-poda" onclick="openUpdatesModal()">
+					<div class="glow"></div>
+					<div class="darkBorderBg"></div>
+					<div class="darkBorderBg"></div>
+					<div class="darkBorderBg"></div>
+					<div class="white"></div>
+					<div class="border"></div>
+
+					<div class="btn-content-wrapper">
+						<svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+							<path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75ZM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18ZM7.758 17.303a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12ZM6.697 7.757a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591Z" />
+						</svg>
+						Что нового?
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="container">
+		<div class="projects-grid">
+
+			<!-- ПРОЕКТ 1 -->
+			<div class="card"
+				 onclick="openModal(this)"
+				 data-title="Скрипт «Timestamp Generator» для Discord"
+				 data-tags="Инструмент, Userscript, Некоммерческий, 2025.11.26"
+				 data-full-desc="Скрипт для браузера, чтобы создавать timestamp для Discord. Timestamp позволяет делиться конкретным временем, которое динамично меняется для пользователей с учётом часового пояса.
+				 Ссылки:
+				 • <a href='https://github.com/Dontaz/dontaz-user_scripts?tab=readme-ov-file#discord-timestamp-generator' target='_blank'>GitHub</a>">
+
+		<div class="card-image" style="--bg-img: url('images/discord_2.webp');"></div>
+		<div class="card-content">
+			<h3 class="card-title">Скрипт «Timestamp Generator» для Discord</h3>
+			<p class="card-short-desc">Скрипт для браузера, чтобы создавать timestamp для Discord.</p>
+			<div class="card-tags"></div>
+		</div>
+	</div>
+
+			<!-- ПРОЕКТ 2 -->
+			<div class="card"
+				 onclick="openModal(this)"
+				 data-title="Where Winds Meet — Русификатор"
+				 data-tags="Русификатор, Некоммерческий, 2025.11.21"
+				 data-full-desc="Участвовал в создании русификатора (перевод на русский) для игры «Where Winds Meet».
+				 Страницу русификатора можно найти на:
+				 • <a href='https://github.com/DOG729/wwm_russian' target='_blank'>Страница на GitHub</a>
+		• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3609472595' target='_blank'>Steam Руководство</a>
+		• <a href='https://www.zoneofgames.ru/games/where_winds_meet/files/10980.html' target='_blank'>Страница на Zone of Games</a>
+		• <a href='https://www.playground.ru/where_winds_meet/file/where_winds_meet_rusifikator_teksta_v0_0_3_dog729_i_zog-1806044' target='_blank'>Страница на PlayGround</a>">
+
+		<div class="card-image" style="--bg-img: url('images/where_winds_meet_ru.webp');"></div>
+		<div class="card-content">
+			<h3 class="card-title">Where Winds Meet — Русификатор</h3>
+			<p class="card-short-desc">Русификатор для игры Where Winds Meet.</p>
+			<div class="card-tags"></div>
+		</div>
+	</div>
+
+			<!-- ПРОЕКТ 3 -->
+			<div class="card"
+				 onclick="openModal(this)"
+				 data-title="The Midnight Walk — Русификатор"
+				 data-tags="Русификатор, Некоммерческий, 2025.05.12"
+				 data-full-desc="Создал русификатор (перевод на русский) для игры «The Midnight Walk».
+				 Страницу русификатора можно найти на:
+				 • <a href='https://github.com/Dontaz/TheMidnightWalk-RU' target='_blank'>Страница на GitHub</a>
+		• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3480297954' target='_blank'>Steam Руководство</a>
+		• <a href='https://www.zoneofgames.ru/games/midnight_walk_the/files/10124.html' target='_blank'>Страница на Zone of Games</a>
+		• <a href='https://www.playground.ru/midnight_walk/file/the_midnight_walk_rusifikator_teksta_v2_8_20251029_dontaz-1770014' target='_blank'>Страница на PlayGround</a>">
+
+		<div class="card-image" style="--bg-img: url('images/the_midnight_walk_ru.webp');"></div>
+		<div class="card-content">
+			<h3 class="card-title">The Midnight Walk — Русификатор</h3>
+			<p class="card-short-desc">Русификатор для игры The Midnight Walk.</p>
+			<div class="card-tags"></div>
+		</div>
+	</div>
+
+			<!-- ПРОЕКТ 4 -->
+			<div class="card"
+				 onclick="openModal(this)"
+				 data-title="База знаний"
+				 data-tags="База знаний, Некоммерческий, 2025.04.01"
+				 data-full-desc="База знаний с рекомендациями литературы и источниками информации по различным темам. На сайте можно найти подборку полезных материалов по различным темам и направлениям. Поддерживается поиск по названию, описанию и авторам.
+				 Ссылки:
+				 • <a href='https://github.com/Dontaz/dontaz.github.io' target='_blank'>Страница на GitHub</a>
+		• <a href='https://dontaz.github.io/' target='_blank'>https://dontaz.github.io/</a>
+		• <a href='https://dontaz.vercel.app/' target='_blank'>https://dontaz.vercel.app/</a>
+		• <a href='https://dontaz.pages.dev/' target='_blank'>https://dontaz.pages.dev/</a>">
+
+		<div class="card-image" style="--bg-img: url('images/knowledge_base.webp');"></div>
+		<div class="card-content">
+			<h3 class="card-title">База знаний</h3>
+			<p class="card-short-desc">База знаний с рекомендациями литературы и источниками информации.</p>
+			<div class="card-tags"></div>
+		</div>
+	</div>
+
+			<!-- ПРОЕКТ 5 -->
+			<div class="card"
+				 onclick="openModal(this)"
+				 data-title="Simple Chart Builder"
+				 data-tags="Инструмент, Некоммерческий, 2025.11.22"
+				 data-full-desc="Простой конструктор графиков.
+				 Ссылки:
+				 • <a href='https://github.com/Dontaz/Simple-Chart-Builder' target='_blank'>Страница на GitHub</a>
+		• <a href='https://dontaz.github.io/other/simple-chart-builder/simple-chart-builder.html' target='_blank'>Сайт с доступом к инструменту</a>">
+
+		<div class="card-image" style="--bg-img: url('images/chart.webp');"></div>
+		<div class="card-content">
+			<h3 class="card-title">Simple Chart Builder</h3>
+			<p class="card-short-desc">Простой конструктор графиков.</p>
+			<div class="card-tags"></div>
+		</div>
+	</div>
+
+			<!-- ПРОЕКТ 6 -->
+			<div class="card"
+				 onclick="openModal(this)"
+				 data-title="Wanderstop — Русификатор"
+				 data-tags="Русификатор, Некоммерческий, 2025.05.10"
+				 data-full-desc="Создал русификатор (перевод на русский) для игры «Wanderstop». Переведён интерфейс, диалоги и прочий текст, а также подобраны шрифты для игры.
+				 Сейчас в процессе глобальная редактура текста.
+				 Страницу русификатора можно найти на:
+				 • <a href='https://github.com/Dontaz/TheMidnightWalk-RU' target='_blank'>Страница на GitHub</a>
+		• <a href='https://www.zoneofgames.ru/games/wanderstop/files/10133.html' target='_blank'>Страница на Zone of Games</a>
+		• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3479356545' target='_blank'>Steam Руководство</a>
+
+		">
+
+		<div class="card-image" style="--bg-img: url('images/wanderstop_ru.webp');"></div>
+		<div class="card-content">
+			<h3 class="card-title">Wanderstop — Русификатор</h3>
+			<p class="card-short-desc">Русификатор для игры Wanderstop.</p>
+			<div class="card-tags"></div>
+		</div>
+	</div>
+
+			<!-- ПРОЕКТ 7 -->
+			<div class="card"
+				 onclick="openModal(this)"
+				 data-title="Скрипт «Kinopoisk rating on IMDb»"
+				 data-tags="Userscript, Некоммерческий, 2025.11.27"
+				 data-full-desc="Скрипт для браузера, который добавляет рейтинг на сайте IMDb у фильмов и сериалов с Кинопоиска.
+				 Ссылки:
+				 • <a href='https://github.com/Dontaz/dontaz-user_scripts?tab=readme-ov-file#kinopoisk-rating-on-imdb' target='_blank'>GitHub</a>">
+
+		<div class="card-image" style="--bg-img: url('images/ratings.webp');"></div>
+		<div class="card-content">
+			<h3 class="card-title">Скрипт «Kinopoisk rating on IMDb»</h3>
+			<p class="card-short-desc">Скрипт для браузера, чтобы видеть рейтинг Кинопоиска на сайте IMDb.</p>
+			<div class="card-tags"></div>
+		</div>
+	</div>
+
+		</div>
+	</main>
+
+	<footer>
+		<p>
+			&copy; 2025 Dontaz. <br>
+			<a href="https://steamcommunity.com/id/dontaz/">Steam</a> &bull; <a href="https://github.com/Dontaz">GitHub</a> &bull; <a href="https://www.youtube.com/@Dontaz">YouTube</a> &bull; <a href="https://boosty.to/dontaz">Boosty</a>
 		</p>
-		<button class="btn-updates" onclick="openUpdatesModal()">
-			<svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-				<path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75ZM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18ZM7.758 17.303a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12ZM6.697 7.757a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591Z" />
-			</svg>
-			Что нового?
-		</button>
-	</div>
-</header>
+	</footer>
 
-<div class="search-container">
-	<div class="search-wrapper">
-		<input type="text" id="search-input" placeholder="Поиск проектов...">
-		<svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-			<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-		</svg>
-	</div>
-</div>
-
-<main class="container">
-	<div class="projects-grid">
-		
-		<!-- ПРОЕКТ 1 -->
-		<div class="card" 
-			onclick="openModal(this)"
-			data-title="Скрипт «Timestamp Generator» для Discord" 
-			data-tags="Инструмент, Userscript, Некоммерческий, 2025.11.26"
-			data-full-desc="Скрипт для браузера, чтобы создавать timestamp для Discord. Timestamp позволяет делиться конкретным временем, которое динамично меняется для пользователей с учётом часового пояса.
-
-			Ссылки:
-			• <a href='https://github.com/Dontaz/dontaz-user_scripts?tab=readme-ov-file#discord-timestamp-generator' target='_blank'>GitHub</a>">
-			
-			<div class="card-image" style="--bg-img: url('images/discord_2.webp');"></div>
-			<div class="card-content">
-				<h3 class="card-title">Скрипт «Timestamp Generator» для Discord</h3>
-				<p class="card-short-desc">Скрипт для браузера, чтобы создавать timestamp для Discord.</p>
-				<div class="card-tags"></div>
+	<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span class="close-btn" onclick="closeModalBtn()">&times;</span>
+				<h2 id="modal-title">Заголовок</h2>
 			</div>
-		</div>
-		
-		<!-- ПРОЕКТ 2 -->
-		<div class="card" 
-			onclick="openModal(this)"
-			data-title="Where Winds Meet — Русификатор" 
-			data-tags="Русификатор, Некоммерческий, 2025.11.21"
-			data-full-desc="Участвовал в создании русификатора (перевод на русский) для игры «Where Winds Meet». 
-
-			Страницу русификатора можно найти на:
-			• <a href='https://github.com/DOG729/wwm_russian' target='_blank'>Страница на GitHub</a>
-			• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3609472595' target='_blank'>Steam Руководство</a>
-			• <a href='https://www.zoneofgames.ru/games/where_winds_meet/files/10980.html' target='_blank'>Страница на Zone of Games</a>
-			• <a href='https://www.playground.ru/where_winds_meet/file/where_winds_meet_rusifikator_teksta_v0_0_3_dog729_i_zog-1806044' target='_blank'>Страница на PlayGround</a>">
-			
-			<div class="card-image" style="--bg-img: url('images/where_winds_meet_ru.webp');"></div>
-			<div class="card-content">
-				<h3 class="card-title">Where Winds Meet — Русификатор</h3>
-				<p class="card-short-desc">Русификатор для игры Where Winds Meet.</p>
-				<div class="card-tags"></div>
-			</div>
-		</div>
-		
-		<!-- ПРОЕКТ 3 -->
-		<div class="card" 
-			onclick="openModal(this)"
-			data-title="The Midnight Walk — Русификатор" 
-			data-tags="Русификатор, Некоммерческий, 2025.05.12"
-			data-full-desc="Создал русификатор (перевод на русский) для игры «The Midnight Walk». 
-
-			Страницу русификатора можно найти на:
-			• <a href='https://github.com/Dontaz/TheMidnightWalk-RU' target='_blank'>Страница на GitHub</a>
-			• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3480297954' target='_blank'>Steam Руководство</a>
-			• <a href='https://www.zoneofgames.ru/games/midnight_walk_the/files/10124.html' target='_blank'>Страница на Zone of Games</a>
-			• <a href='https://www.playground.ru/midnight_walk/file/the_midnight_walk_rusifikator_teksta_v2_8_20251029_dontaz-1770014' target='_blank'>Страница на PlayGround</a>">
-			
-			<div class="card-image" style="--bg-img: url('images/the_midnight_walk_ru.webp');"></div>
-			<div class="card-content">
-				<h3 class="card-title">The Midnight Walk — Русификатор</h3>
-				<p class="card-short-desc">Русификатор для игры The Midnight Walk.</p>
-				<div class="card-tags"></div>
-			</div>
-		</div>
-		
-		<!-- ПРОЕКТ 4 -->
-		<div class="card" 
-			onclick="openModal(this)"
-			data-title="База знаний" 
-			data-tags="База знаний, Некоммерческий, 2025.04.01"
-			data-full-desc="База знаний с рекомендациями литературы и источниками информации по различным темам. На сайте можно найти подборку полезных материалов по различным темам и направлениям. Поддерживается поиск по названию, описанию и авторам.
-
-			Ссылки:
-			• <a href='https://github.com/Dontaz/dontaz.github.io' target='_blank'>Страница на GitHub</a>
-			• <a href='https://dontaz.github.io/' target='_blank'>https://dontaz.github.io/</a>
-			• <a href='https://dontaz.vercel.app/' target='_blank'>https://dontaz.vercel.app/</a>
-			• <a href='https://dontaz.pages.dev/' target='_blank'>https://dontaz.pages.dev/</a>">
-			
-			<div class="card-image" style="--bg-img: url('images/knowledge_base.webp');"></div>
-			<div class="card-content">
-				<h3 class="card-title">База знаний</h3>
-				<p class="card-short-desc">База знаний с рекомендациями литературы и источниками информации.</p>
-				<div class="card-tags"></div>
-			</div>
-		</div>
-		
-		<!-- ПРОЕКТ 5 -->
-		<div class="card" 
-			onclick="openModal(this)"
-			data-title="Simple Chart Builder" 
-			data-tags="Инструмент, Некоммерческий, 2025.11.22"
-			data-full-desc="Простой конструктор графиков.
-
-			Ссылки:
-			• <a href='https://github.com/Dontaz/Simple-Chart-Builder' target='_blank'>Страница на GitHub</a>
-			• <a href='https://dontaz.github.io/other/simple-chart-builder/simple-chart-builder.html' target='_blank'>Сайт с доступом к инструменту</a>">
-			
-			<div class="card-image" style="--bg-img: url('images/chart.webp');"></div>
-			<div class="card-content">
-				<h3 class="card-title">Simple Chart Builder</h3>
-				<p class="card-short-desc">Простой конструктор графиков.</p>
-				<div class="card-tags"></div>
-			</div>
-		</div>
-		
-		<!-- ПРОЕКТ 6 -->
-		<div class="card" 
-			onclick="openModal(this)"
-			data-title="Wanderstop — Русификатор" 
-			data-tags="Русификатор, Некоммерческий, 2025.05.10"
-			data-full-desc="Создал русификатор (перевод на русский) для игры «Wanderstop». Переведён интерфейс, диалоги и прочий текст, а также подобраны шрифты для игры.
-			
-			Сейчас в процессе глобальная редактура текста.
-
-			Страницу русификатора можно найти на:
-			• <a href='https://github.com/Dontaz/TheMidnightWalk-RU' target='_blank'>Страница на GitHub</a>
-			• <a href='https://www.zoneofgames.ru/games/wanderstop/files/10133.html' target='_blank'>Страница на Zone of Games</a>
-			• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3479356545' target='_blank'>Steam Руководство</a>
-
-			">
-			
-			<div class="card-image" style="--bg-img: url('images/wanderstop_ru.webp');"></div>
-			<div class="card-content">
-				<h3 class="card-title">Wanderstop — Русификатор</h3>
-				<p class="card-short-desc">Русификатор для игры Wanderstop.</p>
-				<div class="card-tags"></div>
-			</div>
-		</div>
-		
-		<!-- ПРОЕКТ 7 -->
-		<div class="card" 
-			onclick="openModal(this)"
-			data-title="Скрипт «Kinopoisk rating on IMDb»" 
-			data-tags="Userscript, Некоммерческий, 2025.11.27"
-			data-full-desc="Скрипт для браузера, который добавляет рейтинг на сайте IMDb у фильмов и сериалов с Кинопоиска.
-
-			Ссылки:
-			• <a href='https://github.com/Dontaz/dontaz-user_scripts?tab=readme-ov-file#kinopoisk-rating-on-imdb' target='_blank'>GitHub</a>">
-			
-			<div class="card-image" style="--bg-img: url('images/ratings.webp');"></div>
-			<div class="card-content">
-				<h3 class="card-title">Скрипт «Kinopoisk rating on IMDb»</h3>
-				<p class="card-short-desc">Скрипт для браузера, чтобы видеть рейтинг Кинопоиска на сайте IMDb.</p>
-				<div class="card-tags"></div>
-			</div>
-		</div>
-
-	</div>
-</main>
-
-<footer>
-	<p>&copy; 2025 Dontaz. <br>
-	<a href="https://steamcommunity.com/id/dontaz/">Steam</a> &bull; <a href="https://github.com/Dontaz">GitHub</a> &bull; <a href="https://www.youtube.com/@Dontaz">YouTube</a> &bull; <a href="https://boosty.to/dontaz">Boosty</a></p>
-</footer>
-
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-	<div class="modal-content">
-		<div class="modal-header">
-			<span class="close-btn" onclick="closeModalBtn()">&times;</span>
-			<h2 id="modal-title">Заголовок</h2>
-		</div>
-		<div class="modal-body">
-			<p id="modal-desc">Описание...</p>
-			<div id="modal-tags"></div>
-		</div>
-	</div>
-</div>
-
-<div class="modal-overlay" id="updatesModal" onclick="closeUpdatesModal(event)">
-	<div class="modal-content">
-		<div class="modal-header">
-			<span class="close-btn" onclick="closeUpdatesBtn()">&times;</span>
-			<h2 style="margin-bottom: 0; font-size: 2rem; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-				Последние обновления
-			</h2>
-		</div>
-		
-		<div class="modal-body">
-			<div class="updates-list">
-
-				<div class="update-item">
-					<span class="update-date">03.12.2025</span>
-					<div class="update-text">
-						Обновление русификатора для игры «The Midnight Walk» до версии 2.9.
-					</div>
-				</div>
-
-				<div class="update-item">
-					<span class="update-date">03.12.2025</span>
-					<div class="update-text">
-						Обновление русификатора для игры «Wanderstop» до версии 1.02.
-					</div>
-				</div>
-
-				<div class="update-item">
-					<span class="update-date">30.11.2025</span>
-					<div class="update-text">
-						Добавил раздел «Что нового», чтобы отслеживать изменения на сайте.
-					</div>
-				</div>
-
-				<div class="update-item">
-					<span class="update-date">30.11.2025</span>
-					<div class="update-text">
-						Обновление русификатора для игры «Wanderstop» до версии 1.01.
-					</div>
-				</div>
-
-				<div class="update-item">
-					<span class="update-date">25.11.2025</span>
-					<div class="update-text">
-						Этот сайт вышел в свет.
-					</div>
-				</div>
-
+			<div class="modal-body">
+				<p id="modal-desc">Описание...</p>
+				<div id="modal-tags"></div>
 			</div>
 		</div>
 	</div>
-</div>
 
-<script>
-	document.addEventListener("DOMContentLoaded", () => {
-		const cards = document.querySelectorAll('.card');
-		
-		cards.forEach(card => {
-			const tagsRaw = card.getAttribute('data-tags');
-			const tagsContainer = card.querySelector('.card-tags');
-			
-			if (tagsRaw && tagsContainer) {
-				const tagsArray = tagsRaw.split(',');
-				tagsArray.forEach(tagText => {
-					const span = document.createElement('span');
-					span.className = 'tag';
-					span.textContent = tagText.trim();
-					tagsContainer.appendChild(span);
-				});
-			}
-		});
-		
-		const searchInput = document.getElementById('search-input');
-		searchInput.addEventListener('input', (e) => {
-			const searchTerm = e.target.value.toLowerCase();
+	<div class="modal-overlay" id="updatesModal" onclick="closeUpdatesModal(event)">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span class="close-btn" onclick="closeUpdatesBtn()">&times;</span>
+				<h2 style="margin-bottom: 0; font-size: 2rem; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+					Последние обновления
+				</h2>
+			</div>
+
+			<div class="modal-body">
+				<div class="updates-list">
+
+					<!-- Обновления -->
+
+					<div class="update-item">
+						<span class="update-date">10.12.2025</span>
+						<div class="update-text">
+							Обновление дизайна сайта.
+						</div>
+					</div>
+
+					<div class="update-item">
+						<span class="update-date">03.12.2025</span>
+						<div class="update-text">
+							Обновление русификатора для игры «The Midnight Walk» до версии 2.9.
+						</div>
+					</div>
+
+					<div class="update-item">
+						<span class="update-date">03.12.2025</span>
+						<div class="update-text">
+							Обновление русификатора для игры «Wanderstop» до версии 1.02.
+						</div>
+					</div>
+
+					<div class="update-item">
+						<span class="update-date">30.11.2025</span>
+						<div class="update-text">
+							Добавил раздел «Что нового», чтобы отслеживать изменения на сайте.
+						</div>
+					</div>
+
+					<div class="update-item">
+						<span class="update-date">30.11.2025</span>
+						<div class="update-text">
+							Обновление русификатора для игры «Wanderstop» до версии 1.01.
+						</div>
+					</div>
+
+					<div class="update-item">
+						<span class="update-date">25.11.2025</span>
+						<div class="update-text">
+							Этот сайт вышел в свет.
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
 			const cards = document.querySelectorAll('.card');
 
+			const allTags = new Set();
+
 			cards.forEach(card => {
-				const title = card.getAttribute('data-title').toLowerCase();
-				const tags = card.getAttribute('data-tags').toLowerCase();
-				const shortDesc = card.querySelector('.card-short-desc').textContent.toLowerCase();
-				
-				if (title.includes(searchTerm) || tags.includes(searchTerm) || shortDesc.includes(searchTerm)) {
-					card.style.display = 'flex';
-				} else {
-					card.style.display = 'none';
+				const tagsRaw = card.getAttribute('data-tags');
+				const tagsContainer = card.querySelector('.card-tags');
+
+				if (tagsRaw) {
+					const tagsArray = tagsRaw.split(',');
+					tagsArray.forEach(tagText => {
+						const cleanedTag = tagText.trim();
+
+						const isDate = /^\d{4}\.\d{2}\.\d{2}$/.test(cleanedTag);
+
+						if (!isDate) {
+							allTags.add(cleanedTag);
+						}
+
+						if (tagsContainer) {
+							const span = document.createElement('span');
+							span.className = 'tag';
+							span.textContent = cleanedTag;
+							tagsContainer.appendChild(span);
+						}
+					});
 				}
 			});
-		});
-	});
 
-	const modal = document.getElementById('modalOverlay');
-	const modalTitle = document.getElementById('modal-title');
-	const modalDesc = document.getElementById('modal-desc');
-	const modalTags = document.getElementById('modal-tags');
+			const filterDropdown = document.getElementById('filter-dropdown');
+			if (filterDropdown) {
+				allTags.forEach(tag => {
+					const tagBtn = document.createElement('div');
+					tagBtn.className = 'filter-tag-item';
+					tagBtn.textContent = tag;
+					tagBtn.onclick = () => {
+						const searchInput = document.getElementById('search-input');
+						searchInput.value = tag;
+						searchInput.dispatchEvent(new Event('input'));
+						filterDropdown.classList.remove('active');
+					};
+					filterDropdown.appendChild(tagBtn);
+				});
+			}
 
-	function openModal(cardElement) {
-		const title = cardElement.getAttribute('data-title');
-		const desc = cardElement.getAttribute('data-full-desc');
-		const tagsRaw = cardElement.getAttribute('data-tags');
+			const filterIcon = document.getElementById('filter-icon');
+			if (filterIcon) {
+				filterIcon.addEventListener('click', (e) => {
+					e.stopPropagation();
+					filterDropdown.classList.toggle('active');
+				});
+			}
 
-		modalTitle.textContent = title;
-		modalDesc.innerHTML = desc;
-
-		modalTags.innerHTML = '';
-		if (tagsRaw) {
-			const tagsArray = tagsRaw.split(',');
-			tagsArray.forEach(tagText => {
-				const tagSpan = document.createElement('span');
-				tagSpan.classList.add('tag');
-				tagSpan.textContent = tagText.trim();
-				modalTags.appendChild(tagSpan);
+			document.addEventListener('click', (e) => {
+				if (filterDropdown && filterDropdown.classList.contains('active')) {
+					if (!filterDropdown.contains(e.target) && !filterIcon.contains(e.target)) {
+						filterDropdown.classList.remove('active');
+					}
+				}
 			});
+
+			const searchInput = document.getElementById('search-input');
+			searchInput.addEventListener('input', (e) => {
+				const searchTerm = e.target.value.toLowerCase();
+				const cards = document.querySelectorAll('.card');
+
+				cards.forEach(card => {
+					const title = card.getAttribute('data-title').toLowerCase();
+					const tags = card.getAttribute('data-tags').toLowerCase();
+					const shortDesc = card.querySelector('.card-short-desc').textContent.toLowerCase();
+
+					if (title.includes(searchTerm) || tags.includes(searchTerm) || shortDesc.includes(searchTerm)) {
+						card.style.display = 'flex';
+					} else {
+						card.style.display = 'none';
+					}
+				});
+			});
+		});
+
+		const modal = document.getElementById('modalOverlay');
+		const modalTitle = document.getElementById('modal-title');
+		const modalDesc = document.getElementById('modal-desc');
+		const modalTags = document.getElementById('modal-tags');
+
+		function openModal(cardElement) {
+			const title = cardElement.getAttribute('data-title');
+			const desc = cardElement.getAttribute('data-full-desc');
+			const tagsRaw = cardElement.getAttribute('data-tags');
+
+			modalTitle.textContent = title;
+			modalDesc.innerHTML = desc;
+
+			modalTags.innerHTML = '';
+			if (tagsRaw) {
+				const tagsArray = tagsRaw.split(',');
+				tagsArray.forEach(tagText => {
+					const tagSpan = document.createElement('span');
+					tagSpan.classList.add('tag');
+					tagSpan.textContent = tagText.trim();
+					modalTags.appendChild(tagSpan);
+				});
+			}
+
+			modal.classList.add('active');
+			document.body.style.overflow = 'hidden';
 		}
 
-		modal.classList.add('active');
-		document.body.style.overflow = 'hidden';
-	}
-
-	function closeModalBtn() {
-		modal.classList.remove('active');
-		document.body.style.overflow = 'auto';
-	}
-
-	function closeModal(event) {
-		if (event.target === modal) {
-			closeModalBtn();
+		function closeModalBtn() {
+			modal.classList.remove('active');
+			document.body.style.overflow = 'auto';
 		}
-	}
-	
-	const updatesModal = document.getElementById('updatesModal');
 
-	function openUpdatesModal() {
-		updatesModal.classList.add('active');
-		document.body.style.overflow = 'hidden';
-	}
-
-	function closeUpdatesBtn() {
-		updatesModal.classList.remove('active');
-		document.body.style.overflow = 'auto';
-	}
-
-	function closeUpdatesModal(event) {
-		if (event.target === updatesModal) {
-			closeUpdatesBtn();
+		function closeModal(event) {
+			if (event.target === modal) {
+				closeModalBtn();
+			}
 		}
-	}
-	
-	document.addEventListener('keydown', (e) => {
-		if(e.key === "Escape") {
-			closeModalBtn();
-			closeUpdatesBtn();
+
+		const updatesModal = document.getElementById('updatesModal');
+
+		function openUpdatesModal() {
+			updatesModal.classList.add('active');
+			document.body.style.overflow = 'hidden';
 		}
-	});
-</script>
+
+		function closeUpdatesBtn() {
+			updatesModal.classList.remove('active');
+			document.body.style.overflow = 'auto';
+		}
+
+		function closeUpdatesModal(event) {
+			if (event.target === updatesModal) {
+				closeUpdatesBtn();
+			}
+		}
+
+		document.addEventListener('keydown', (e) => {
+			if (e.key === "Escape") {
+				closeModalBtn();
+				closeUpdatesBtn();
+			}
+		});
+	</script>
+
 </body>
 </html>
