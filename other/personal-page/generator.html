@@ -581,6 +581,7 @@
 
 			<button class="tool-btn" onclick="makeBold()" title="Сделать жирным (выделите текст)"><b>B</b></button>
 			<button class="tool-btn" onclick="openLinkModal()" title="Создать ссылку"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" /></svg></button>
+			<button class="tool-btn" onclick="insertBreak()" title="Вставить перенос строки" style="font-size: 0.8rem;">BR</button>
 
 			<button class="reset-btn" onclick="resetForm()">Сбросить</button>
 		</div>
@@ -648,9 +649,9 @@
 
 			if (!title && !shortDesc && !tags && !fullDesc && img === 'images/') {
 				document.getElementById('previewCanvas').innerHTML = `
-							<div style="border: 1px dashed #333; padding: 20px; text-align: center; color: #444; border-radius: 12px;">
-								Начните вводить текст...
-							</div>`;
+								<div style="border: 1px dashed #333; padding: 20px; text-align: center; color: #444; border-radius: 12px;">
+									Начните вводить текст...
+								</div>`;
 				document.getElementById('resultCode').value = '';
 				return;
 			}
@@ -660,17 +661,17 @@
 
 			const htmlCode = `
 <div class="card"
-				onclick="openModal(this)"
-				data-title="${safeTitle}"
-				data-tags="${tags}"
-				data-full-desc="${safeFullDesc}">
+					onclick="openModal(this)"
+					data-title="${safeTitle}"
+					data-tags="${tags}"
+					data-full-desc="${safeFullDesc}">
 
-				<div class="card-image" style="--bg-img: url('${img}');"></div>
-				<div class="card-content">
-					<h3 class="card-title">${title}</h3>
-					<p class="card-short-desc">${shortDesc}</p>
-					<div class="card-tags"></div>
-				</div>
+					<div class="card-image" style="--bg-img: url('${img}');"></div>
+					<div class="card-content">
+						<h3 class="card-title">${title}</h3>
+						<p class="card-short-desc">${shortDesc}</p>
+						<div class="card-tags"></div>
+					</div>
 </div>`;
 
 			document.getElementById('resultCode').value = htmlCode;
@@ -684,19 +685,19 @@
 			}
 
 			const previewHtml = `
-							<div class="card"
-								onclick="openModal(this)"
-								data-title="${safeTitle}"
-								data-tags="${tags}"
-								data-full-desc="${safeFullDesc}">
+								<div class="card"
+									onclick="openModal(this)"
+									data-title="${safeTitle}"
+									data-tags="${tags}"
+									data-full-desc="${safeFullDesc}">
 
-								<div class="card-image" style="--bg-img: url('${img}');"></div>
-								<div class="card-content">
-									<h3 class="card-title">${title || 'Заголовок проекта'}</h3>
-									<p class="card-short-desc">${shortDesc || 'Краткое описание...'}</p>
-									<div class="card-tags">${tagsHtml}</div>
-								</div>
-							</div>`;
+									<div class="card-image" style="--bg-img: url('${img}');"></div>
+									<div class="card-content">
+										<h3 class="card-title">${title || 'Заголовок проекта'}</h3>
+										<p class="card-short-desc">${shortDesc || 'Краткое описание...'}</p>
+										<div class="card-tags">${tagsHtml}</div>
+									</div>
+								</div>`;
 
 			document.getElementById('previewCanvas').innerHTML = previewHtml;
 		}
@@ -762,6 +763,18 @@
 			textarea.value = text.substring(0, start) + replacement + text.substring(end);
 			textarea.focus();
 
+			generateCode();
+		}
+
+		function insertBreak() {
+			const textarea = document.getElementById('inpFull');
+			const start = textarea.selectionStart;
+			const end = textarea.selectionEnd;
+			const text = textarea.value;
+			const replacement = '<br />';
+			textarea.value = text.substring(0, start) + replacement + text.substring(end);
+			textarea.selectionStart = textarea.selectionEnd = start + replacement.length;
+			textarea.focus();
 			generateCode();
 		}
 
