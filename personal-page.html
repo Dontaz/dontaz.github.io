@@ -19,6 +19,35 @@
 			--modal-overlay: rgba(0, 0, 0, 0.85);
 		}
 
+		::selection {
+			background: rgba(124, 58, 237, 0.9);
+			color: white;
+			text-shadow: 0 0 5px rgba(255,255,255,0.5);
+		}
+
+		html {
+			scrollbar-color: #3f3f46 rgba(255, 255, 255, 0.02);
+			scrollbar-width: auto;
+		}
+
+		body::-webkit-scrollbar {
+			width: 10px;
+		}
+
+		body::-webkit-scrollbar-track {
+			background: rgba(255, 255, 255, 0.02);
+		}
+
+		body::-webkit-scrollbar-thumb {
+			background-color: #3f3f46;
+			border-radius: 5px;
+			border: 2px solid #050505;
+		}
+
+		body::-webkit-scrollbar-thumb:hover {
+			background-color: var(--accent);
+		}
+
 		* {
 			margin: 0;
 			padding: 0;
@@ -185,7 +214,12 @@
 			-webkit-background-clip: text;
 			-webkit-text-fill-color: transparent;
 			text-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+			transition: text-shadow 0.3s ease;
 		}
+
+			.logo-title:hover {
+				text-shadow: 0 0 20px rgba(124, 58, 237, 0.6), 0 0 40px rgba(37, 99, 235, 0.4);
+			}
 
 		.letter-o-wrapper {
 			position: relative;
@@ -684,17 +718,22 @@
 			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 			display: flex;
 			flex-direction: column;
-			border: 1px solid transparent;
-			background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box, linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)) border-box;
+			border: 2px solid rgba(255, 255, 255, 0.08);
+			background: var(--card-bg);
 			transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 		}
 
 			.card:hover {
 				transform: translateY(-7px);
-				box-shadow: 0 0 30px rgba(124, 58, 237, 0.15), inset 0 0 20px rgba(0,0,0,0.8);
-				background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box, linear-gradient(var(--bg-angle, 135deg), #7c3aed, #2563eb, #6366f1, #7c3aed) border-box;
+				background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box, linear-gradient(135deg, #7c3aed, #2563eb, #a78bfa, #7c3aed) border-box;
 				background-size: 200% 200%;
 				animation: gradientBorder 3s ease infinite;
+				border-color: transparent;
+				background-size: 300% 300%;
+				box-shadow: 0 15px 35px -5px rgba(124, 58, 237, 0.35), 0 0 10px rgba(124, 58, 237, 0.2), inset 0 0 20px rgba(0,0,0,0.8);
+				animation: gradientBorder 4s ease infinite;
+				border: 2px solid transparent;
 			}
 
 		@keyframes gradientBorder {
@@ -788,20 +827,33 @@
 		}
 
 		.tag {
-			background: rgba(255, 255, 255, 0.03);
+			background: rgba(255, 255, 255, 0.05);
 			color: #d4d4d8;
-			padding: 6px 12px;
-			border-radius: 6px;
+			padding: 6px 14px;
+			border-radius: 20px;
 			font-size: 0.75rem;
 			font-weight: 500;
-			border: 1px solid rgba(255, 255, 255, 0.1);
-			transition: 0.3s;
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			transition: all 0.3s ease;
+			backdrop-filter: blur(4px);
+			display: inline-flex;
+			align-items: center;
 		}
 
 		.card:hover .tag {
 			border-color: rgba(124, 58, 237, 0.5);
 			background: rgba(124, 58, 237, 0.1);
 			color: #fff;
+		}
+
+		.card:active {
+			transform: scale(0.98) translateY(-5px) !important;
+			transition: transform 0.1s ease;
+		}
+
+		.btn-poda:active, #poda:active {
+			transform: scale(0.96);
+			transition: transform 0.1s;
 		}
 
 		.modal-overlay {
@@ -833,8 +885,8 @@
 			max-width: 650px;
 			width: 100%;
 			position: relative;
-			transform: scale(0.9);
-			transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+			transform: scale(0.95) translateY(20px);
+			transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 			border: 1px solid rgba(124, 58, 237, 0.2);
 			box-shadow: 0 0 50px -10px rgba(124, 58, 237, 0.2);
 			display: flex;
@@ -842,6 +894,7 @@
 			max-height: 85vh;
 			padding: 0;
 			overflow: hidden;
+			opacity: 0;
 		}
 
 		.modal-header {
@@ -877,7 +930,8 @@
 				}
 
 		.modal-overlay.active .modal-content {
-			transform: scale(1);
+			opacity: 1;
+			transform: scale(1) translateY(0);
 		}
 
 		.close-btn {
@@ -996,27 +1050,100 @@
 		}
 
 		footer {
-			text-align: center;
-			padding: 40px;
-			color: var(--text-secondary);
-			border-top: 1px solid #262626;
+			position: relative;
 			margin-top: auto;
+			width: 100%;
+			background: linear-gradient(to top, rgba(124, 58, 237, 0.05) 0%, transparent 100%);
+			padding-bottom: 30px;
 		}
 
-			footer a {
-				color: #fff;
+		.footer-divider {
+			height: 1px;
+			width: 100%;
+			max-width: 1200px;
+			margin: 0 auto;
+			background: linear-gradient(90deg, transparent, var(--accent), transparent);
+			opacity: 0.5;
+			box-shadow: 0 0 10px var(--accent);
+		}
+
+		.footer-content {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 30px 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+		}
+
+		.copyright {
+			color: var(--text-secondary);
+			font-size: 0.95rem;
+			font-weight: 500;
+			display: flex;
+			align-items: center;
+			gap: 5px;
+		}
+
+		.logo-text-small {
+			color: var(--accent);
+			font-weight: 800;
+			font-size: 1.2rem;
+		}
+
+		.footer-links {
+			display: flex;
+			gap: 25px;
+		}
+
+			.footer-links a {
+				color: #a1a1aa;
 				text-decoration: none;
-				border-bottom: 1px dotted var(--accent);
-				transition: 0.3s;
+				font-size: 0.95rem;
+				transition: all 0.3s ease;
+				position: relative;
+				padding: 5px 0;
+				border: none;
 			}
 
-				footer a:hover {
-					color: var(--accent);
+				.footer-links a:hover {
+					color: #fff;
+					text-shadow: 0 0 8px var(--accent);
+				}
+
+				.footer-links a::after {
+					content: '';
+					position: absolute;
+					bottom: 0;
+					left: 50%;
+					transform: translateX(-50%) scaleX(0);
+					width: 100%;
+					height: 2px;
+					background-color: var(--accent);
+					box-shadow: 0 0 8px var(--accent);
+					transition: transform 0.3s ease;
+					border-radius: 2px;
+				}
+
+				.footer-links a:hover::after {
+					transform: translateX(-50%) scaleX(0.5);
 				}
 
 		@media (max-width: 600px) {
 			.logo-title {
 				font-size: 3.5rem;
+			}
+
+			.footer-content {
+				padding-bottom: 50px;
+			}
+
+			.footer-links {
+				gap: 20px;
+				flex-wrap: wrap;
+				justify-content: center;
 			}
 
 			.loader {
@@ -1321,10 +1448,19 @@
 	</main>
 
 	<footer>
-		<p>
-			&copy; 2025 Dontaz. <br>
-			<a href="https://steamcommunity.com/id/dontaz/">Steam</a> &bull; <a href="https://github.com/Dontaz">GitHub</a> &bull; <a href="https://www.youtube.com/@Dontaz">YouTube</a> &bull; <a href="https://boosty.to/dontaz">Boosty</a>
-		</p>
+		<div class="footer-divider"></div>
+		<div class="footer-content">
+			<div class="copyright">
+				<span class="logo-text-small"></span>Dontaz &copy; 2025
+			</div>
+
+			<div class="footer-links">
+				<a href="https://steamcommunity.com/id/dontaz/" target="_blank">Steam</a>
+				<a href="https://github.com/Dontaz" target="_blank">GitHub</a>
+				<a href="https://www.youtube.com/@Dontaz" target="_blank">YouTube</a>
+				<a href="https://boosty.to/dontaz" target="_blank">Boosty</a>
+			</div>
+		</div>
 	</footer>
 
 	<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
