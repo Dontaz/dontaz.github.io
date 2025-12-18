@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Конструктор карточек (Real-time Preview)</title>
+	<title>Конструктор карточек</title>
 	<style>
 		:root {
 			--bg-color: #050505;
@@ -227,39 +227,31 @@
 			border-bottom: 1px solid rgba(255,255,255,0.05);
 		}
 
-			.card-image::before {
-				content: '';
+			.card-image img {
 				position: absolute;
 				top: 0;
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background-image: var(--bg-img);
-				background-size: cover;
-				background-position: center;
+				user-select: none;
+				pointer-events: none;
+			}
+
+			.card-image .blur-layer {
+				object-fit: cover;
 				filter: blur(20px) brightness(0.6);
 				transform: scale(1.2);
 				z-index: -1;
 			}
 
-			.card-image::after {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background-image: var(--bg-img);
-				background-size: contain;
-				background-position: center;
-				background-repeat: no-repeat;
+			.card-image .main-layer {
+				object-fit: contain;
 				z-index: 1;
 				transition: transform 0.4s ease, filter 0.4s ease;
-				filter: brightness(1);
+				will-change: transform;
 			}
 
-		.card:hover .card-image::after {
-			filter: brightness(1.1);
+		.card:hover .main-layer {
 			transform: scale(1.05);
 		}
 
@@ -666,7 +658,10 @@
 					data-tags="${tags}"
 					data-full-desc="${safeFullDesc}">
 
-					<div class="card-image" style="--bg-img: url('${img}');"></div>
+					<div class="card-image">
+						<img src="${img}" class="blur-layer" alt="" loading="lazy">
+						<img src="${img}" class="main-layer" alt="" loading="lazy">
+					</div>
 					<div class="card-content">
 						<h3 class="card-title">${title}</h3>
 						<p class="card-short-desc">${shortDesc}</p>
@@ -691,7 +686,10 @@
 									data-tags="${tags}"
 									data-full-desc="${safeFullDesc}">
 
-									<div class="card-image" style="--bg-img: url('${img}');"></div>
+									<div class="card-image">
+										<img src="${img}" class="blur-layer" alt="">
+										<img src="${img}" class="main-layer" alt="">
+									</div>
 									<div class="card-content">
 										<h3 class="card-title">${title || 'Заголовок проекта'}</h3>
 										<p class="card-short-desc">${shortDesc || 'Краткое описание...'}</p>
