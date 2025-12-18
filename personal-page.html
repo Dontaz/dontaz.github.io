@@ -721,43 +721,31 @@
 			border-bottom: 1px solid rgba(255,255,255,0.05);
 		}
 
-			.card-image::before {
-				content: '';
+			.card-image img {
 				position: absolute;
 				top: 0;
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background-image: var(--bg-img);
-				background-size: cover;
-				background-position: center;
+				user-select: none;
+				pointer-events: none;
+			}
+
+			.card-image .blur-layer {
+				object-fit: cover;
 				filter: blur(20px) brightness(0.6);
 				transform: scale(1.2);
 				z-index: -1;
 			}
 
-			.card-image::after {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background-image: var(--bg-img);
-				background-size: contain;
-				background-position: center;
-				background-repeat: no-repeat;
+			.card-image .main-layer {
+				object-fit: contain;
 				z-index: 1;
 				transition: transform 0.4s ease, filter 0.4s ease;
-				filter: brightness(1);
-				-webkit-backface-visibility: hidden;
-				backface-visibility: hidden;
-				transform: translateZ(0);
-				will-change: transform, filter;
+				will-change: transform;
 			}
 
-		.card:hover .card-image::after {
-			filter: brightness(1);
+		.card:hover .main-layer {
 			transform: scale(1.05);
 		}
 
@@ -1164,7 +1152,10 @@
 				 <b>Ссылки:</b>
 				 • <a href='https://github.com/Dontaz/dontaz-user_scripts?tab=readme-ov-file#discord-timestamp-generator' target='_blank'>GitHub</a>">
 
-				<div class="card-image" style="--bg-img: url('images/discord_2.webp');"></div>
+				<div class="card-image">
+					<img src="images/discord_2.webp" class="blur-layer" alt="">
+					<img src="images/discord_2.webp" class="main-layer" alt="">
+				</div>
 				<div class="card-content">
 					<h3 class="card-title">Скрипт «Timestamp Generator» для Discord</h3>
 					<p class="card-short-desc">Скрипт для браузера, чтобы создавать timestamp для Discord.</p>
@@ -1184,7 +1175,10 @@
 				• <a href='https://www.zoneofgames.ru/games/where_winds_meet/files/10980.html' target='_blank'>Страница на Zone of Games</a>
 				• <a href='https://www.playground.ru/where_winds_meet/file/where_winds_meet_rusifikator_teksta_v0_0_3_dog729_i_zog-1806044' target='_blank'>Страница на PlayGround</a>">
 
-				<div class="card-image" style="--bg-img: url('images/where_winds_meet_ru.webp');"></div>
+				<div class="card-image">
+					<img src="images/where_winds_meet_ru.webp" class="blur-layer" alt="">
+					<img src="images/where_winds_meet_ru.webp" class="main-layer" alt="">
+				</div>
 				<div class="card-content">
 					<h3 class="card-title">Where Winds Meet — Русификатор</h3>
 					<p class="card-short-desc">Русификатор для игры Where Winds Meet.</p>
@@ -1204,7 +1198,10 @@
 				• <a href='https://www.zoneofgames.ru/games/midnight_walk_the/files/10124.html' target='_blank'>Страница на Zone of Games</a>
 				• <a href='https://www.playground.ru/midnight_walk/file/the_midnight_walk_rusifikator_teksta_v2_8_20251029_dontaz-1770014' target='_blank'>Страница на PlayGround</a>">
 
-				<div class="card-image" style="--bg-img: url('images/the_midnight_walk_ru.webp');"></div>
+				<div class="card-image">
+					<img src="images/the_midnight_walk_ru.webp" class="blur-layer" alt="">
+					<img src="images/the_midnight_walk_ru.webp" class="main-layer" alt="">
+				</div>
 				<div class="card-content">
 					<h3 class="card-title">The Midnight Walk — Русификатор</h3>
 					<p class="card-short-desc">Русификатор для игры The Midnight Walk.</p>
@@ -1224,7 +1221,10 @@
 				• <a href='https://dontaz.vercel.app/' target='_blank'>https://dontaz.vercel.app/</a>
 				• <a href='https://dontaz.pages.dev/' target='_blank'>https://dontaz.pages.dev/</a>">
 
-				<div class="card-image" style="--bg-img: url('images/knowledge_base.webp');"></div>
+				<div class="card-image">
+					<img src="images/knowledge_base.webp" class="blur-layer" alt="">
+					<img src="images/knowledge_base.webp" class="main-layer" alt="">
+				</div>
 				<div class="card-content">
 					<h3 class="card-title">База знаний</h3>
 					<p class="card-short-desc">База знаний с рекомендациями литературы и источниками информации.</p>
@@ -1242,7 +1242,10 @@
 				• <a href='https://github.com/Dontaz/Simple-Chart-Builder' target='_blank'>Страница на GitHub</a>
 				• <a href='https://dontaz.github.io/other/simple-chart-builder/simple-chart-builder.html' target='_blank'>Сайт с доступом к инструменту</a>">
 
-				<div class="card-image" style="--bg-img: url('images/chart.webp');"></div>
+				<div class="card-image">
+					<img src="images/chart.webp" class="blur-layer" alt="">
+					<img src="images/chart.webp" class="main-layer" alt="">
+				</div>
 				<div class="card-content">
 					<h3 class="card-title">Simple Chart Builder</h3>
 					<p class="card-short-desc">Простой конструктор графиков.</p>
@@ -1262,7 +1265,10 @@
 				• <a href='https://www.zoneofgames.ru/games/wanderstop/files/10133.html' target='_blank'>Страница на Zone of Games</a>
 				• <a href='https://steamcommunity.com/sharedfiles/filedetails/?id=3479356545' target='_blank'>Steam Руководство</a>">
 
-				<div class="card-image" style="--bg-img: url('images/wanderstop_ru.webp');"></div>
+				<div class="card-image">
+					<img src="images/wanderstop_ru.webp" class="blur-layer" alt="">
+					<img src="images/wanderstop_ru.webp" class="main-layer" alt="">
+				</div>
 				<div class="card-content">
 					<h3 class="card-title">Wanderstop — Русификатор</h3>
 					<p class="card-short-desc">Русификатор для игры Wanderstop.</p>
@@ -1279,7 +1285,10 @@
 				 <b>Ссылки:</b>
 				 • <a href='https://github.com/Dontaz/dontaz-user_scripts?tab=readme-ov-file#kinopoisk-rating-on-imdb' target='_blank'>GitHub</a>">
 
-				<div class="card-image" style="--bg-img: url('images/ratings.webp');"></div>
+				<div class="card-image">
+					<img src="images/ratings.webp" class="blur-layer" alt="">
+					<img src="images/ratings.webp" class="main-layer" alt="">
+				</div>
 				<div class="card-content">
 					<h3 class="card-title">Скрипт «Kinopoisk rating on IMDb»</h3>
 					<p class="card-short-desc">Скрипт для браузера, чтобы видеть рейтинг Кинопоиска на сайте IMDb.</p>
@@ -1296,7 +1305,10 @@
 				 <b>Ссылки:</b>
 				 • <a href='https://github.com/Dontaz/dontaz-user_scripts?tab=readme-ov-file#kinopoisk--imdb-search--cross-site-links' target='_blank'>GitHub</a>">
 
-                <div class="card-image" style="--bg-img: url('images/search.webp');"></div>
+                <div class="card-image">
+					<img src="images/search.webp" class="blur-layer" alt="">
+					<img src="images/search.webp" class="main-layer" alt="">
+				</div>
                 <div class="card-content">
                     <h3 class="card-title">Скрипт «Kinopoisk & IMDb Search + Cross-Site Links»</h3>
                     <p class="card-short-desc">Скрипт добавляет всплывающее окно поиска и кнопки на сайтах IMDb и Кинопоиск для перекрёстного поиска.</p>
