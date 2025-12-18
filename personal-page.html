@@ -750,10 +750,14 @@
 				z-index: 1;
 				transition: transform 0.4s ease, filter 0.4s ease;
 				filter: brightness(1);
+				-webkit-backface-visibility: hidden;
+				backface-visibility: hidden;
+				transform: translateZ(0);
+				will-change: transform, filter;
 			}
 
 		.card:hover .card-image::after {
-			filter: brightness(1.1);
+			filter: brightness(1);
 			transform: scale(1.05);
 		}
 
