@@ -44,9 +44,9 @@
 			border: 2px solid #050505;
 		}
 
-		body::-webkit-scrollbar-thumb:hover {
-			background-color: var(--accent);
-		}
+			body::-webkit-scrollbar-thumb:hover {
+				background-color: var(--accent);
+			}
 
 		* {
 			margin: 0;
@@ -851,8 +851,14 @@
 			transition: transform 0.1s ease;
 		}
 
-		.btn-poda:active, #poda:active {
+		.btn-poda:active {
 			transform: scale(0.96);
+			transition: transform 0.1s;
+		}
+
+
+		#filter-icon:active {
+			transform: scale(0.9);
 			transition: transform 0.1s;
 		}
 
@@ -1340,7 +1346,7 @@
 			<div class="card"
 				 onclick="openModal(this)"
 				 data-title="База знаний"
-				 data-tags="База знаний, Некоммерческий, 2025.04.01"
+				 data-tags="Веб-сайт, Некоммерческий, 2025.04.01"
 				 data-full-desc="База знаний с рекомендациями литературы и источниками информации по различным темам. На сайте можно найти подборку полезных материалов по различным темам и направлениям. Поддерживается поиск по названию, описанию и авторам.<br />
 				 <b>Ссылки:</b>
 				• <a href='https://github.com/Dontaz/dontaz.github.io' target='_blank'>Страница на GitHub</a>
@@ -1458,7 +1464,7 @@
 					<img src="images/steamdb_steam.webp" class="main-layer" alt="" loading="lazy">
 				</div>
 				<div class="card-content">
-					<h3 class="card-title">SteamDB & PCGamingWiki for Steam</h3>
+					<h3 class="card-title">Скрипт «SteamDB & PCGamingWiki for Steam»</h3>
 					<p class="card-short-desc">Добавляет на страницу Steam кнопки SteamDB и PCGamingWiki, а также реальный онлайн и точный рейтинг.</p>
 					<div class="card-tags"></div>
 				</div>
@@ -1609,21 +1615,31 @@
 				}
 			});
 
-			const filterDropdown = document.getElementById('filter-dropdown');
-			if (filterDropdown) {
-				allTags.forEach(tag => {
-					const tagBtn = document.createElement('div');
-					tagBtn.className = 'filter-tag-item';
-					tagBtn.textContent = tag;
-					tagBtn.onclick = () => {
-						const searchInput = document.getElementById('search-input');
-						searchInput.value = tag;
-						searchInput.dispatchEvent(new Event('input'));
-						filterDropdown.classList.remove('active');
-					};
-					filterDropdown.appendChild(tagBtn);
-				});
-			}
+            const filterDropdown = document.getElementById('filter-dropdown');
+            if (filterDropdown) {
+                allTags.forEach(tag => {
+                    const tagBtn = document.createElement('div');
+                    tagBtn.className = 'filter-tag-item';
+                    tagBtn.textContent = tag;
+
+                    tagBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        const searchInput = document.getElementById('search-input');
+
+                        if (searchInput.value === tag) {
+                            searchInput.value = '';
+                        } else {
+                            searchInput.value = tag;
+                        }
+
+                        searchInput.dispatchEvent(new Event('input'));
+
+                        filterDropdown.classList.remove('active');
+                        searchInput.focus();
+                    };
+                    filterDropdown.appendChild(tagBtn);
+                });
+            }
 
 			const filterIcon = document.getElementById('filter-icon');
 			if (filterIcon) {
