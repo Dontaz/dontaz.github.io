@@ -36,12 +36,12 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="font-sans">
-	<div id="headerButtons" class="header-buttons fixed top-4 right-4 flex flex-row-reverse items-center gap-2 transition-transform duration-300">
-		<button id="burgerMenu" class="burger-menu p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
-			<svg class="w-6 h-6 text-gray-700 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-			</svg>
-		</button>
+    <div id="headerButtons" class="header-buttons fixed top-4 right-4 flex flex-row-reverse items-center gap-2 transition-transform duration-300">
+        <button id="burgerMenu" class="burger-menu p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
+            <svg class="w-6 h-6 text-gray-700 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
     </div>
 
     <div class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
@@ -56,13 +56,11 @@
             </div>
 
             <div class="search-panel mb-8">
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Поиск по материалам..."
-                    class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 outline-none transition-all duration-200"
-                />
-                
+                <input type="text"
+                       id="searchInput"
+                       placeholder="Поиск по материалам..."
+                       class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 outline-none transition-all duration-200" />
+
                 <div id="filters" class="filters mt-4 flex flex-wrap gap-2">
                 </div>
             </div>
@@ -71,89 +69,89 @@
             </div>
         </div>
     </div>
-    
-	<div id="resourceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center overflow-y-auto">
-    <div class="modal-content bg-white dark:bg-gray-800 max-w-2xl mx-4 my-8 rounded-lg shadow-xl relative">
-        <button id="closeModal" class="absolute right-4 top-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-100 transition-all duration-200 z-10">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
 
-        <div class="modal-header p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 dark:text-white pr-8"></h2>
-            <p id="modalType" class="text-sm text-gray-600 dark:text-gray-400 mt-1"></p>
-        </div>
+    <div id="resourceModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center overflow-y-auto">
+        <div class="modal-content bg-white dark:bg-gray-800 max-w-2xl mx-4 my-8 rounded-lg shadow-xl relative">
+            <button id="closeModal" class="absolute right-4 top-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-100 transition-all duration-200 z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
 
-        <div class="modal-body p-6 max-h-[60vh] overflow-y-auto">
-            <div class="resource-details space-y-4">
-                <div class="detail-item">
-                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Автор(-ы)</div>
-                    <div id="modalAuthor" class="text-gray-900 dark:text-white"></div>
-                </div>
-                
-                <div class="detail-item">
-                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Описание</div>
-                    <div id="modalDescription" class="text-gray-700 dark:text-gray-300"></div>
-                </div>
-                
-                <div class="detail-item categories">
-                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Категории</div>
-                    <div id="modalCategories" class="flex flex-wrap gap-2"></div>
+            <div class="modal-header p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 dark:text-white pr-8"></h2>
+                <p id="modalType" class="text-sm text-gray-600 dark:text-gray-400 mt-1"></p>
+            </div>
+
+            <div class="modal-body p-6 max-h-[60vh] overflow-y-auto">
+                <div class="resource-details space-y-4">
+                    <div class="detail-item">
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Автор(-ы)</div>
+                        <div id="modalAuthor" class="text-gray-900 dark:text-white"></div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Описание</div>
+                        <div id="modalDescription" class="text-gray-700 dark:text-gray-300"></div>
+                    </div>
+
+                    <div class="detail-item categories">
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Категории</div>
+                        <div id="modalCategories" class="flex flex-wrap gap-2"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-	</div>
 
-	<button id="scrollToTop" 
-		class="scroll-to-top fixed bottom-6 right-6 p-3 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-200 shadow-lg transition-all duration-300 opacity-0"
-		aria-label="Прокрутить наверх">
-		<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-		</svg>
-	</button>	
+    <button id="scrollToTop"
+            class="scroll-to-top fixed bottom-6 right-6 p-3 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-200 shadow-lg transition-all duration-300 opacity-0"
+            aria-label="Прокрутить наверх">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
 
-	<div id="menuOverlay" class="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-40 hidden">
-		<div id="menuContainer" class="menu-container fixed inset-0 z-50 flex items-center justify-center p-4">
-			<div class="menu-content bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 transform transition-transform duration-300 scale-95 opacity-0 relative">
-				<button id="closeMenu" class="absolute right-0 top-0 transform translate-x-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
-				</button>
-				
-				<div class="grid grid-cols-2 gap-4">
-					<a href="https://docs.google.com/forms/d/e/1FAIpQLSdtW9ZKaYc0mFR3EqYuiA_0y5C9MJAgC_CCui3z6rbr4QNLfw/viewform?usp=dialog" 
-					   target="_blank"
-					   class="menu-btn flex flex-col items-center justify-center p-4 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 transition-colors duration-200">
-						<i class="fas fa-file-circle-plus text-2xl mb-2"></i>
-						<span class="text-sm font-medium text-center">Предложить материал</span>
-					</a>
-					
-					<button id="themeToggleMenu" class="menu-btn flex flex-col items-center justify-center p-4 rounded-lg bg-purple-100 hover:bg-purple-200 dark:bg-purple-900 dark:hover:bg-purple-800 text-purple-800 dark:text-purple-200 transition-colors duration-200">
-						<i class="fas fa-moon text-2xl mb-2 dark:hidden"></i>
-						<i class="fas fa-sun text-2xl mb-2 hidden dark:block"></i>
-						<span class="text-sm font-medium text-center">Сменить тему</span>
-					</button>
-					
-					<button id="favoritesBtn" class="menu-btn flex flex-col items-center justify-center p-4 rounded-lg bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900 dark:hover:bg-yellow-800 text-yellow-800 dark:text-yellow-200 transition-colors duration-200">
-						<i class="fas fa-star text-2xl mb-2"></i>
-						<span class="text-sm font-medium text-center">Избранное</span>
-					</button>
-					
-					<button id="randomMaterialBtn" class="menu-btn flex flex-col items-center justify-center p-4 rounded-lg bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800 text-green-800 dark:text-green-200 transition-colors duration-200">
-						<i class="fas fa-random text-2xl mb-2"></i>
-						<span class="text-sm font-medium text-center">Случайный материал</span>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div id="menuOverlay" class="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-40 hidden">
+        <div id="menuContainer" class="menu-container fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div class="menu-content bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 transform transition-transform duration-300 scale-95 opacity-0 relative">
+                <button id="closeMenu" class="absolute right-0 top-0 transform translate-x-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdtW9ZKaYc0mFR3EqYuiA_0y5C9MJAgC_CCui3z6rbr4QNLfw/viewform?usp=dialog"
+                       target="_blank"
+                       class="menu-btn flex flex-col items-center justify-center p-4 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 transition-colors duration-200">
+                        <i class="fas fa-file-circle-plus text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-center">Предложить материал</span>
+                    </a>
+
+                    <button id="themeToggleMenu" class="menu-btn flex flex-col items-center justify-center p-4 rounded-lg bg-purple-100 hover:bg-purple-200 dark:bg-purple-900 dark:hover:bg-purple-800 text-purple-800 dark:text-purple-200 transition-colors duration-200">
+                        <i class="fas fa-moon text-2xl mb-2 dark:hidden"></i>
+                        <i class="fas fa-sun text-2xl mb-2 hidden dark:block"></i>
+                        <span class="text-sm font-medium text-center">Сменить тему</span>
+                    </button>
+
+                    <button id="favoritesBtn" class="menu-btn flex flex-col items-center justify-center p-4 rounded-lg bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900 dark:hover:bg-yellow-800 text-yellow-800 dark:text-yellow-200 transition-colors duration-200">
+                        <i class="fas fa-star text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-center">Избранное</span>
+                    </button>
+
+                    <button id="randomMaterialBtn" class="menu-btn flex flex-col items-center justify-center p-4 rounded-lg bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800 text-green-800 dark:text-green-200 transition-colors duration-200">
+                        <i class="fas fa-random text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-center">Случайный материал</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const headerButtons = document.getElementById('headerButtons');
-		const scrollToTopButton = document.getElementById('scrollToTop');
+        const scrollToTopButton = document.getElementById('scrollToTop');
 
         window.addEventListener('scroll', () => {
             if (window.scrollY > 0) {
@@ -161,14 +159,14 @@
             } else {
                 headerButtons.classList.remove('hidden');
             }
-			
+
             if (window.scrollY > 300) {
                 scrollToTopButton.classList.add('visible');
             } else {
                 scrollToTopButton.classList.remove('visible');
-            }			
-			
-        });		
+            }
+
+        });
         scrollToTopButton.addEventListener('click', () => {
             window.scrollTo({
                 top: 0,
@@ -178,6 +176,10 @@
     </script>
 
     <script src="js/data.js"></script>
-	<script src="js/main.js"></script>
+    <script src="js/main.js"></script>
+
+    <script data-goatcounter="https://dontaz.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+
 </body>
 </html>
