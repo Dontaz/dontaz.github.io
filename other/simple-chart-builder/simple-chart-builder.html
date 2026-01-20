@@ -373,7 +373,7 @@
                 <button class="icon-btn" onclick="toggleTheme()" id="themeToggleBtn" title="Переключить тему">🌞</button>
             </div>
         </div>
-        
+
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importProject(this)">
 
         <div class="controls">
@@ -451,7 +451,7 @@
                         <input type="number" id="fontSizeAxis" value="12" oninput="updateChart()">
                     </div>
                     <button class="btn-dashed" onclick="resetFonts()" id="ui-btn-reset" title="Сбросить">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
                         Сбросить
                     </button>
                 </div>
@@ -481,7 +481,7 @@
                         <span class="setting-label" id="ui-label-text">Текст</span>
                     </div>
                     <button class="btn-dashed btn-reverse-tall" onclick="swapThemeColors()" id="ui-btn-reverse" title="Реверс">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="M16 21l4-4-4-4"/><path d="M20 17H4"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4" /><path d="M4 7h16" /><path d="M16 21l4-4-4-4" /><path d="M20 17H4" /></svg>
                         Реверс
                     </button>
                 </div>
@@ -512,7 +512,7 @@
             <button class="primary-btn modal-close" id="ui-modal-close" onclick="toggleInfo()">Закрыть</button>
         </div>
     </div>
-    
+
     <div id="resetModal" class="modal-overlay" onclick="closeResetModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h3 id="ui-modal-reset-title">Сброс настроек</h3>
@@ -645,15 +645,15 @@
             }
         };
 
-        window.onload = function() {
+        window.onload = function () {
             const savedTheme = localStorage.getItem('chartBuilderTheme');
             if (savedTheme === 'dark') toggleTheme();
-            
+
             const savedMode = localStorage.getItem('chartBuilderInputMode');
             if (savedMode === 'table' || !savedMode) {
                 toggleInputMode();
             }
-            
+
             const savedLang = localStorage.getItem('chartBuilderLang');
             if (savedLang && translations[savedLang]) {
                 currentLang = savedLang;
@@ -669,9 +669,9 @@
                         parsedColors.forEach(c => addNewColorInput(c, false));
                         colorsLoaded = true;
                     }
-                } catch(e) { console.error("Error loading colors", e); }
+                } catch (e) { console.error("Error loading colors", e); }
             }
-            
+
             if (!colorsLoaded) {
                 defaultColors.forEach(c => addNewColorInput(c, false));
             }
@@ -688,12 +688,12 @@
         function applyLanguage(lang) {
             const t = translations[lang];
             document.getElementById('langBtn').textContent = lang.toUpperCase();
-            
-            const setTxt = (id, txt) => { 
-                const el = document.getElementById(id); 
-                if(el) el.innerText = txt; 
+
+            const setTxt = (id, txt) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = txt;
             };
-            
+
             setTxt('ui-title', t.title);
             setTxt('ui-label-type', t.type);
             setTxt('ui-label-names', t.lblNames);
@@ -720,20 +720,20 @@
             setTxt('ui-modal-title', t.mTitle);
             setTxt('ui-modal-github', t.mGithub);
             setTxt('ui-modal-close', t.mClose);
-            
+
             setTxt('ui-modal-reset-title', t.modalResetTitle);
             setTxt('ui-modal-reset-msg', t.msgReset);
             setTxt('ui-btn-cancel', t.btnCancel);
             setTxt('ui-btn-confirm', t.btnConfirm);
 
             const authorEl = document.getElementById('ui-modal-author');
-            if(authorEl) authorEl.innerHTML = t.mAuthor;
-            
+            if (authorEl) authorEl.innerHTML = t.mAuthor;
+
             const btnReset = document.getElementById('ui-btn-reset');
-            if(btnReset) btnReset.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> ${t.btnReset}`;
-            
+            if (btnReset) btnReset.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> ${t.btnReset}`;
+
             const btnReverse = document.getElementById('ui-btn-reverse');
-            if(btnReverse) btnReverse.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="M16 21l4-4-4-4"/><path d="M20 17H4"/></svg> ${t.btnReverse}`;
+            if (btnReverse) btnReverse.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="M16 21l4-4-4-4"/><path d="M20 17H4"/></svg> ${t.btnReverse}`;
 
             document.getElementById('btn-load-proj').title = t.tipLoad;
             document.getElementById('btn-save-proj').title = t.tipSave;
@@ -757,7 +757,7 @@
             posOpts[1].text = t.posBot;
             posOpts[2].text = t.posLeft;
             posOpts[3].text = t.posRight;
-            
+
             const textInputs = document.querySelectorAll('#tableRows input[type="text"]');
             textInputs.forEach(i => i.placeholder = t.plName);
             const numInputs = document.querySelectorAll('#tableRows input[type="number"]');
@@ -796,8 +796,8 @@
         }
 
         function syncInputsToTable() {
-            const labels = document.getElementById('labels').value.split(',').map(s=>s.trim());
-            const data = document.getElementById('data').value.split(',').map(s=>s.trim());
+            const labels = document.getElementById('labels').value.split(',').map(s => s.trim());
+            const data = document.getElementById('data').value.split(',').map(s => s.trim());
             const container = document.getElementById('tableRows');
             container.innerHTML = '';
             const maxLen = Math.max(labels.length, data.length);
@@ -819,7 +819,7 @@
             });
             document.getElementById('labels').value = labelsArr.join(', ');
             document.getElementById('data').value = dataArr.join(', ');
-            updateChart(); 
+            updateChart();
         }
 
         function updateTableNumbers() {
@@ -833,29 +833,29 @@
             const container = document.getElementById('tableRows');
             const div = document.createElement('div');
             div.className = 'table-row';
-            
+
             div.innerHTML = `
-                <span class="drag-handle" title="Drag">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
-                </span>
-                <span class="table-num"></span>
-                <input type="text" placeholder="${translations[currentLang].plName}" value="${labelVal}" oninput="syncTableToInputs()">
-                <input type="number" placeholder="${translations[currentLang].plNum}" value="${dataVal}" oninput="syncTableToInputs()">
-                <button class="btn-remove" onclick="removeTableRow(this)" title="Remove">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            `;
+                    <span class="drag-handle" title="Drag">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                    </span>
+                    <span class="table-num"></span>
+                    <input type="text" placeholder="${translations[currentLang].plName}" value="${labelVal}" oninput="syncTableToInputs()">
+                    <input type="number" placeholder="${translations[currentLang].plNum}" value="${dataVal}" oninput="syncTableToInputs()">
+                    <button class="btn-remove" onclick="removeTableRow(this)" title="Remove">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                `;
 
             const handle = div.querySelector('.drag-handle');
             handle.addEventListener('mousedown', () => div.setAttribute('draggable', 'true'));
             div.addEventListener('mouseup', () => div.setAttribute('draggable', 'false'));
 
-            div.addEventListener('dragstart', function(e) {
+            div.addEventListener('dragstart', function (e) {
                 draggedTableItem = this;
                 setTimeout(() => this.classList.add('dragging'), 0);
             });
 
-            div.addEventListener('dragend', function(e) {
+            div.addEventListener('dragend', function (e) {
                 this.classList.remove('dragging');
                 this.setAttribute('draggable', 'false');
                 draggedTableItem = null;
@@ -863,7 +863,7 @@
                 syncTableToInputs();
             });
 
-            div.addEventListener('dragenter', function(e) {
+            div.addEventListener('dragenter', function (e) {
                 e.preventDefault();
                 if (this !== draggedTableItem && draggedTableItem) {
                     const rowsContainer = document.getElementById('tableRows');
@@ -874,16 +874,16 @@
                     else rowsContainer.insertBefore(draggedTableItem, this);
                 }
             });
-            
-            div.addEventListener('dragover', function(e) { e.preventDefault(); });
+
+            div.addEventListener('dragover', function (e) { e.preventDefault(); });
             container.appendChild(div);
         }
 
         function addTableRow() { addTableRowHTML(); updateTableNumbers(); syncTableToInputs(); }
-        function removeTableRow(btn) { 
-            btn.closest('.table-row').remove(); 
+        function removeTableRow(btn) {
+            btn.closest('.table-row').remove();
             updateTableNumbers();
-            syncTableToInputs(); 
+            syncTableToInputs();
         }
 
         let draggedItem = null;
@@ -904,33 +904,33 @@
             colorCounter++;
             const container = document.getElementById('dataColorsList');
             if (!colorVal) colorVal = defaultColors[colorCounter % defaultColors.length] || '#000000';
-            
+
             const div = document.createElement('div');
             div.className = 'color-row';
             div.id = `color-group-${colorCounter}`;
-            
+
             div.innerHTML = `
-                <span class="drag-handle" title="Drag">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
-                </span>
-                <input type="color" class="data-color-picker" value="${colorVal}" onchange="this.nextElementSibling.value = this.value.toUpperCase(); updateChart(); saveColors()">
-                <input type="text" class="hex-input" value="${colorVal}" oninput="this.previousElementSibling.value = this.value; updateChart(); saveColors()">
-                <span class="color-num"></span>
-                <button class="btn-remove" onclick="removeColorInput(this)" title="Remove">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            `;
-            
+                    <span class="drag-handle" title="Drag">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                    </span>
+                    <input type="color" class="data-color-picker" value="${colorVal}" onchange="this.nextElementSibling.value = this.value.toUpperCase(); updateChart(); saveColors()">
+                    <input type="text" class="hex-input" value="${colorVal}" oninput="this.previousElementSibling.value = this.value; updateChart(); saveColors()">
+                    <span class="color-num"></span>
+                    <button class="btn-remove" onclick="removeColorInput(this)" title="Remove">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                `;
+
             const handle = div.querySelector('.drag-handle');
             handle.addEventListener('mousedown', () => div.setAttribute('draggable', 'true'));
             div.addEventListener('mouseup', () => div.setAttribute('draggable', 'false'));
 
-            div.addEventListener('dragstart', function(e) {
+            div.addEventListener('dragstart', function (e) {
                 draggedItem = this;
                 setTimeout(() => this.classList.add('dragging'), 0);
             });
 
-            div.addEventListener('dragend', function(e) {
+            div.addEventListener('dragend', function (e) {
                 this.classList.remove('dragging');
                 this.setAttribute('draggable', 'false');
                 draggedItem = null;
@@ -939,7 +939,7 @@
                 saveColors();
             });
 
-            div.addEventListener('dragenter', function(e) {
+            div.addEventListener('dragenter', function (e) {
                 e.preventDefault();
                 if (this !== draggedItem && draggedItem) {
                     const container = document.getElementById('dataColorsList');
@@ -951,7 +951,7 @@
                 }
             });
 
-            div.addEventListener('dragover', function(e) { e.preventDefault(); });
+            div.addEventListener('dragover', function (e) { e.preventDefault(); });
             container.appendChild(div);
             updateColorNumbers();
             if (chart) updateChart();
@@ -997,7 +997,7 @@
         function confirmReset() {
             document.getElementById('resetModal').classList.add('open');
         }
-        
+
         function closeResetModal() {
             document.getElementById('resetModal').classList.remove('open');
         }
@@ -1062,7 +1062,7 @@
             const fontTitle = sizeTitleRaw * scaleMultiplier;
             const fontLegend = sizeLegendRaw * scaleMultiplier;
             const fontAxis = sizeAxisRaw * scaleMultiplier;
-            
+
             const paddingBase = 10 * scaleMultiplier;
             const paddingLegend = 20 * scaleMultiplier;
             const borderWidth = 2 * scaleMultiplier;
@@ -1089,7 +1089,7 @@
                 if (type === 'line' || type === 'bar') {
                     scalesConfig = {
                         x: { ticks: { color: textColor, font: { size: fontAxis } }, grid: { display: false } },
-                        y: { beginAtZero: true, ticks: { color: textColor, padding: paddingBase, font: { size: fontAxis } }, grid: { color: textColor + '15', borderDash: [5*scaleMultiplier, 5*scaleMultiplier], drawBorder: false, lineWidth: 1*scaleMultiplier } }
+                        y: { beginAtZero: true, ticks: { color: textColor, padding: paddingBase, font: { size: fontAxis } }, grid: { color: textColor + '15', borderDash: [5 * scaleMultiplier, 5 * scaleMultiplier], drawBorder: false, lineWidth: 1 * scaleMultiplier } }
                     };
                     if (type === 'line') {
                         datasetExtra = { backgroundColor: finalColors[0] + '20', borderColor: finalColors[0], tension: 0.4, fill: true, pointBackgroundColor: bgColor, pointBorderColor: finalColors[0], pointBorderWidth: borderWidth, pointRadius: 6 * scaleMultiplier };
@@ -1097,7 +1097,7 @@
                         datasetExtra = { backgroundColor: finalColors, borderColor: 'transparent', borderRadius: 6 * scaleMultiplier, borderSkipped: false };
                     }
                 } else if (type === 'radar' || type === 'polarArea') {
-                    scalesConfig = { r: { grid: { color: textColor + '22', borderDash: [5*scaleMultiplier, 5*scaleMultiplier], lineWidth: 1*scaleMultiplier }, pointLabels: { color: textColor, font: { size: fontAxis, weight: 'bold' } }, ticks: { display: false, backdropColor: 'transparent' } } };
+                    scalesConfig = { r: { grid: { color: textColor + '22', borderDash: [5 * scaleMultiplier, 5 * scaleMultiplier], lineWidth: 1 * scaleMultiplier }, pointLabels: { color: textColor, font: { size: fontAxis, weight: 'bold' } }, ticks: { display: false, backdropColor: 'transparent' } } };
                     datasetExtra = { backgroundColor: finalColors, borderColor: bgColor };
                 } else {
                     datasetExtra = { backgroundColor: finalColors, borderColor: bgColor, borderWidth: (type === 'doughnut' ? 3 : 2) * scaleMultiplier, cutout: type === 'doughnut' ? '60%' : '0%' };
@@ -1107,7 +1107,7 @@
 
             const customLegendLabels = (chart) => {
                 const original = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                if (type === 'line' || type === 'radar') return original; 
+                if (type === 'line' || type === 'radar') return original;
                 if (type === 'singleline') {
                     return chart.data.datasets.map((ds, i) => ({
                         text: showValues ? `${ds.label}: ${ds.data[0]}` : ds.label,
@@ -1206,7 +1206,7 @@
             const showValues = document.getElementById('showLegendValues').checked;
             const legendPos = document.getElementById('legendPosition').value;
             const colorsArr = getActiveColors().map(c => `'${c}'`).join(', ');
-            
+
             const sizeTitle = document.getElementById('fontSizeTitle').value || 20;
             const sizeLegend = document.getElementById('fontSizeLegend').value || 14;
             const sizeAxis = document.getElementById('fontSizeAxis').value || 12;
@@ -1216,22 +1216,22 @@
 <style>body{background:${bg};display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;font-family:sans-serif;}.box{width:100%;max-width:800px;height:500px;padding:40px;box-sizing:border-box;}</style></head>
 <body><div class="box"><canvas id="c"></canvas></div>
 <script>
-const ctx=document.getElementById('c'), type='${type}', labels=[${labels.split(',').map(s=>`'${s.trim()}'`).join(',')}], dataArr=[${data}], colors=[${colorsArr}], title='${title}', textColor='${text}', bgColor='${bg}', showValues=${showValues};
+const ctx=document.getElementById('c'), type='${type}', labels=[${labels.split(',').map(s => `'${s.trim()}'`).join(',')}], dataArr=[${data}], colors=[${colorsArr}], title='${title}', textColor='${text}', bgColor='${bg}', showValues=${showValues};
 const getColors=(c,l)=>{let r=[];for(let i=0;i<l;i++)r.push(c[i%c.length]);return r}, finalColors=getColors(colors, dataArr.length);
 let config={type:type==='progressbar'||type==='singleline'?'bar':type,data:{},options:{}};
 if(type==='singleline'){
-    config.data={labels:[''],datasets:labels.map((l,i)=>({label:l,data:[dataArr[i]],backgroundColor:finalColors[i],borderColor:bgColor,borderWidth:{right:2},barThickness:50,borderRadius:10}))};
-    config.options={indexAxis:'y',scales:{x:{stacked:true,display:false},y:{stacked:true,display:false}}};
+        config.data={labels:[''],datasets:labels.map((l,i)=>({label:l,data:[dataArr[i]],backgroundColor:finalColors[i],borderColor:bgColor,borderWidth:{right:2},barThickness:50,borderRadius:10}))};
+        config.options={indexAxis:'y',scales:{x:{stacked:true,display:false},y:{stacked:true,display:false}}};
 }else if(type==='progressbar'){
-    config.data={labels:labels,datasets:[{label:title,data:dataArr,indexAxis:'y',barThickness:30,borderRadius:20,backgroundColor:finalColors}]};
-    config.options={indexAxis:'y',scales:{x:{min:0,max:Math.max(100,...dataArr),display:false},y:{grid:{display:false},ticks:{color:textColor,font:{size:${sizeAxis},weight:'bold'}}}}};
+        config.data={labels:labels,datasets:[{label:title,data:dataArr,indexAxis:'y',barThickness:30,borderRadius:20,backgroundColor:finalColors}]};
+        config.options={indexAxis:'y',scales:{x:{min:0,max:Math.max(100,...dataArr),display:false},y:{grid:{display:false},ticks:{color:textColor,font:{size:${sizeAxis},weight:'bold'}}}}};
 }else{
-    let ds={label:title,data:dataArr,backgroundColor:finalColors,borderColor:bgColor};
-    if(type==='line'){ds.fill=true;ds.backgroundColor=finalColors[0]+'20';ds.borderColor=finalColors[0];ds.tension=0.4;}
-    if(type==='doughnut'){ds.cutout='60%';ds.borderWidth=3;}
-    config.data={labels:labels,datasets:[ds]};
-    config.options.scales=(type==='pie'||type==='doughnut'||type==='radar'||type==='polarArea')?{}:{x:{grid:{display:false},ticks:{color:textColor,font:{size:${sizeAxis}}}},y:{grid:{display:false},ticks:{color:textColor,font:{size:${sizeAxis}}}}};
-    if(type==='radar'||type==='polarArea')config.options.scales={r:{grid:{color:textColor+'22'},pointLabels:{color:textColor,font:{size:${sizeAxis},weight:'bold'}},ticks:{display:false}}};
+        let ds={label:title,data:dataArr,backgroundColor:finalColors,borderColor:bgColor};
+        if(type==='line'){ds.fill=true;ds.backgroundColor=finalColors[0]+'20';ds.borderColor=finalColors[0];ds.tension=0.4;}
+        if(type==='doughnut'){ds.cutout='60%';ds.borderWidth=3;}
+        config.data={labels:labels,datasets:[ds]};
+        config.options.scales=(type==='pie'||type==='doughnut'||type==='radar'||type==='polarArea')?{}:{x:{grid:{display:false},ticks:{color:textColor,font:{size:${sizeAxis}}}},y:{grid:{display:false},ticks:{color:textColor,font:{size:${sizeAxis}}}}};
+        if(type==='radar'||type==='polarArea')config.options.scales={r:{grid:{color:textColor+'22'},pointLabels:{color:textColor,font:{size:${sizeAxis},weight:'bold'}},ticks:{display:false}}};
 }
 config.options.plugins={title:{display:true,text:title,color:textColor,font:{size:${sizeTitle}}},legend:{position:'${legendPos}',labels:{color:textColor,font:{size:${sizeLegend}},usePointStyle:true,generateLabels:(chart)=>{const orig=Chart.defaults.plugins.legend.labels.generateLabels(chart);if(type==='line'||type==='radar')return orig;if(type==='singleline'){return chart.data.datasets.map((ds,i)=>({text:showValues?ds.label+': '+ds.data[0]:ds.label,fillStyle:ds.backgroundColor,strokeStyle:'transparent',pointStyle:'circle',index:i,datasetIndex:i}));}if(chart.data.labels.length){return chart.data.labels.map((l,i)=>({text:showValues?l+': '+chart.data.datasets[0].data[i]:l,fillStyle:chart.data.datasets[0].backgroundColor[i],strokeStyle:'transparent',pointStyle:'circle',index:i}));}return orig;}}}};
 config.options.responsive=true;config.options.maintainAspectRatio=false;new Chart(ctx,config);
@@ -1240,7 +1240,7 @@ config.options.responsive=true;config.options.maintainAspectRatio=false;new Char
             document.getElementById('codeOutput').style.display = 'block';
             navigator.clipboard.writeText(htmlCode).then(() => showNotification('✅ ' + (currentLang === 'ru' ? 'HTML скопирован!' : 'HTML copied!')));
         }
-        
+
         function triggerImport() { document.getElementById('importFile').click(); }
         function exportProject() {
             const config = {
@@ -1273,7 +1273,7 @@ config.options.responsive=true;config.options.maintainAspectRatio=false;new Char
             const file = input.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 try {
                     const config = JSON.parse(e.target.result);
                     if (config.lang && config.lang !== currentLang) {
@@ -1295,14 +1295,14 @@ config.options.responsive=true;config.options.maintainAspectRatio=false;new Char
                     document.getElementById('hexBg').value = config.bgColor.toUpperCase();
                     document.getElementById('textColor').value = config.textColor;
                     document.getElementById('hexText').value = config.textColor.toUpperCase();
-                    
+
                     const colorList = document.getElementById('dataColorsList');
                     colorList.innerHTML = '';
                     colorCounter = 0;
-                    if (config.colors && Array.isArray(config.colors)) { 
-                        config.colors.forEach(c => addNewColorInput(c, false)); 
-                    } else { 
-                        defaultColors.forEach(c => addNewColorInput(c, false)); 
+                    if (config.colors && Array.isArray(config.colors)) {
+                        config.colors.forEach(c => addNewColorInput(c, false));
+                    } else {
+                        defaultColors.forEach(c => addNewColorInput(c, false));
                     }
                     saveColors();
 
@@ -1316,5 +1316,9 @@ config.options.responsive=true;config.options.maintainAspectRatio=false;new Char
             input.value = '';
         }
     </script>
+
+    <script data-goatcounter="https://dontaz.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+
 </body>
 </html>
