@@ -124,59 +124,59 @@
 </head>
 <body>
 
-<div class="card">
-    <h1>Kinopoisk Rating on IMDb</h1>
-    
-    <div class="api-guide">
-        <h3>Как получить API ключ:</h3>
-        <ol>
-            <li>Зарегистрируйтесь на сайте <a href="https://kinopoiskapiunofficial.tech" target="_blank">kinopoiskapiunofficial.tech</a>.</li>
-            <li>Войдите в аккаунт и перейдите в <b>Профиль</b> (справа сверху).</li>
-            <li>Скопируйте ваш <b>API Key</b> и вставьте его в поле ниже.</li>
-        </ol>
-    </div>
+    <div class="card">
+        <h1>Kinopoisk Rating on IMDb</h1>
 
-    <label for="apiKey">Ваш API ключ:</label>
-    <input type="text" id="apiKey" placeholder="Например: e3b7921a-95c0-44c3-b3c9-0268a2212345">
+        <div class="api-guide">
+            <h3>Как получить API ключ:</h3>
+            <ol>
+                <li>Зарегистрируйтесь на сайте <a href="https://kinopoiskapiunofficial.tech" target="_blank">kinopoiskapiunofficial.tech</a>.</li>
+                <li>Войдите в аккаунт и перейдите в <b>Профиль</b> (справа сверху).</li>
+                <li>Скопируйте ваш <b>API Key</b> и вставьте его в поле ниже.</li>
+            </ol>
+        </div>
 
-    <button class="btn btn-gen" onclick="generate()">Сгенерировать скрипт</button>
+        <label for="apiKey">Ваш API ключ:</label>
+        <input type="text" id="apiKey" placeholder="Например: e3b7921a-95c0-44c3-b3c9-0268a2212345">
 
-    <div id="resultBlock" style="display:none;">
-        <textarea id="finalCode" readonly></textarea>
-        
-        <button class="btn btn-copy" id="copyBtn" onclick="copyCode()">Скопировать код в буфер</button>
+        <button class="btn btn-gen" onclick="generate()">Сгенерировать скрипт</button>
 
-        <div class="tabs-container" id="tabsBlock">
-            <div class="tabs-header">
-                <button class="tab-btn active" onclick="openTab('tamper')">Tampermonkey</button>
-                <button class="tab-btn" onclick="openTab('violent')">Violentmonkey</button>
-            </div>
+        <div id="resultBlock" style="display:none;">
+            <textarea id="finalCode" readonly></textarea>
 
-            <div id="tamper" class="tab-content active">
-                <ol>
-                    <li>Нажмите кнопку <b>«Скопировать код»</b> выше.</li>
-                    <li>Нажмите на иконку <b>Tampermonkey</b> в браузере.</li>
-                    <li>Выберите <b>«Создать новый скрипт»</b> (иконка с плюсиком).</li>
-                    <li>Выделите весь старый код (Ctrl+A) и удалите его.</li>
-                    <li>Вставьте скопированный код (Ctrl+V).</li>
-                    <li>Нажмите <b>Файл -> Сохранить</b>. Готово!</li>
-                </ol>
-            </div>
+            <button class="btn btn-copy" id="copyBtn" onclick="copyCode()">Скопировать код в буфер</button>
 
-            <div id="violent" class="tab-content">
-                <ol>
-                    <li>Нажмите кнопку <b>«Скопировать код»</b> выше.</li>
-                    <li>Нажмите на иконку <b>Violentmonkey</b> в браузере.</li>
-                    <li>Нажмите на <b>«+»</b> (Создать новый скрипт).</li>
-                    <li>Выберите <b>«Создать пустой»</b> (иногда не появляется окно, это не важно).</li>
-                    <li>Удалите весь шаблонный код.</li>
-                    <li>Вставьте скопированный код (Ctrl+V).</li>
-                    <li>Нажмите <b>«Сохранить и закрыть»</b> (Save&amp;Close). Готово!</li>
-                </ol>
+            <div class="tabs-container" id="tabsBlock">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="openTab('tamper')">Tampermonkey</button>
+                    <button class="tab-btn" onclick="openTab('violent')">Violentmonkey</button>
+                </div>
+
+                <div id="tamper" class="tab-content active">
+                    <ol>
+                        <li>Нажмите кнопку <b>«Скопировать код»</b> выше.</li>
+                        <li>Нажмите на иконку <b>Tampermonkey</b> в браузере.</li>
+                        <li>Выберите <b>«Создать новый скрипт»</b> (иконка с плюсиком).</li>
+                        <li>Выделите весь старый код (Ctrl+A) и удалите его.</li>
+                        <li>Вставьте скопированный код (Ctrl+V).</li>
+                        <li>Нажмите <b>Файл -> Сохранить</b>. Готово!</li>
+                    </ol>
+                </div>
+
+                <div id="violent" class="tab-content">
+                    <ol>
+                        <li>Нажмите кнопку <b>«Скопировать код»</b> выше.</li>
+                        <li>Нажмите на иконку <b>Violentmonkey</b> в браузере.</li>
+                        <li>Нажмите на <b>«+»</b> (Создать новый скрипт).</li>
+                        <li>Выберите <b>«Создать пустой»</b> (иногда не появляется окно, это не важно).</li>
+                        <li>Удалите весь шаблонный код.</li>
+                        <li>Вставьте скопированный код (Ctrl+V).</li>
+                        <li>Нажмите <b>«Сохранить и закрыть»</b> (Save&amp;Close). Готово!</li>
+                    </ol>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 <textarea id="template" style="display:none;">
 // ==UserScript==
@@ -221,7 +221,7 @@
     function createRatingElement() {
         const container = document.createElement('div');
         container.className = 'kinopoisk-rating-container loading';
-        container.innerHTML = '<svg class="kinopoisk-logo" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-13l6 5-6 5V7z"/></svg><span>...</span>';
+        container.innerHTML = '<svg class="kinopoisk-logo" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-13l6 5-6 5V7z" /></svg><span>...</span>';
         return container;
     }
     async function searchKinopoisk(title, year, imdbId) {
@@ -326,54 +326,57 @@
 })();
 </textarea>
 
-<script>
-    function generate() {
-        const key = document.getElementById('apiKey').value.trim();
-        if (!key) {
-            alert('Пожалуйста, введите API ключ!');
-            return;
+    <script>
+        function generate() {
+            const key = document.getElementById('apiKey').value.trim();
+            if (!key) {
+                alert('Пожалуйста, введите API ключ!');
+                return;
+            }
+
+            let code = document.getElementById('template').value.trim();
+            code = code.replace('KEY_PLACEHOLDER', key);
+
+            document.getElementById('finalCode').value = code;
+
+            document.getElementById('resultBlock').style.display = 'block';
+            document.getElementById('finalCode').style.display = 'block';
+            document.getElementById('copyBtn').style.display = 'block';
+            document.getElementById('tabsBlock').style.display = 'block';
         }
 
-        let code = document.getElementById('template').value.trim();
-        code = code.replace('KEY_PLACEHOLDER', key);
+        function copyCode() {
+            const textarea = document.getElementById('finalCode');
+            textarea.select();
+            document.execCommand('copy');
 
-        document.getElementById('finalCode').value = code;
-        
-        document.getElementById('resultBlock').style.display = 'block';
-        document.getElementById('finalCode').style.display = 'block';
-        document.getElementById('copyBtn').style.display = 'block';
-        document.getElementById('tabsBlock').style.display = 'block';
-    }
+            const btn = document.getElementById('copyBtn');
+            const oldText = btn.textContent;
+            btn.textContent = 'Скопировано! ✅';
+            btn.style.background = '#218838';
 
-    function copyCode() {
-        const textarea = document.getElementById('finalCode');
-        textarea.select();
-        document.execCommand('copy');
-        
-        const btn = document.getElementById('copyBtn');
-        const oldText = btn.textContent;
-        btn.textContent = 'Скопировано! ✅';
-        btn.style.background = '#218838';
-        
-        setTimeout(() => {
-            btn.textContent = oldText;
-            btn.style.background = '';
-        }, 2000);
-    }
-
-    function openTab(tabName) {
-        const contents = document.getElementsByClassName('tab-content');
-        for (let i = 0; i < contents.length; i++) {
-            contents[i].style.display = 'none';
+            setTimeout(() => {
+                btn.textContent = oldText;
+                btn.style.background = '';
+            }, 2000);
         }
-        const buttons = document.getElementsByClassName('tab-btn');
-        for (let i = 0; i < buttons.length; i++) {
-            buttons[i].className = buttons[i].className.replace(' active', '');
+
+        function openTab(tabName) {
+            const contents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].style.display = 'none';
+            }
+            const buttons = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].className = buttons[i].className.replace(' active', '');
+            }
+            document.getElementById(tabName).style.display = 'block';
+            event.currentTarget.className += ' active';
         }
-        document.getElementById(tabName).style.display = 'block';
-        event.currentTarget.className += ' active';
-    }
-</script>
+    </script>
+
+    <script data-goatcounter="https://dontaz.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
 
 </body>
 </html>
