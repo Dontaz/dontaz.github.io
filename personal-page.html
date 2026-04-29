@@ -74,34 +74,20 @@
 			background: radial-gradient(circle at 50% 0%, #1e1e2e 0%, #050505 70%);
 		}
 
-			.gradient-bg::before, .gradient-bg::after {
-				content: "";
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				background-image: radial-gradient(1px 1px at 10% 10%, white, transparent), radial-gradient(1px 1px at 20% 30%, white, transparent), radial-gradient(2px 2px at 30% 60%, rgba(255,255,255,0.8), transparent), radial-gradient(1px 1px at 40% 80%, white, transparent), radial-gradient(1px 1px at 50% 40%, white, transparent), radial-gradient(2px 2px at 60% 20%, rgba(255,255,255,0.7), transparent), radial-gradient(1px 1px at 70% 50%, white, transparent), radial-gradient(1px 1px at 80% 90%, white, transparent), radial-gradient(2px 2px at 90% 10%, white, transparent);
-				background-size: 500px 500px;
-				opacity: 0.6;
-				animation: starMove 100s linear infinite;
-			}
-
-			.gradient-bg::after {
-				background-size: 700px 700px;
-				background-image: radial-gradient(1px 1px at 15% 15%, rgba(255,255,255,0.5), transparent), radial-gradient(2px 2px at 55% 55%, rgba(255,255,255,0.4), transparent), radial-gradient(1px 1px at 85% 85%, rgba(255,255,255,0.5), transparent);
-				animation: starMove 150s linear infinite reverse;
-				opacity: 0.4;
-			}
-
-		@keyframes starMove {
-			from {
-				transform: translateY(0);
-			}
-
-			to {
-				transform: translateY(-500px);
-			}
+		.gradient-bg::before {
+			content: "";
+			position: absolute;
+			top: 0; left: -50%; width: 200%; height: 100%;
+			background-image: 
+				linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+			background-size: 40px 40px;
+			transform: perspective(1000px) rotateX(60deg);
+			-webkit-mask-image: radial-gradient(circle at 50% 50%, black 10%, transparent 60%);
+			mask-image: radial-gradient(circle at 50% 50%, black 10%, transparent 60%);
+		}
+		.gradient-bg::after {
+			display: none;
 		}
 
 		.gradient-orb {
@@ -1519,16 +1505,23 @@
 					<!-- Обновления -->
 
 					<div class="update-item">
+						<span class="update-date">29.04.2026</span>
+						<div class="update-text">
+							Небольшое обновление дизайна сайта «Персональная страница».
+						</div>
+					</div>
+
+					<div class="update-item">
 						<span class="update-date">06.03.2026</span>
 						<div class="update-text">
-							Обновление скрипта «SteamDB & PCGamingWiki for Steam» до версии 1.4
+							Обновление скрипта «SteamDB & PCGamingWiki for Steam» до версии 1.4.
 						</div>
 					</div>
 
 					<div class="update-item">
 						<span class="update-date">26.02.2026</span>
 						<div class="update-text">
-							Обновление скрипта «MALxKodik» до версии 2.0
+							Обновление скрипта «MALxKodik» до версии 2.0.
 						</div>
 					</div>
 
