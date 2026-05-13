@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     const burgerMenu = document.getElementById('burgerMenu');
     const menuOverlay = document.getElementById('menuOverlay');
+	const savedPerPage = parseInt(localStorage.getItem('itemsPerPage'), 10);
+	
+	if (savedPerPage && [6, 12, 24, 48].includes(savedPerPage)) {
+		itemsPerPage = savedPerPage;
+	}
     
     if (burgerMenu && menuOverlay) {
         burgerMenu.addEventListener('click', function() {
@@ -20,6 +25,12 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         document.documentElement.classList.remove('dark');
     }
+	
+	resources.forEach((resource, index) => {
+		if (!resource.id) {
+			resource.id = `resource-${index}`;
+		}
+	});
     
     initializeModalHandlers();
     initializeFiltersAndSearch();
@@ -90,17 +101,19 @@ function initializeFiltersAndSearch() {
 		const searchTerm = searchInput.value.toLowerCase();
 		const filtered = resources.filter(resource => {
 			const matchesSearch = resource.title.toLowerCase().includes(searchTerm) ||
-                resource.description.toLowerCase().includes(searchTerm) ||
-                resource.author.toLowerCase().includes(searchTerm);
-        
+				resource.description.toLowerCase().includes(searchTerm) ||
+				resource.author.toLowerCase().includes(searchTerm);
+		
 			const matchesCategory = currentCategory === 'all' || 
-                resource.categories.includes(currentCategory);
-        
+				resource.categories.includes(currentCategory);
+		
 			const matchesSubcategory = !currentSubcategory || 
-                resource.subcategories.includes(currentSubcategory);
-        
+				resource.subcategories.includes(currentSubcategory);
+		
 			return matchesSearch && matchesCategory && matchesSubcategory;
 		});
+		
+		currentPage = 1;
 		displayResources(filtered);
 	}
 
@@ -148,9 +161,16 @@ function getResourceTypeIcon(type) {
     }
 }
 
+let currentPage = 1;
+let itemsPerPage = 12;
+let lastFilteredResources = [];
+
 function displayResources(filteredResources) {
     const resourcesList = document.getElementById('resourcesList');
+	
     resourcesList.innerHTML = '';
+
+    lastFilteredResources = filteredResources;
 
     if (filteredResources.length === 0) {
         resourcesList.innerHTML = `
@@ -164,14 +184,23 @@ function displayResources(filteredResources) {
                 </p>
             </div>
         `;
+        renderPagination(0);
         return;
     }
+
+    const totalPages = Math.max(1, Math.ceil(filteredResources.length / itemsPerPage));
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageResources = filteredResources.slice(startIndex, endIndex);
 
     const favorites = localStorage.getItem('favorites') ? 
         JSON.parse(localStorage.getItem('favorites')) : 
         [];
 
-    filteredResources.forEach((resource, index) => {
+    pageResources.forEach((resource) => {
         const categoryNames = resource.categories.map(cat => 
             categories[cat]?.name || cat
         );
@@ -210,14 +239,10 @@ function displayResources(filteredResources) {
                 <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">${shortDescription}</p>
                 <div class="flex flex-wrap gap-2 mb-4">
                     ${categoryNames.map(cat => `
-                        <span class="category-tag primary">
-                            ${cat}
-                        </span>
+                        <span class="category-tag primary">${cat}</span>
                     `).join('')}
                     ${subcategoryNames.map(sub => `
-                        <span class="category-tag secondary">
-                            ${sub}
-                        </span>
+                        <span class="category-tag secondary">${sub}</span>
                     `).join('')}
                 </div>
             </div>
@@ -241,7 +266,311 @@ function displayResources(filteredResources) {
         resourcesList.appendChild(card);
     });
     
-    addFavoriteButtonsToCards();
+    if (typeof addFavoriteButtonsToCards === 'function') {
+		addFavoriteButtonsToCards();
+	}
+	renderPagination(filteredResources.length);
+}
+
+function getFavorites() {
+	const favorites = localStorage.getItem('favorites');
+	return favorites ? JSON.parse(favorites) : [];
+}
+
+function saveFavorites(favorites) {
+	localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+function isFavorite(resourceId) {
+	const favorites = getFavorites();
+	return favorites.includes(resourceId);
+}
+
+function toggleFavorite(resourceId) {
+	const favorites = getFavorites();
+	const index = favorites.indexOf(resourceId);
+	let isNowFavorite;
+	
+	if (index === -1) {
+		favorites.push(resourceId);
+		isNowFavorite = true;
+	} else {
+		favorites.splice(index, 1);
+		isNowFavorite = false;
+	}
+	
+	saveFavorites(favorites);
+	
+	document.querySelectorAll(`.resource-card[data-resource-id="${resourceId}"]`).forEach(card => {
+		if (isNowFavorite) {
+			card.classList.add('favorite');
+			
+			if (!card.querySelector('.favorite-indicator')) {
+				const indicator = document.createElement('div');
+				indicator.className = 'favorite-indicator';
+				indicator.innerHTML = '<i class="fas fa-star"></i>';
+				card.appendChild(indicator);
+			}
+		} else {
+			card.classList.remove('favorite');
+			
+			const indicator = card.querySelector('.favorite-indicator');
+			if (indicator) {
+				indicator.remove();
+			}
+		}
+		
+		const favoriteBtn = card.querySelector('.card-favorite-btn');
+		if (favoriteBtn) {
+			if (isNowFavorite) {
+				favoriteBtn.classList.add('active');
+			} else {
+				favoriteBtn.classList.remove('active');
+			}
+		}
+	});
+	
+	return isNowFavorite;
+}
+
+function addFavoriteButtonsToCards() {
+	document.querySelectorAll('.card-favorite-btn').forEach(btn => {
+		btn.remove();
+	});
+	
+	document.querySelectorAll('.resource-card').forEach(card => {
+		const resourceId = card.dataset.resourceId;
+		if (!resourceId) return;
+		
+		const favBtn = document.createElement('button');
+		favBtn.className = 'card-favorite-btn';
+		favBtn.dataset.resourceId = resourceId;
+		favBtn.dataset.tooltip = isFavorite(resourceId) ? 'Удалить из избранного' : 'Добавить в избранное';
+		favBtn.innerHTML = '<i class="fas fa-star"></i>';
+		
+		if (isFavorite(resourceId)) {
+			favBtn.classList.add('active');
+			card.classList.add('favorite');
+			
+			if (!card.querySelector('.favorite-indicator')) {
+				const indicator = document.createElement('div');
+				indicator.className = 'favorite-indicator';
+				indicator.innerHTML = '<i class="fas fa-star"></i>';
+				card.appendChild(indicator);
+			}
+		}
+		
+		favBtn.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			const isNowFavorite = toggleFavorite(resourceId);
+			
+			favBtn.dataset.tooltip = isNowFavorite ? 'Удалить из избранного' : 'Добавить в избранное';
+			
+			if (isNowFavorite) {
+				favBtn.classList.add('active');
+			} else {
+				favBtn.classList.remove('active');
+			}
+			
+			if (isNowFavorite) {
+				card.classList.add('favorite');
+				
+				if (!card.querySelector('.favorite-indicator')) {
+					const indicator = document.createElement('div');
+					indicator.className = 'favorite-indicator';
+					indicator.innerHTML = '<i class="fas fa-star"></i>';
+					card.appendChild(indicator);
+				}
+			} else {
+				card.classList.remove('favorite');
+				
+				const indicator = card.querySelector('.favorite-indicator');
+				if (indicator) {
+					indicator.remove();
+				}
+			}
+			
+			const icon = favBtn.querySelector('i');
+			icon.style.transform = 'scale(1.3)';
+			setTimeout(() => {
+				icon.style.transform = 'scale(1)';
+			}, 200);
+			
+			showNotification(isNowFavorite ? 
+				'Добавлено в избранное' : 
+				'Удалено из избранного');
+		});
+		
+		card.appendChild(favBtn);
+	});
+}
+
+function scrollToPagination() {
+    requestAnimationFrame(() => {
+        const paginationEl = document.getElementById('pagination');
+        if (paginationEl) {
+            paginationEl.scrollIntoView({ block: 'end', behavior: 'auto' });
+        }
+    });
+}
+
+function renderPagination(totalItems) {
+    const paginationEl = document.getElementById('pagination');
+    if (!paginationEl) {
+        console.warn('Элемент #pagination не найден в HTML');
+        return;
+    }
+    
+    paginationEl.innerHTML = '';
+    
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    
+    const perPageWrapper = document.createElement('div');
+    perPageWrapper.className = 'per-page-wrapper';
+    perPageWrapper.innerHTML = `
+        <label for="perPageSelect" class="text-sm text-gray-600 dark:text-gray-400 mr-2">На странице:</label>
+        <select id="perPageSelect" class="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm">
+            <option value="6">6</option>
+            <option value="12">12</option>
+            <option value="24">24</option>
+            <option value="48">48</option>
+        </select>
+    `;
+    paginationEl.appendChild(perPageWrapper);
+    
+    const selectEl = perPageWrapper.querySelector('#perPageSelect');
+    selectEl.value = itemsPerPage;
+    selectEl.addEventListener('change', (e) => {
+        itemsPerPage = parseInt(e.target.value, 10);
+        localStorage.setItem('itemsPerPage', itemsPerPage);
+        currentPage = 1;
+        displayResources(lastFilteredResources);
+        scrollToPagination();
+    });
+    
+    if (totalItems === 0 || totalPages <= 1) {
+        return;
+    }
+    
+    const info = document.createElement('div');
+    info.className = 'pagination-info';
+    const startItem = (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+    info.textContent = `${startItem}–${endItem} из ${totalItems}`;
+    paginationEl.appendChild(info);
+    
+    const buttonsWrapper = document.createElement('div');
+    buttonsWrapper.className = 'pagination-buttons';
+    
+    const createPageBtn = (label, page, opts = {}) => {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn';
+        if (opts.active) btn.classList.add('active');
+        if (opts.disabled) btn.classList.add('disabled');
+        btn.innerHTML = label;
+        btn.disabled = !!opts.disabled;
+        if (!opts.disabled && !opts.active && page !== null) {
+            btn.addEventListener('click', () => {
+                currentPage = page;
+                displayResources(lastFilteredResources);
+                scrollToPagination();
+            });
+        }
+        return btn;
+    };
+    
+    buttonsWrapper.appendChild(createPageBtn(
+        '<i class="fas fa-chevron-left"></i>', 
+        currentPage - 1, 
+        { disabled: currentPage === 1 }
+    ));
+    
+    const pages = getPageNumbers(currentPage, totalPages);
+    pages.forEach(p => {
+        if (p === '...') {
+            const dots = document.createElement('span');
+            dots.className = 'page-dots';
+            dots.textContent = '…';
+            buttonsWrapper.appendChild(dots);
+        } else {
+            buttonsWrapper.appendChild(createPageBtn(
+                String(p),
+                p,
+                { active: p === currentPage }
+            ));
+        }
+    });
+    
+    buttonsWrapper.appendChild(createPageBtn(
+        '<i class="fas fa-chevron-right"></i>', 
+        currentPage + 1, 
+        { disabled: currentPage === totalPages }
+    ));
+    
+    paginationEl.appendChild(buttonsWrapper);
+    
+    const jumpWrapper = document.createElement('div');
+    jumpWrapper.className = 'page-jump-wrapper';
+    jumpWrapper.innerHTML = `
+        <label for="pageJumpInput" class="text-sm text-gray-600 dark:text-gray-400">Перейти:</label>
+        <input type="number" id="pageJumpInput" min="1" max="${totalPages}" value="${currentPage}"
+            class="page-jump-input px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm" />
+        <span class="text-sm text-gray-600 dark:text-gray-400">из ${totalPages}</span>
+        <button id="pageJumpBtn" class="page-btn" title="Перейти">
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    `;
+    paginationEl.appendChild(jumpWrapper);
+    
+    const jumpInput = jumpWrapper.querySelector('#pageJumpInput');
+    const jumpBtn = jumpWrapper.querySelector('#pageJumpBtn');
+    
+    const goToPage = () => {
+        let page = parseInt(jumpInput.value, 10);
+        if (isNaN(page)) {
+            jumpInput.value = currentPage;
+            return;
+        }
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+        if (page === currentPage) return;
+        
+        jumpInput.blur();
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+        
+        currentPage = page;
+        displayResources(lastFilteredResources);
+        scrollToPagination();
+    };
+    
+    jumpBtn.addEventListener('click', goToPage);
+    jumpInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            goToPage();
+        }
+    });
+}
+
+function getPageNumbers(current, total) {
+    const delta = 1;
+    const range = [];
+    const result = [];
+    
+    for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+        range.push(i);
+    }
+    
+    result.push(1);
+    if (range[0] > 2) result.push('...');
+    result.push(...range);
+    if (range[range.length - 1] < total - 1) result.push('...');
+    if (total > 1) result.push(total);
+    
+    return result;
 }
 
 function showModal(resource) {
@@ -638,159 +967,12 @@ function initBurgerMenu() {
 }
 
 function initFavorites() {
-    function getFavorites() {
-        const favorites = localStorage.getItem('favorites');
-        return favorites ? JSON.parse(favorites) : [];
-    }
-    
-    function saveFavorites(favorites) {
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-    }
-    
-    function isFavorite(resourceId) {
-        const favorites = getFavorites();
-        return favorites.includes(resourceId);
-    }
-    
-	function toggleFavorite(resourceId) {
-		const favorites = getFavorites();
-		const index = favorites.indexOf(resourceId);
-		let isNowFavorite;
-		
-		if (index === -1) {
-			favorites.push(resourceId);
-			isNowFavorite = true;
-		} else {
-			favorites.splice(index, 1);
-			isNowFavorite = false;
-		}
-		
-		saveFavorites(favorites);
-		
-		document.querySelectorAll(`.resource-card[data-resource-id="${resourceId}"]`).forEach(card => {
-			if (isNowFavorite) {
-				card.classList.add('favorite');
-				
-				if (!card.querySelector('.favorite-indicator')) {
-					const indicator = document.createElement('div');
-					indicator.className = 'favorite-indicator';
-					indicator.innerHTML = '<i class="fas fa-star"></i>';
-					card.appendChild(indicator);
-				}
-			} else {
-				card.classList.remove('favorite');
-				
-				const indicator = card.querySelector('.favorite-indicator');
-				if (indicator) {
-					indicator.remove();
-				}
-			}
-			
-			const favoriteBtn = card.querySelector('.card-favorite-btn');
-			if (favoriteBtn) {
-				if (isNowFavorite) {
-					favoriteBtn.classList.add('active');
-				} else {
-					favoriteBtn.classList.remove('active');
-				}
-			}
-		});
-		
-		return isNowFavorite;
-	}
-    
     function updateFavoriteButtons() {
-        document.querySelectorAll('.favorite-btn').forEach(btn => {
+        document.querySelectorAll('.favorite-btn, .card-favorite-btn').forEach(btn => {
             const resourceId = btn.dataset.resourceId;
-            if (isFavorite(resourceId)) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-        
-        document.querySelectorAll('.card-favorite-btn').forEach(btn => {
-            const resourceId = btn.dataset.resourceId;
-            if (isFavorite(resourceId)) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
+            btn.classList.toggle('active', isFavorite(resourceId));
         });
     }
-    
-	function addFavoriteButtonsToCards() {
-		document.querySelectorAll('.card-favorite-btn').forEach(btn => {
-			btn.remove();
-		});
-		
-		document.querySelectorAll('.resource-card').forEach(card => {
-			const resourceId = card.dataset.resourceId;
-			if (!resourceId) return;
-			
-			const favBtn = document.createElement('button');
-			favBtn.className = 'card-favorite-btn';
-			favBtn.dataset.resourceId = resourceId;
-			favBtn.dataset.tooltip = isFavorite(resourceId) ? 'Удалить из избранного' : 'Добавить в избранное';
-			favBtn.innerHTML = '<i class="fas fa-star"></i>';
-			
-			if (isFavorite(resourceId)) {
-				favBtn.classList.add('active');
-				card.classList.add('favorite');
-				
-				if (!card.querySelector('.favorite-indicator')) {
-					const indicator = document.createElement('div');
-					indicator.className = 'favorite-indicator';
-					indicator.innerHTML = '<i class="fas fa-star"></i>';
-					card.appendChild(indicator);
-				}
-			}
-			
-			favBtn.addEventListener('click', (e) => {
-				e.preventDefault();
-				e.stopPropagation();
-				const isNowFavorite = toggleFavorite(resourceId);
-				
-				favBtn.dataset.tooltip = isNowFavorite ? 'Удалить из избранного' : 'Добавить в избранное';
-				
-				if (isNowFavorite) {
-					favBtn.classList.add('active');
-				} else {
-					favBtn.classList.remove('active');
-				}
-				
-				if (isNowFavorite) {
-					card.classList.add('favorite');
-					
-					if (!card.querySelector('.favorite-indicator')) {
-						const indicator = document.createElement('div');
-						indicator.className = 'favorite-indicator';
-						indicator.innerHTML = '<i class="fas fa-star"></i>';
-						card.appendChild(indicator);
-					}
-				} else {
-					card.classList.remove('favorite');
-					
-					const indicator = card.querySelector('.favorite-indicator');
-					if (indicator) {
-						indicator.remove();
-					}
-				}
-				
-				const icon = favBtn.querySelector('i');
-				icon.style.transform = 'scale(1.3)';
-				setTimeout(() => {
-					icon.style.transform = 'scale(1)';
-				}, 200);
-				
-				showNotification(isNowFavorite ? 
-					'Добавлено в избранное' : 
-					'Удалено из избранного');
-			});
-			
-			card.appendChild(favBtn);
-		});
-	}
     
     const originalShowModal = window.showModal;
     window.showModal = function(resource) {
@@ -799,9 +981,7 @@ function initFavorites() {
         if (!resource.id) return;
         
         const existingBtn = document.querySelector('.favorite-btn');
-        if (existingBtn) {
-            existingBtn.remove();
-        }
+        if (existingBtn) existingBtn.remove();
         
         const favoriteBtn = document.createElement('button');
         favoriteBtn.className = 'favorite-btn';
@@ -816,19 +996,14 @@ function initFavorites() {
         favoriteBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const isNowFavorite = toggleFavorite(resource.id);
-            
             favoriteBtn.dataset.tooltip = isNowFavorite ? 'Удалить из избранного' : 'Добавить в избранное';
             favoriteBtn.classList.toggle('active', isNowFavorite);
             
             const icon = favoriteBtn.querySelector('i');
             icon.style.transform = 'scale(1.3)';
-            setTimeout(() => {
-                icon.style.transform = 'scale(1)';
-            }, 200);
+            setTimeout(() => { icon.style.transform = 'scale(1)'; }, 200);
             
-            showNotification(isNowFavorite ? 
-                'Добавлено в избранное' : 
-                'Удалено из избранного');
+            showNotification(isNowFavorite ? 'Добавлено в избранное' : 'Удалено из избранного');
         });
         
         document.querySelector('.modal-content').appendChild(favoriteBtn);
@@ -848,18 +1023,7 @@ function initFavorites() {
         });
     }
     
-    const originalDisplayResources = window.displayResources;
-    window.displayResources = function(filteredResources) {
-        originalDisplayResources(filteredResources);
-        
-        setTimeout(() => {
-            addResourceIds();
-            addFavoriteButtonsToCards();
-        }, 100);
-    };
-    
     addResourceIds();
-    
     setTimeout(addFavoriteButtonsToCards, 100);
 }
 
