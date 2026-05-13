@@ -476,6 +476,112 @@ html, body {
     z-index: 1000;
 }
 
+.pagination-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1rem 0;
+}
+
+.per-page-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.per-page-wrapper select {
+    cursor: pointer;
+}
+
+.pagination-info {
+    flex: 1;
+    text-align: center;
+    font-size: 0.875rem;
+    color: rgb(107, 114, 128);
+}
+
+.dark .pagination-info {
+    color: rgb(156, 163, 175);
+}
+
+.pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.6rem;
+    border-radius: 0.5rem;
+    background-color: rgb(243, 244, 246);
+    color: rgb(17, 24, 39);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark .page-btn {
+    background-color: rgb(55, 65, 81);
+    color: #fff;
+}
+
+.page-btn:hover:not(.disabled):not(.active) {
+    background-color: rgb(229, 231, 235);
+}
+
+.dark .page-btn:hover:not(.disabled):not(.active) {
+    background-color: rgb(75, 85, 99);
+}
+
+.page-btn.active {
+    background-color: rgb(37, 99, 235);
+    color: #fff;
+    cursor: default;
+}
+
+.page-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-dots {
+    padding: 0 0.4rem;
+    color: rgb(107, 114, 128);
+}
+
+.page-jump-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-jump-input {
+    width: 4rem;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.page-jump-input::-webkit-outer-spin-button,
+.page-jump-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.page-jump-input:focus {
+    outline: none;
+    border-color: rgb(59, 130, 246);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
 @media (max-width: 768px) {
 	#closeModal, .favorite-btn {
         width: 32px;
@@ -628,5 +734,26 @@ html, body {
 	
     .sub-btn:last-child {
         border-bottom: none;
-    }	
+    }
+
+	.pagination-container {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.pagination-info {
+		text-align: center;
+	}
+
+	.pagination-buttons {
+		justify-content: center;
+	}
+
+	.per-page-wrapper {
+		justify-content: center;
+	}
+	.page-jump-wrapper {
+		justify-content: center;
+		flex-wrap: wrap;
+	}	
 }
