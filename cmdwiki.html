@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMD WIKI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/powershell.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #0d1117;
+            border-bottom: 1px solid #21262d;
+            padding: 12px 32px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        header h1 {
+            color: #e6edf3;
+            font-size: 0.95em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        nav {
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #8b949e;
+            text-decoration: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.82em;
+            transition: background 0.15s, color 0.15s;
+            white-space: nowrap;
+        }
+
+        nav a:hover {
+            background: #21262d;
+            color: #e6edf3;
+        }
+
+        main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 80px 24px 60px;
+        }
+
+        .category {
+            margin-bottom: 48px;
+        }
+
+        .category + .category {
+            border-top: 1px solid #21262d;
+            padding-top: 40px;
+        }
+
+        .category-title {
+            color: #e6edf3;
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: 0.2px;
+        }
+
+        .card {
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .card:hover {
+            border-color: #30363d;
+        }
+
+        .card-title {
+            color: #e6edf3;
+            font-size: 0.92em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .card-desc {
+            color: #8b949e;
+            font-size: 0.83em;
+            margin-bottom: 12px;
+        }
+
+        .card-desc code {
+            background: #21262d;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            color: #c9d1d9;
+        }
+
+        pre {
+            margin: 0 !important;
+            border-radius: 6px !important;
+            font-size: 0.82em !important;
+        }
+
+        pre code {
+            font-family: 'Consolas', 'Cascadia Code', monospace !important;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #21262d;
+            color: #8b949e;
+            font-size: 0.73em;
+            padding: 2px 8px;
+            border-radius: 20px;
+            border: 1px solid #30363d;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #8b949e;
+            font-size: 0.78em;
+            padding: 4px 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #21262d;
+            color: #c9d1d9;
+            border-color: #484f58;
+        }
+
+        .btn.copied {
+            color: #3fb950;
+            border-color: #3fb950;
+        }
+
+        .btn-edit {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-edit svg, .btn-copy svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 1000px;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .modal-title {
+            color: #e6edf3;
+            font-size: 0.88em;
+            font-weight: 600;
+        }
+
+        .modal-subtitle {
+            color: #8b949e;
+            font-size: 0.78em;
+            margin-top: 2px;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: #8b949e;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            line-height: 1;
+            transition: all 0.15s;
+        }
+
+        .modal-close:hover {
+            background: #21262d;
+            color: #c9d1d9;
+        }
+
+        .modal-body {
+            padding: 16px 18px;
+            flex: 1;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'Consolas', 'Cascadia Code', monospace;
+            font-size: 0.83em;
+            line-height: 1.6;
+            padding: 12px 14px;
+            resize: vertical;
+            min-height: 500px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .modal-textarea:focus {
+            border-color: #484f58;
+        }
+
+        .modal-footer {
+            padding: 12px 18px;
+            border-top: 1px solid #21262d;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #238636;
+            border: 1px solid #2ea043;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.82em;
+            padding: 6px 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary:hover {
+            background: #2ea043;
+        }
+
+        .btn-primary.copied {
+            background: #1a7f37;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #8b949e;
+            font-size: 0.82em;
+            padding: 6px 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-secondary:hover {
+            background: #21262d;
+            color: #c9d1d9;
+        }
+
+        #back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #161b22;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-decoration: none;
+            transition: all 0.15s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #back-to-top.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #back-to-top:hover {
+            background: #21262d;
+            color: #c9d1d9;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <h1>⚡ CMD WIKI</h1>
+        <nav>
+            <a href="#ffmpega">FFmpeg Audio</a>
+            <a href="#ffmpegv">FFmpeg Video</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+    <section class="category" id="ffmpega">
+        <h2 class="category-title">FFmpeg Audio</h2>
+
+        <div class="card">
+            <div class="card-title">FLAC → Opus 160k</div>
+            <p class="card-desc">Все FLAC в Opus 160k Stereo.</p>
+        <pre><code class="language-powershell">$outputDir = Join-Path -Path $PWD.Path -ChildPath "output"
+
+    if (!(Test-Path -LiteralPath $outputDir)) { 
+        New-Item -ItemType Directory -Path $outputDir | Out-Null 
+    }
+
+    Get-ChildItem -LiteralPath $PWD.Path -Filter *.flac -File | ForEach-Object {
+        $basename = $_.BaseName
+        $outputPath = Join-Path -Path $outputDir -ChildPath "$($basename).opus"
+        
+        if (Test-Path -LiteralPath $outputPath) {
+            Write-Host "Пропуск: $($_.Name) уже обработан." -ForegroundColor Cyan
+        } else {
+            Write-Host "Обработка: $($_.Name)" -ForegroundColor Yellow
+            
+            ffmpeg -nostdin -n -i "$($_.FullName)" -hide_banner -c:a libopus -b:a 160k -ac 2 -vbr on -compression_level 10 "$outputPath"
+        }
+    }</code></pre>
+            <div class="card-footer">
+                <div class="tags">
+                <span class="tag">flac</span>
+            <span class="tag">opus</span>
+            <span class="tag">folder</span>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-copy" onclick="copyAndEdit(this)">
+                        <svg viewBox="0 0 16 16"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
+                        Редактировать и копировать
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="category" id="ffmpegv">
+        <h2 class="category-title">FFmpeg Video</h2>
+
+        <div class="card">
+            <div class="card-title">MP4 → MKV AV1 Opus</div>
+            <p class="card-desc">Небольшая потеря качества видео и умеренная потеря качества аудио, очень сильное сжатие. Все MP4 в SVT-AV1 и Opus 50k Mono.</p>
+        <pre><code class="language-powershell">$outputDir = Join-Path -Path $PWD.Path -ChildPath "output"
+
+    if (!(Test-Path -Path $outputDir)) { 
+        New-Item -ItemType Directory -Path $outputDir | Out-Null 
+    }
+
+    Get-ChildItem -Path $PWD.Path -Filter *.mp4 -File | ForEach-Object {
+        $basename = $_.BaseName
+        $outputPath = Join-Path -Path $outputDir -ChildPath "$($basename).mkv"
+        
+        if (Test-Path -Path $outputPath) {
+            Write-Host "Пропуск: $($_.Name) уже обработан." -ForegroundColor Cyan
+        } else {
+            Write-Host "Обработка: $($_.Name)" -ForegroundColor Yellow
+            
+            ffmpeg -nostdin -n -i $_.FullName -hide_banner -c:v libsvtav1 -preset 4 -crf 35 -svtav1-params "tune=0:enable-qm=1:qm-min=0:qm-max=15:film-grain=10:enable-tf=1:adaptive-film-grain=1:film-grain-denoise=1:scd=1:keyint=10s:lookahead=32" -pix_fmt yuv420p10le -c:a libopus -b:a 50k -ac 1 -compression_level 10 -c:s copy -map 0 "$outputPath"
+        }
+    }</code></pre>
+            <div class="card-footer">
+                <div class="tags">
+                <span class="tag">mkv</span>
+            <span class="tag">mp4</span>
+            <span class="tag">opus</span>
+            <span class="tag">folder</span>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-copy" onclick="copyAndEdit(this)">
+                        <svg viewBox="0 0 16 16"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
+                        Редактировать и копировать
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+    <div class="modal">
+        <div class="modal-header">
+            <div>
+                <div class="modal-title">Редактировать перед использованием</div>
+                <div class="modal-subtitle">Изменения не сохраняются в карточке</div>
+            </div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <textarea class="modal-textarea" id="modal-textarea" spellcheck="false"></textarea>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal()">Закрыть</button>
+            <button class="btn-primary" id="modal-copy-btn" onclick="copyFromModal()">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
+                Скопировать
+            </button>
+        </div>
+    </div>
+</div>
+
+<a href="#" id="back-to-top" title="Наверх">↑</a>
+
+<script>
+    function copyAndEdit(btn) {
+        const card = btn.closest('.card');
+        const code = card.querySelector('pre code').innerText;
+        document.getElementById('modal-textarea').value = code;
+        document.getElementById('modal').classList.add('active');
+    }
+
+    function copyFromModal() {
+        const text = document.getElementById('modal-textarea').value;
+        navigator.clipboard.writeText(text);
+        const btn = document.getElementById('modal-copy-btn');
+        btn.classList.add('copied');
+        btn.textContent = '✓ Скопировано';
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg> Скопировать`;
+        }, 2000);
+    }
+
+    function closeModal() {
+        document.getElementById('modal').classList.remove('active');
+    }
+
+    function closeModalOutside(e) {
+        if (e.target === document.getElementById('modal')) closeModal();
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    const backBtn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+        backBtn.classList.toggle('visible', window.scrollY > 300);
+    });
+</script>
+
+</body>
+</html>
