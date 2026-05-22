@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMD WIKI CARD GENERATOR</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #0d1117;
+            border-bottom: 1px solid #21262d;
+            padding: 14px 32px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            color: #e6edf3;
+            font-size: 0.95em;
+            font-weight: 600;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 72px 24px 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid #21262d;
+            color: #e6edf3;
+            font-size: 0.88em;
+            font-weight: 600;
+        }
+
+        .panel-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            color: #8b949e;
+            font-size: 0.8em;
+        }
+
+        input[type="text"], textarea, select {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.85em;
+            padding: 8px 12px;
+            outline: none;
+            transition: border-color 0.15s;
+            width: 100%;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            border-color: #484f58;
+        }
+
+        textarea {
+            font-family: 'Consolas', monospace;
+            resize: vertical;
+            min-height: 140px;
+        }
+
+        .tags-hint {
+            color: #6e7681;
+            font-size: 0.75em;
+        }
+
+        .btn-generate {
+            background: #238636;
+            border: 1px solid #2ea043;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.85em;
+            padding: 8px 18px;
+            cursor: pointer;
+            transition: all 0.15s;
+            width: 100%;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .btn-generate:hover {
+            background: #2ea043;
+        }
+
+        .output-panel {
+            position: sticky;
+            top: 72px;
+        }
+
+        .output-area {
+            background: #0d1117;
+            border: none;
+            color: #c9d1d9;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8em;
+            line-height: 1.6;
+            padding: 16px;
+            width: 100%;
+            min-height: 300px;
+            resize: vertical;
+            outline: none;
+        }
+
+        .output-footer {
+            padding: 10px 18px;
+            border-top: 1px solid #21262d;
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .btn-copy {
+            background: transparent;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #8b949e;
+            font-size: 0.8em;
+            padding: 5px 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .btn-copy:hover {
+            background: #21262d;
+            color: #c9d1d9;
+        }
+
+        .btn-copy.copied {
+            color: #3fb950;
+            border-color: #3fb950;
+        }
+
+        .placeholder-text {
+            color: #6e7681;
+            font-size: 0.82em;
+            padding: 24px 18px;
+            text-align: center;
+        }
+
+        .lang-note {
+            color: #6e7681;
+            font-size: 0.75em;
+            margin-top: 2px;
+        }
+
+        .error {
+            color: #f85149;
+            font-size: 0.78em;
+            display: none;
+        }
+
+        @media (max-width: 680px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+            .output-panel {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>⚙️ CMD WIKI CARD GENERATOR</h1>
+</header>
+
+<main>
+
+    <div class="panel">
+        <div class="panel-header">Данные карточки</div>
+        <div class="panel-body">
+
+            <div class="field">
+                <label>Заголовок карточки</label>
+                <input type="text" id="card-title" placeholder="Краткое название команды">
+                <span class="error" id="err-title">Заполните заголовок</span>
+            </div>
+
+            <div class="field">
+                <label>Описание</label>
+                <textarea id="card-desc" style="min-height:80px; font-family: 'Segoe UI', system-ui, sans-serif;" placeholder="Что делает эта команда..."></textarea>
+            </div>
+
+            <div class="field">
+                <label>Код</label>
+                <textarea id="card-code" placeholder="Вставьте код сюда..."></textarea>
+                <span class="error" id="err-code">Вставьте код</span>
+                <span class="lang-note">Язык подсветки:</span>
+                <select id="card-lang">
+                    <option value="powershell">PowerShell</option>
+                    <option value="bash">Bash</option>
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="plaintext">Без подсветки</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Теги</label>
+                <input type="text" id="card-tags" placeholder="av1, opus, batch">
+                <span class="tags-hint">Через запятую</span>
+            </div>
+
+            <button class="btn-generate" onclick="generate()">Сгенерировать код</button>
+
+        </div>
+    </div>
+
+    <div class="panel output-panel">
+        <div class="panel-header">Готовый HTML</div>
+        <div id="output-placeholder" class="placeholder-text">Заполните форму и нажмите «Сгенерировать код»</div>
+        <textarea class="output-area" id="output" style="display:none;" readonly></textarea>
+        <div class="output-footer" id="output-footer" style="display:none;">
+            <button class="btn-copy" id="copy-btn" onclick="copyOutput()">Скопировать</button>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    function escapeHtml(str) {
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function generate() {
+        const title = document.getElementById('card-title').value.trim();
+        const desc = document.getElementById('card-desc').value.trim();
+        const code = document.getElementById('card-code').value.trim();
+        const lang = document.getElementById('card-lang').value;
+        const tagsRaw = document.getElementById('card-tags').value.trim();
+
+        let valid = true;
+
+        document.getElementById('err-title').style.display = 'none';
+        document.getElementById('err-code').style.display = 'none';
+
+        if (!title) {
+            document.getElementById('err-title').style.display = 'block';
+            valid = false;
+        }
+        if (!code) {
+            document.getElementById('err-code').style.display = 'block';
+            valid = false;
+        }
+
+        if (!valid) return;
+
+        const tags = tagsRaw
+            ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean)
+            : [];
+
+        const tagsHtml = tags.map(t => `        <span class="tag">${escapeHtml(t)}</span>`).join('\n');
+
+        const descLine = desc ? `    <p class="card-desc">${escapeHtml(desc)}</p>\n` : '';
+
+        const result = `<div class="card">
+        <div class="card-title">${escapeHtml(title)}</div>
+    ${descLine}    <pre><code class="language-${lang}">${escapeHtml(code)}</code></pre>
+        <div class="card-footer">
+            <div class="tags">
+    ${tagsHtml}
+            </div>
+            <div class="card-actions">
+                <button class="btn btn-copy" onclick="copyAndEdit(this)">
+                    <svg viewBox="0 0 16 16"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
+                    Редактировать и копировать
+                </button>
+            </div>
+        </div>
+    </div>`;
+
+        const output = document.getElementById('output');
+        const placeholder = document.getElementById('output-placeholder');
+        const footer = document.getElementById('output-footer');
+
+        output.value = result;
+        output.style.display = 'block';
+        placeholder.style.display = 'none';
+        footer.style.display = 'flex';
+
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = 'Скопировать';
+        btn.classList.remove('copied');
+    }
+
+    function copyOutput() {
+        const output = document.getElementById('output');
+        navigator.clipboard.writeText(output.value);
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = '✓ Скопировано';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Скопировать';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
