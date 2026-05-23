@@ -272,6 +272,17 @@
     }
     */
 
+    function escapeCode(str) {
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function escapeText(str) {
+        return str.replace(/&/g, '&amp;');
+    }
+
     function generate() {
         const title = document.getElementById('card-title').value.trim();
         const desc = document.getElementById('card-desc').value.trim();
@@ -299,13 +310,13 @@
             ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean)
             : [];
 
-        const tagsHtml = tags.map(t => `        <span class="tag">${escapeHtml(t)}</span>`).join('\n');
+        const tagsHtml = tags.map(t => `        <span class="tag">${escapeText(t)}</span>`).join('\n');
 
-        const descLine = desc ? `    <p class="card-desc">${escapeHtml(desc)}</p>\n` : '';
+        const descLine = desc ? `    <p class="card-desc">${escapeText(desc)}</p>\n` : '';
 
         const result = `<div class="card">
-        <div class="card-title">${escapeHtml(title)}</div>
-    ${descLine}    <pre><code class="language-${lang}">${escapeHtml(code)}</code></pre>
+                <div class="card-title">${escapeText(title)}</div>
+            ${descLine}    <pre><code class="language-${lang}">${escapeCode(code)}</code></pre>
         <div class="card-footer">
             <div class="tags">
     ${tagsHtml}
