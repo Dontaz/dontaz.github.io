@@ -479,6 +479,46 @@
         <h2 class="category-title">FFmpeg Video</h2>
 
         <div class="card">
+                <div class="card-title">MP4 → MKV (AV1, Opus, Old Cartoons)</div>
+                <p class="card-desc">Для старых мультфильмов Telecined NTSC с гибридными вставками. Копирует все аудио-дорожки и субтитры. Аудио в Opus 160k Stereo.</p>
+    <pre><code class="language-powershell">$outputDir = Join-Path -Path $PWD.Path -ChildPath "output"
+
+if (!(Test-Path -LiteralPath $outputDir)) { 
+    New-Item -ItemType Directory -Path $outputDir | Out-Null 
+}
+
+Get-ChildItem -LiteralPath $PWD.Path -Filter *.mkv -File | ForEach-Object {
+    $basename = $_.BaseName
+    $inputPath = $_.FullName
+    $outputPath = Join-Path -Path $outputDir -ChildPath "$($basename).mkv"
+    
+    if (Test-Path -LiteralPath $outputPath) {
+        Write-Host "Пропуск: $($_.Name) уже обработан." -ForegroundColor Cyan
+    } else {
+        Write-Host "Обработка: $($_.Name)" -ForegroundColor Yellow
+        
+        ffmpeg -nostdin -n -i "$inputPath" -hide_banner -vf "fieldmatch=order=tff:combmatch=full,bwdif=mode=send_frame:deint=interlaced,decimate" -c:v libsvtav1 -preset 4 -crf 28 -svtav1-params "tune=0:enable-qm=1:qm-min=8:qm-max=15:chroma-qm-min=14:film-grain=17:enable-tf=0:adaptive-film-grain=1:film-grain-denoise=0:scd=1:keyint=10s:lookahead=32" -pix_fmt yuv420p10le -c:a libopus -b:a 160k -ac 2 -compression_level 10 -c:s copy -map 0 "$outputPath"
+    }
+}</code></pre>
+        <div class="card-footer">
+            <div class="tags">
+            <span class="tag">av1</span>
+        <span class="tag">opus</span>
+        <span class="tag">video</span>
+        <span class="tag">mp4</span>
+        <span class="tag">mkv</span>
+        <span class="tag">subtitles</span>
+            </div>
+            <div class="card-actions">
+                <button class="btn btn-copy" onclick="copyAndEdit(this)">
+                    <svg viewBox="0 0 16 16"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
+                    Редактировать и копировать
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <div class="card">
                 <div class="card-title">MP4 → MKV → AV1 Opus (Very Good Quality, Medium Compression)</div>
                 <p class="card-desc">Видео и аудио на глаз и слух практически не отличимы от оригинала, неплохое сжатие. Все MP4 в SVT-AV1 и Opus 160k Stereo. Копирует все дорожки субтитров.
 <br>
