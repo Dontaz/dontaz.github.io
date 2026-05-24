@@ -565,6 +565,45 @@ Get-ChildItem -Path $PWD.Path -Filter *.mp4 -File | ForEach-Object {
         <h2 class="category-title">Images</h2>
 
         <div class="card">
+                <div class="card-title">PNG → JXL</div>
+                <p class="card-desc">Цветные изображения из .png в .jxl.
+                    <br>
+                    • -d — качество изображения (ниже значение — лучше качество)
+                    <br>
+                    • -e — усилие кодирования (10 — максимальное), лучше качество и меньше размер, но медленнее кодирование.                  
+<br><br>
+Требуется:
+<br>
+• <a href="https://github.com/libjxl/libjxl">libjxl</a></p>
+    <pre><code class="language-powershell">if (!(Test-Path "output")) { New-Item -ItemType Directory -Name "output" }
+
+Get-ChildItem *.png | ForEach-Object {
+    $basename = $_.BaseName
+    $outputPath = "output/$($basename).jxl"
+    
+    if (Test-Path $outputPath) {
+        Write-Host "Пропуск: $($_.Name) уже обработан." -ForegroundColor Cyan
+    } else {
+        Write-Host "Обработка: $($_.Name)" -ForegroundColor Yellow
+        cjxl $_.FullName "$outputPath" --lossless_jpeg=0 -d 2.5 -e 10
+    }
+}</code></pre>
+        <div class="card-footer">
+            <div class="tags">
+            <span class="tag">libjxl</span>
+        <span class="tag">jxl</span>
+        <span class="tag">png</span>
+            </div>
+            <div class="card-actions">
+                <button class="btn btn-copy" onclick="copyAndEdit(this)">
+                    <svg viewBox="0 0 16 16"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
+                    Редактировать и копировать
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <div class="card">
                 <div class="card-title">JPG (Black &amp; White) → JXL (Black &amp; White)</div>
                 <p class="card-desc">Чёрно-белые изображения из .jpg в .jxl с фиксом на искажение цвета.
                     <br>
@@ -603,7 +642,7 @@ Get-ChildItem *.jpg | ForEach-Object {
 Remove-Item "temp" -Recurse -Force</code></pre>
         <div class="card-footer">
             <div class="tags">
-            <span class="tag">cjxl</span>
+            <span class="tag">libjxl</span>
         <span class="tag">jxl</span>
         <span class="tag">jpg</span>
         <span class="tag">bw</span>
