@@ -479,8 +479,8 @@
         <h2 class="category-title">FFmpeg Video</h2>
 
         <div class="card">
-                <div class="card-title">MP4 → MKV (AV1, Opus, Old Cartoons)</div>
-                <p class="card-desc">Для старых мультфильмов Telecined NTSC с гибридными вставками. Копирует все аудио-дорожки и субтитры. Аудио в Opus 160k Stereo.</p>
+                <div class="card-title">MP4 → MKV (AV1, Opus, Old Cartoons Telecined NTSC, IVTC)</div>
+                <p class="card-desc">Для старых мультфильмов Telecined NTSC с гибридными вставками. Копирует все аудио-дорожки и субтитры. Аудио в Opus 160k Stereo.<br>• "fieldmatch=order=auto" — auto можно заменить на tff (Hybrid Telecined NTSC) или bff (NTSC Hard Telecine (BFF - Bottom Field First)), если не определило автоматически.</p>
     <pre><code class="language-powershell">$outputDir = Join-Path -Path $PWD.Path -ChildPath "output"
 
 if (!(Test-Path -LiteralPath $outputDir)) { 
@@ -497,7 +497,7 @@ Get-ChildItem -LiteralPath $PWD.Path -Filter *.mkv -File | ForEach-Object {
     } else {
         Write-Host "Обработка: $($_.Name)" -ForegroundColor Yellow
         
-        ffmpeg -nostdin -n -i "$inputPath" -hide_banner -vf "fieldmatch=order=tff:combmatch=full,bwdif=mode=send_frame:deint=interlaced,decimate" -c:v libsvtav1 -preset 4 -crf 28 -svtav1-params "tune=0:enable-qm=1:qm-min=8:qm-max=15:chroma-qm-min=14:film-grain=17:enable-tf=0:adaptive-film-grain=1:film-grain-denoise=0:scd=1:keyint=10s:lookahead=32" -pix_fmt yuv420p10le -c:a libopus -b:a 160k -ac 2 -compression_level 10 -c:s copy -map 0 "$outputPath"
+        ffmpeg -nostdin -n -i "$inputPath" -hide_banner -vf "fieldmatch=order=auto:combmatch=full,bwdif=mode=send_frame:deint=interlaced,decimate" -c:v libsvtav1 -preset 4 -crf 28 -svtav1-params "tune=0:enable-qm=1:qm-min=8:qm-max=15:chroma-qm-min=14:film-grain=17:enable-tf=0:adaptive-film-grain=1:film-grain-denoise=0:scd=1:keyint=10s:lookahead=32" -pix_fmt yuv420p10le -c:a libopus -b:a 160k -ac 2 -compression_level 10 -c:s copy -map 0 "$outputPath"
     }
 }</code></pre>
         <div class="card-footer">
