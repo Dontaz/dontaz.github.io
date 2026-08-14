@@ -706,7 +706,10 @@
 			flex-direction: column;
 			border: 2px solid rgba(255, 255, 255, 0.08);
 			background: var(--card-bg);
-			transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+			transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+				box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+				border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+				background 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 			content-visibility: auto;
 			contain-intrinsic-size: 470px;
@@ -760,7 +763,7 @@
 
 			.card-image .blur-layer {
 				object-fit: cover;
-				filter: blur(20px) brightness(0.6);
+				filter: blur(10px) brightness(0.6);
 				transform: scale(1.2);
 				z-index: -1;
 			}
@@ -769,10 +772,10 @@
 				object-fit: contain;
 				z-index: 1;
 				transition: transform 0.4s ease, filter 0.4s ease;
-				will-change: transform;
 			}
 
 		.card:hover .main-layer {
+			will-change: transform;
 			transform: scale(1.05);
 		}
 
@@ -822,8 +825,7 @@
 			font-size: 0.75rem;
 			font-weight: 500;
 			border: 1px solid rgba(255, 255, 255, 0.08);
-			transition: all 0.3s ease;
-			backdrop-filter: blur(4px);
+			transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 			display: inline-flex;
 			align-items: center;
 		}
@@ -1183,6 +1185,13 @@
 				right: 20px;
 			}
 		}
+
+	@media (max-width: 768px) {
+	.card-image .blur-layer {
+		display: none;
+	}
+	}
+
 	</style>
 
 </head>
