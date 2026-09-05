@@ -56,6 +56,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function preventBackgroundScroll(e) {
+    const element = e.currentTarget;
+    const scrollTop = element.scrollTop;
+    const scrollHeight = element.scrollHeight;
+    const height = element.clientHeight;
+    const delta = e.deltaY;
+    const up = delta < 0;
+
+    if (!up && delta + scrollTop > scrollHeight - height) {
+        element.scrollTop = scrollHeight;
+        e.preventDefault();
+    } else if (up && scrollTop + delta <= 0) {
+        element.scrollTop = 0;
+        e.preventDefault();
+    }
+}
+
 function formatDescription(description) {
     return description.replace(
         /\[\[([^\]]+)>>([^\]]+)\]\]/g, 
@@ -65,7 +82,14 @@ function formatDescription(description) {
 
 function closeModal() {
     const modal = document.getElementById('resourceModal');
+    const modalBody = modal.querySelector('.modal-body');
+    
+    if (modalBody) {
+        modalBody.removeEventListener('wheel', preventBackgroundScroll);
+    }
+    
     modal.classList.add('hidden');
+    document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
 }
 
@@ -694,7 +718,13 @@ function showModal(resource) {
     });
     
     modal.classList.remove('hidden');
+    document.body.classList.add('modal-open');
     document.body.style.overflow = 'hidden';
+
+    const modalBody = modal.querySelector('.modal-body');
+    if (modalBody) {
+        modalBody.addEventListener('wheel', preventBackgroundScroll, { passive: false });
+    }
 }
 
 function createFilterMenu() {
