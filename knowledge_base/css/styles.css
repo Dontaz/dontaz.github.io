@@ -576,6 +576,21 @@ html, body {
     margin: 0;
 }
 
+.modal {
+    overscroll-behavior: contain;
+}
+
+body.modal-open {
+    overflow: hidden !important;
+    height: 100vh;
+    position: fixed;
+    width: 100%;
+}
+
+.modal-body {
+    overscroll-behavior: contain;
+}
+
 .page-jump-input:focus {
     outline: none;
     border-color: rgb(59, 130, 246);
