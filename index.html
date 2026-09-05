@@ -48,7 +48,7 @@
         <div class="container mx-auto px-4 py-8">
             <div class="section hero mb-8">
                 <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4 flex items-center justify-center gap-3">
-                    <img src="knowledge_base/logo/cat.avif" alt="Логотип" class="h-12 w-12 rounded-lg shadow-md">
+                    <img src="knowledge_base/logo/cat.avif" alt="♥" class="h-12 w-12 rounded-lg shadow-md">
                     <span>База знаний <span style="color:#93c5fd;">{создатель: <a href="https://dontaz.github.io/personal-page" style="color:#93c5fd;">Dontaz</a>}</span></span>
                 </h1>
                 <p class="text-gray-600 dark:text-gray-300">
@@ -152,28 +152,32 @@
     </div>
 
     <script>
-        const headerButtons = document.getElementById('headerButtons');
-        const scrollToTopButton = document.getElementById('scrollToTop');
+        document.addEventListener('DOMContentLoaded', function() {
+            const headerButtons = document.getElementById('headerButtons');
+            const scrollToTopButton = document.getElementById('scrollToTop');
 
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 0) {
-                headerButtons.classList.add('hidden');
-            } else {
-                headerButtons.classList.remove('hidden');
+            if (headerButtons && scrollToTopButton) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 0) {
+                        headerButtons.classList.add('hidden');
+                    } else {
+                        headerButtons.classList.remove('hidden');
+                    }
+
+                    if (window.scrollY > 300) {
+                        scrollToTopButton.classList.add('visible');
+                    } else {
+                        scrollToTopButton.classList.remove('visible');
+                    }
+                });
+                
+                scrollToTopButton.addEventListener('click', () => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
             }
-
-            if (window.scrollY > 300) {
-                scrollToTopButton.classList.add('visible');
-            } else {
-                scrollToTopButton.classList.remove('visible');
-            }
-
-        });
-        scrollToTopButton.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
         });
     </script>
 
