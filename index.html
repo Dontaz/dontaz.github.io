@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>База знаний</title>
-	
+
 	<link rel="icon" href="knowledge_base/logo/logo.svg" type="knowledge_base/logo/svg+xml">
 	<link rel="alternate icon" href="knowledge_base/logo/logo.ico" type="knowledge_base/logo/x-icon">
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-	
+
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark')
@@ -19,7 +19,7 @@
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
-	
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -107,7 +107,8 @@
     </div>
 
     <button id="scrollToTop"
-            class="scroll-to-top fixed bottom-6 right-6 p-3 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-200 shadow-lg transition-all duration-300"
+            class="scroll-to-top fixed bottom-6 right-6 p-3 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-200 shadow-lg"
+            style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;"
             aria-label="Прокрутить наверх">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
@@ -157,6 +158,9 @@
             const scrollToTopButton = document.getElementById('scrollToTop');
 
             if (headerButtons && scrollToTopButton) {
+                scrollToTopButton.style.opacity = '0';
+                scrollToTopButton.style.pointerEvents = 'none';
+
                 window.addEventListener('scroll', () => {
                     if (window.scrollY > 0) {
                         headerButtons.classList.add('hidden');
@@ -165,12 +169,24 @@
                     }
 
                     if (window.scrollY > 300) {
-                        scrollToTopButton.classList.add('visible');
+                        scrollToTopButton.style.opacity = '1';
+                        scrollToTopButton.style.pointerEvents = 'auto';
                     } else {
-                        scrollToTopButton.classList.remove('visible');
+                        scrollToTopButton.style.opacity = '0';
+                        scrollToTopButton.style.pointerEvents = 'none';
                     }
                 });
-                
+
+                scrollToTopButton.addEventListener('mouseenter', () => {
+                    if (window.scrollY > 300) {
+                        scrollToTopButton.style.transform = 'translateY(-3px)';
+                    }
+                });
+
+                scrollToTopButton.addEventListener('mouseleave', () => {
+                    scrollToTopButton.style.transform = 'translateY(0)';
+                });
+
                 scrollToTopButton.addEventListener('click', () => {
                     window.scrollTo({
                         top: 0,
