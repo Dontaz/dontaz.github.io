@@ -597,6 +597,85 @@ body.modal-open {
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #93c5fd 0%, #60a5fa 100%);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    transition: background 0.3s ease, border 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+    border: 2px solid rgba(255, 255, 255, 1);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+    border: 2px solid rgba(31, 41, 55, 0.8);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+    border: 2px solid rgba(31, 41, 55, 1);
+}
+
+.dark ::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 100%);
+}
+
+html {
+    scrollbar-width: auto;
+    scrollbar-color: #93c5fd rgba(0, 0, 0, 0.05);
+}
+
+html.dark {
+    scrollbar-color: #3b82f6 rgb(28, 37, 49);
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(147, 197, 253, 0.5);
+    border-radius: 4px;
+    border: none;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(147, 197, 253, 0.7);
+}
+
+.dark .modal-body::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.5);
+}
+
+.dark .modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.7);
+}
+
 @media (max-width: 768px) {
 	#closeModal, .favorite-btn {
         width: 32px;
