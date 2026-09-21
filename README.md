@@ -12,6 +12,7 @@
 
 # Список
 
+- [**Хаб с ссылками**](https://dontaz.com)
 - [**База знаний**](https://dontaz.github.io/)
 - [**Simple Chart Builder**](https://dontaz.github.io/other/simple-chart-builder/simple-chart-builder)
 - [**Персональная страница**](https://dontaz.github.io/personal-page) и [**генератор кода для карточек**](https://dontaz.github.io/other/personal-page/generator.html) к ней
