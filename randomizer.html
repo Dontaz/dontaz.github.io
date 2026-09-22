@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="pageTitle">Randomizer</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='6' fill='%23111113' stroke='%2386868c' stroke-width='2'/%3E%3Ccircle cx='10' cy='10' r='2.4' fill='%23eaeaea'/%3E%3Ccircle cx='22' cy='10' r='2.4' fill='%23eaeaea'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='%23eaeaea'/%3E%3Ccircle cx='10' cy='22' r='2.4' fill='%23eaeaea'/%3E%3Ccircle cx='22' cy='22' r='2.4' fill='%23eaeaea'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --surface: #111113;
+    --border: #242427;
+    --border-strong: #35353a;
+    --text: #eaeaea;
+    --muted: #86868c;
+    --muted-2: #5c5c62;
+    --danger: #e05a5a;
+    --success: #6fae8c;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    padding: 40px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    -webkit-font-smoothing: antialiased;
+  }
+  .topbar {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+  }
+  .heading {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  h1 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0;
+    max-width: 440px;
+    line-height: 1.5;
+  }
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .home-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .home-link:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+  .home-link svg {
+    width: 16px;
+    height: 16px;
+  }
+  .lang-switch {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .lang-switch button {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 7px 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .lang-switch button + button {
+    border-left: 1px solid var(--border);
+  }
+  .lang-switch button.active {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .lang-switch button:not(.active):hover {
+    color: var(--text);
+  }
+  .wrap {
+    width: 100%;
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  @media (max-width: 760px) {
+    .wrap { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--surface);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .card h2 {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin: 0;
+  }
+  label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .row {
+    display: flex;
+    gap: 10px;
+  }
+  .row > div { flex: 1; }
+  input[type="number"],
+  input[type="text"],
+  textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 9px 11px;
+    font-size: 0.9rem;
+    font-family: var(--mono);
+  }
+  textarea {
+    font-family: inherit;
+    resize: vertical;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--border-strong);
+    box-shadow: 0 0 0 1px var(--border-strong);
+  }
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .checkbox-row input {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--text);
+  }
+  button {
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    padding: 9px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #cfcfcf; }
+  button:disabled {
+    background: var(--border-strong);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+  button.secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  button.secondary:hover {
+    border-color: var(--border-strong);
+    background: rgba(255,255,255,0.03);
+  }
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .result {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    overflow: hidden;
+  }
+  .result.empty {
+    color: var(--muted-2);
+    font-weight: 400;
+  }
+  .result span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .history {
+    font-size: 0.78rem;
+    color: var(--muted);
+    max-height: 80px;
+    overflow-y: auto;
+    line-height: 1.6;
+    font-family: var(--mono);
+  }
+  .history strong {
+    color: var(--muted);
+    font-family: inherit;
+    font-weight: 600;
+  }
+  .file-drop {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .file-drop:hover, .file-drop.dragover {
+    border-color: var(--border-strong);
+  }
+  .file-drop input { display: none; }
+  .status {
+    font-size: 0.78rem;
+    color: var(--muted);
+    min-height: 16px;
+  }
+  .status.error { color: var(--danger); }
+  .status.ok { color: var(--success); }
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted-2);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  footer {
+    margin-top: 32px;
+    color: var(--muted-2);
+    font-size: 0.75rem;
+    text-align: center;
+    max-width: 560px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="heading">
+    <h1 data-i18n="pageTitle">Randomizer</h1>
+    <p class="subtitle" data-i18n="subtitle">All calculations run locally in your browser. Nothing is sent to a server.</p>
+  </div>
+  <div class="topbar-actions">
+    <a class="home-link" href="https://dontaz.com/" aria-label="Home" title="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 11.5 12 4l9 7.5"/>
+        <path d="M5 10v10h14V10"/>
+      </svg>
+    </a>
+    <div class="lang-switch">
+      <button id="langEn" class="active">EN</button>
+      <button id="langRu">RU</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2 data-i18n="numberHeading">Number</h2>
+
+    <div class="row">
+      <div>
+        <label for="numMin" data-i18n="fromLabel">From</label>
+        <input type="number" id="numMin" value="1">
+      </div>
+      <div>
+        <label for="numMax" data-i18n="toLabel">To</label>
+        <input type="number" id="numMax" value="100">
+      </div>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="noRepeatNum">
+      <label for="noRepeatNum" style="margin:0;" data-i18n="noRepeatNumbers">Don't repeat until range is exhausted</label>
+    </div>
+
+    <div class="result empty" id="numResult"><span>—</span></div>
+
+    <div class="btn-row">
+      <button id="btnGenNum" data-i18n="generateBtn">Generate</button>
+      <button class="secondary" id="btnResetNum" data-i18n="resetBtn">Reset</button>
+    </div>
+
+    <div class="status" id="numStatus"></div>
+    <div class="history" id="numHistory"></div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="listHeading">List</h2>
+
+    <label for="fileInput" data-i18n="uploadLabel">Upload file (.txt, .csv, .tsv, .tab)</label>
+    <div class="file-drop" id="fileDrop">
+      <span id="fileDropText" data-i18n="dropText">Click or drop a file here</span>
+      <input type="file" id="fileInput" accept=".txt,.csv,.tsv,.tab">
+    </div>
+    <div class="status" id="fileStatus"></div>
+
+    <div class="divider" data-i18n="orManual">or paste manually</div>
+
+    <label for="manualList" data-i18n="manualLabel">One item per line, or comma-separated</label>
+    <textarea id="manualList" rows="4" data-i18n-placeholder="manualPlaceholder" placeholder="Anna
+Ben
+Chris"></textarea>
+    <button class="secondary" id="btnLoadManual" data-i18n="loadManualBtn">Load list from text</button>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="noRepeatList">
+      <label for="noRepeatList" style="margin:0;" data-i18n="noRepeatList">Don't repeat until list is exhausted</label>
+    </div>
+
+    <div class="result empty" id="listResult"><span>—</span></div>
+
+    <div class="btn-row">
+      <button id="btnGenList" data-i18n="pickBtn">Pick random</button>
+      <button class="secondary" id="btnResetList" data-i18n="resetUsedBtn">Reset used</button>
+      <button class="secondary" id="btnClearList" data-i18n="clearBtn">Clear list</button>
+    </div>
+
+    <div class="status" id="listStatus"></div>
+    <div class="history" id="listHistory"></div>
+  </div>
+
+</div>
+
+<footer data-i18n="footer">Runs entirely client-side (JavaScript in your browser). Uploaded files never leave your device.</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  const I18N = {
+    en: {
+      pageTitle: "Randomizer",
+      subtitle: "All calculations run locally in your browser. Nothing is sent to a server.",
+      numberHeading: "Number",
+      fromLabel: "From",
+      toLabel: "To",
+      noRepeatNumbers: "Don't repeat until range is exhausted",
+      generateBtn: "Generate",
+      resetBtn: "Reset",
+      historyLabel: "History:",
+      listHeading: "List",
+      uploadLabel: "Upload file (.txt, .csv, .tsv, .tab)",
+      dropText: "Click or drop a file here",
+      orManual: "or paste manually",
+      manualLabel: "One item per line, or comma-separated",
+      manualPlaceholder: "Anna\nBen\nChris",
+      loadManualBtn: "Load list from text",
+      noRepeatList: "Don't repeat until list is exhausted",
+      pickBtn: "Pick random",
+      resetUsedBtn: "Reset used",
+      clearBtn: "Clear list",
+      footer: "Runs entirely client-side (JavaScript in your browser). Uploaded files never leave your device.",
+      errInvalidRange: "Enter valid numbers for From and To.",
+      errAllNumbersUsed: "All numbers in the range have been used. Click Reset.",
+      numRemaining: "{remaining} of {total} remaining.",
+      numReset: "Reset.",
+      errFileType: "Only .txt, .csv, .tsv, .tab files are supported.",
+      errFileRead: "Error reading file.",
+      errNoItemsFound: "No items found in the file.",
+      loadedItems: "Loaded {count} items ({source}).",
+      manual: "manual entry",
+      errEmptyManual: "Enter at least one item in the text field.",
+      errNoList: "Load a list first (file or manual entry).",
+      errAllPicked: "All items have been picked. Click Reset used.",
+      listRemaining: "{remaining} of {total} remaining.",
+      listResetUsed: "Used items reset.",
+      listCleared: "List cleared."
+    },
+    ru: {
+      pageTitle: "Рандомайзер",
+      subtitle: "Все вычисления выполняются локально в браузере. Ничего не отправляется на сервер.",
+      numberHeading: "Число",
+      fromLabel: "От",
+      toLabel: "До",
+      noRepeatNumbers: "Не повторять, пока диапазон не закончится",
+      generateBtn: "Сгенерировать",
+      resetBtn: "Сбросить",
+      historyLabel: "История:",
+      listHeading: "Список",
+      uploadLabel: "Загрузить файл (.txt, .csv, .tsv, .tab)",
+      dropText: "Нажмите или перетащите файл сюда",
+      orManual: "или вставьте вручную",
+      manualLabel: "Один элемент на строку, либо через запятую",
+      manualPlaceholder: "Аня\nБорис\nВера",
+      loadManualBtn: "Загрузить список из текста",
+      noRepeatList: "Не повторять, пока список не закончится",
+      pickBtn: "Выбрать случайно",
+      resetUsedBtn: "Сбросить использованные",
+      clearBtn: "Очистить список",
+      footer: "Всё выполняется на стороне клиента (JavaScript в браузере). Загруженные файлы не покидают устройство.",
+      errInvalidRange: "Укажите корректные числа для «От» и «До».",
+      errAllNumbersUsed: "Все числа диапазона уже использованы. Нажмите «Сбросить».",
+      numRemaining: "Осталось {remaining} из {total}.",
+      numReset: "Сброшено.",
+      errFileType: "Поддерживаются только файлы .txt, .csv, .tsv, .tab.",
+      errFileRead: "Ошибка чтения файла.",
+      errNoItemsFound: "В файле не найдено элементов.",
+      loadedItems: "Загружено {count} элементов ({source}).",
+      manual: "вручную",
+      errEmptyManual: "Введите хотя бы один элемент в текстовое поле.",
+      errNoList: "Сначала загрузите список (файл или вручную).",
+      errAllPicked: "Все элементы уже выбраны. Нажмите «Сбросить использованные».",
+      listRemaining: "Осталось {remaining} из {total}.",
+      listResetUsed: "Использованные элементы сброшены.",
+      listCleared: "Список очищен."
+    }
+  };
+
+  let currentLang = "en";
+
+  function t(key, params) {
+    let str = I18N[currentLang][key] || key;
+    if (params) {
+      Object.keys(params).forEach(k => {
+        str = str.replace("{" + k + "}", params[k]);
+      });
+    }
+    return str;
+  }
+
+  function applyStaticTranslations() {
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      el.textContent = t(el.getAttribute("data-i18n"));
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+      el.setAttribute("placeholder", t(el.getAttribute("data-i18n-placeholder")));
+    });
+    document.getElementById("htmlRoot").setAttribute("lang", currentLang);
+  }
+
+  const langEnBtn = document.getElementById("langEn");
+  const langRuBtn = document.getElementById("langRu");
+
+  function setLang(lang) {
+    currentLang = lang;
+    langEnBtn.classList.toggle("active", lang === "en");
+    langRuBtn.classList.toggle("active", lang === "ru");
+    applyStaticTranslations();
+    renderNumStatus();
+    renderListStatus();
+    renderFileStatus();
+    renderNumHistory();
+    renderListHistory();
+  }
+
+  langEnBtn.addEventListener("click", function () { setLang("en"); });
+  langRuBtn.addEventListener("click", function () { setLang("ru"); });
+
+  const numMinEl = document.getElementById("numMin");
+  const numMaxEl = document.getElementById("numMax");
+  const noRepeatNumEl = document.getElementById("noRepeatNum");
+  const numResultEl = document.getElementById("numResult");
+  const numStatusEl = document.getElementById("numStatus");
+  const numHistoryEl = document.getElementById("numHistory");
+  const btnGenNum = document.getElementById("btnGenNum");
+  const btnResetNum = document.getElementById("btnResetNum");
+
+  let usedNumbers = new Set();
+  let numHistoryLog = [];
+  let numStatusState = null;
+
+  function setNumStatus(key, params, type) {
+    numStatusState = key ? { key, params, type } : null;
+    renderNumStatus();
+  }
+
+  function renderNumStatus() {
+    if (!numStatusState) {
+      numStatusEl.textContent = "";
+      numStatusEl.className = "status";
+      return;
+    }
+    numStatusEl.textContent = t(numStatusState.key, numStatusState.params);
+    numStatusEl.className = "status" + (numStatusState.type ? " " + numStatusState.type : "");
+  }
+
+  function renderNumHistory() {
+    if (numHistoryLog.length === 0) {
+      numHistoryEl.textContent = "";
+      return;
+    }
+    numHistoryEl.innerHTML = "<strong>" + t("historyLabel") + "</strong> " + numHistoryLog.join(", ");
+  }
+
+  function generateNumber() {
+    let min = parseInt(numMinEl.value, 10);
+    let max = parseInt(numMaxEl.value, 10);
+
+    if (Number.isNaN(min) || Number.isNaN(max)) {
+      setNumStatus("errInvalidRange", null, "error");
+      return;
+    }
+    if (min > max) {
+      const tmp = min; min = max; max = tmp;
+    }
+
+    const rangeSize = max - min + 1;
+
+    if (noRepeatNumEl.checked) {
+      if (usedNumbers.size >= rangeSize) {
+        setNumStatus("errAllNumbersUsed", null, "error");
+        return;
+      }
+      const remaining = [];
+      for (let i = min; i <= max; i++) {
+        if (!usedNumbers.has(i)) remaining.push(i);
+      }
+      const candidate = remaining[Math.floor(Math.random() * remaining.length)];
+
+      usedNumbers.add(candidate);
+      numResultEl.innerHTML = "<span>" + candidate + "</span>";
+      numResultEl.classList.remove("empty");
+      numHistoryLog.push(candidate);
+      renderNumHistory();
+      setNumStatus("numRemaining", { remaining: rangeSize - usedNumbers.size, total: rangeSize }, "ok");
+    } else {
+      const num = Math.floor(Math.random() * rangeSize) + min;
+      numResultEl.innerHTML = "<span>" + num + "</span>";
+      numResultEl.classList.remove("empty");
+      numHistoryLog.push(num);
+      renderNumHistory();
+      setNumStatus(null);
+    }
+  }
+
+  btnGenNum.addEventListener("click", generateNumber);
+
+  btnResetNum.addEventListener("click", function () {
+    usedNumbers.clear();
+    numHistoryLog = [];
+    numResultEl.innerHTML = "<span>—</span>";
+    numResultEl.classList.add("empty");
+    renderNumHistory();
+    setNumStatus("numReset", null, "ok");
+  });
+
+  [numMinEl, numMaxEl, noRepeatNumEl].forEach(el => {
+    el.addEventListener("change", function () {
+      usedNumbers.clear();
+      setNumStatus(null);
+    });
+  });
+
+  const fileInput = document.getElementById("fileInput");
+  const fileDrop = document.getElementById("fileDrop");
+  const fileStatusEl = document.getElementById("fileStatus");
+  const manualListEl = document.getElementById("manualList");
+  const btnLoadManual = document.getElementById("btnLoadManual");
+  const noRepeatListEl = document.getElementById("noRepeatList");
+  const listResultEl = document.getElementById("listResult");
+  const listStatusEl = document.getElementById("listStatus");
+  const listHistoryEl = document.getElementById("listHistory");
+  const btnGenList = document.getElementById("btnGenList");
+  const btnResetList = document.getElementById("btnResetList");
+  const btnClearList = document.getElementById("btnClearList");
+
+  let currentList = [];
+  let usedIndexes = new Set();
+  let listHistoryLog = [];
+  let listStatusState = null;
+  let fileStatusState = null;
+
+  function setListStatus(key, params, type) {
+    listStatusState = key ? { key, params, type } : null;
+    renderListStatus();
+  }
+
+  function renderListStatus() {
+    if (!listStatusState) {
+      listStatusEl.textContent = "";
+      listStatusEl.className = "status";
+      return;
+    }
+    listStatusEl.textContent = t(listStatusState.key, listStatusState.params);
+    listStatusEl.className = "status" + (listStatusState.type ? " " + listStatusState.type : "");
+  }
+
+  function setFileStatus(key, params, type) {
+    fileStatusState = key ? { key, params, type } : null;
+    renderFileStatus();
+  }
+
+  function renderFileStatus() {
+    if (!fileStatusState) {
+      fileStatusEl.textContent = "";
+      fileStatusEl.className = "status";
+      return;
+    }
+    fileStatusEl.textContent = t(fileStatusState.key, fileStatusState.params);
+    fileStatusEl.className = "status" + (fileStatusState.type ? " " + fileStatusState.type : "");
+  }
+
+  function renderListHistory() {
+    if (listHistoryLog.length === 0) {
+      listHistoryEl.textContent = "";
+      return;
+    }
+    listHistoryEl.innerHTML = "<strong>" + t("historyLabel") + "</strong> " + listHistoryLog.join(", ");
+  }
+
+  function parseDelimited(text, delimiter) {
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const next = text[i + 1];
+
+      if (inQuotes) {
+        if (char === '"' && next === '"') {
+          field += '"';
+          i++;
+        } else if (char === '"') {
+          inQuotes = false;
+        } else {
+          field += char;
+        }
+      } else {
+        if (char === '"') {
+          inQuotes = true;
+        } else if (char === delimiter) {
+          row.push(field);
+          field = "";
+        } else if (char === "\n") {
+          row.push(field);
+          rows.push(row);
+          row = [];
+          field = "";
+        } else if (char === "\r") {
+        } else {
+          field += char;
+        }
+      }
+    }
+    row.push(field);
+    rows.push(row);
+    return rows;
+  }
+
+  function extractItemsFromRows(rows) {
+    const items = [];
+    rows.forEach(r => {
+      r.forEach(cell => {
+        const trimmed = cell.trim();
+        if (trimmed !== "") items.push(trimmed);
+      });
+    });
+    return items;
+  }
+
+  function parseFileContent(text, filename) {
+    const lower = filename.toLowerCase();
+    let items = [];
+
+    if (lower.endsWith(".csv")) {
+      items = extractItemsFromRows(parseDelimited(text, ","));
+    } else if (lower.endsWith(".tsv") || lower.endsWith(".tab")) {
+      items = extractItemsFromRows(parseDelimited(text, "\t"));
+    } else {
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== "");
+      if (lines.length === 1 && lines[0].includes(",")) {
+        items = lines[0].split(",").map(s => s.trim()).filter(s => s !== "");
+      } else {
+        items = lines;
+      }
+    }
+    return items;
+  }
+
+  function loadList(items, sourceLabel) {
+    if (items.length === 0) {
+      setFileStatus("errNoItemsFound", null, "error");
+      return;
+    }
+    currentList = items;
+    usedIndexes.clear();
+    listHistoryLog = [];
+    renderListHistory();
+    listResultEl.innerHTML = "<span>—</span>";
+    listResultEl.classList.add("empty");
+    setFileStatus("loadedItems", { count: items.length, source: sourceLabel }, "ok");
+    setListStatus(null);
+  }
+
+  function readFile(file) {
+    if (!file) return;
+    const validExt = /\.(txt|csv|tsv|tab)$/i;
+    if (!validExt.test(file.name)) {
+      setFileStatus("errFileType", null, "error");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const text = e.target.result;
+      const items = parseFileContent(text, file.name);
+      loadList(items, file.name);
+    };
+    reader.onerror = function () {
+      setFileStatus("errFileRead", null, "error");
+    };
+    reader.readAsText(file, "UTF-8");
+  }
+
+  fileInput.addEventListener("change", function (e) {
+    readFile(e.target.files[0]);
+  });
+
+  fileDrop.addEventListener("click", function () {
+    fileInput.click();
+  });
+
+  fileDrop.addEventListener("dragover", function (e) {
+    e.preventDefault();
+    fileDrop.classList.add("dragover");
+  });
+  fileDrop.addEventListener("dragleave", function () {
+    fileDrop.classList.remove("dragover");
+  });
+  fileDrop.addEventListener("drop", function (e) {
+    e.preventDefault();
+    fileDrop.classList.remove("dragover");
+    if (e.dataTransfer.files.length > 0) {
+      readFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  btnLoadManual.addEventListener("click", function () {
+    const text = manualListEl.value;
+    if (!text.trim()) {
+      setFileStatus("errEmptyManual", null, "error");
+      return;
+    }
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== "");
+    let items = [];
+    if (lines.length === 1 && lines[0].includes(",")) {
+      items = lines[0].split(",").map(s => s.trim()).filter(s => s !== "");
+    } else {
+      items = lines;
+    }
+    loadList(items, t("manual"));
+  });
+
+  function generateFromList() {
+    if (currentList.length === 0) {
+      setListStatus("errNoList", null, "error");
+      return;
+    }
+
+    if (noRepeatListEl.checked) {
+      if (usedIndexes.size >= currentList.length) {
+        setListStatus("errAllPicked", null, "error");
+        return;
+      }
+      const remainingIndexes = [];
+      for (let i = 0; i < currentList.length; i++) {
+        if (!usedIndexes.has(i)) remainingIndexes.push(i);
+      }
+      const pick = remainingIndexes[Math.floor(Math.random() * remainingIndexes.length)];
+      usedIndexes.add(pick);
+      const item = currentList[pick];
+      listResultEl.innerHTML = "<span>" + item + "</span>";
+      listResultEl.classList.remove("empty");
+      listHistoryLog.push(item);
+      renderListHistory();
+      setListStatus("listRemaining", { remaining: currentList.length - usedIndexes.size, total: currentList.length }, "ok");
+    } else {
+      const pick = Math.floor(Math.random() * currentList.length);
+      const item = currentList[pick];
+      listResultEl.innerHTML = "<span>" + item + "</span>";
+      listResultEl.classList.remove("empty");
+      listHistoryLog.push(item);
+      renderListHistory();
+      setListStatus(null);
+    }
+  }
+
+  btnGenList.addEventListener("click", generateFromList);
+
+  btnResetList.addEventListener("click", function () {
+    usedIndexes.clear();
+    setListStatus("listResetUsed", null, "ok");
+  });
+
+  btnClearList.addEventListener("click", function () {
+    currentList = [];
+    usedIndexes.clear();
+    listHistoryLog = [];
+    renderListHistory();
+    listResultEl.innerHTML = "<span>—</span>";
+    listResultEl.classList.add("empty");
+    manualListEl.value = "";
+    fileInput.value = "";
+    setFileStatus(null);
+    setListStatus("listCleared", null, "ok");
+  });
+
+})();
+</script>
+</body>
+</html>
