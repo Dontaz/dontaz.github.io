@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="crown">
+      <path d="M11 9c0-3 2-5.5 5-5.5s5 2.5 5 5.5v1h-10z"/>
+    </clipPath>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="#15171a"/>
+  <circle cx="16" cy="14" r="5" fill="#6ea8fe"/>
+  <path d="M16 20c-5.5 0-10 2.8-10 7v2h20v-2c0-4.2-4.5-7-10-7z" fill="#6ea8fe"/>
+  <path d="M11 9c0-3 2-5.5 5-5.5s5 2.5 5 5.5v1h-10z" fill="#6ea8fe"/>
+  <rect x="10" y="6.2" width="12" height="4" fill="#15171a" clip-path="url(#crown)"/>
+  <ellipse cx="16" cy="10" rx="9" ry="1.8" fill="#6ea8fe"/>
+</svg>
