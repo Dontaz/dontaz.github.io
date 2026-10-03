@@ -1,0 +1,21 @@
+THIRD-PARTY LICENSES
+====================
+This reader bundles the following third-party libraries in the lib/ folder.
+They are NOT public domain: each keeps its own license, reproduced below.
+The reader's own code (index.html, style.css, app.js) is separate from them.
+
+1. pdf.js 3.11.174 (lib/pdf.min.js, lib/pdf.worker.blob.js)
+   Copyright 2023 Mozilla Foundation and contributors
+   License: Apache License 2.0   https://github.com/mozilla/pdf.js
+   lib/pdf.worker.blob.js contains the unmodified pdf.js worker (pdf.worker.min.js),
+   only wrapped into a JavaScript string so it can run from file:// pages.
+
+2. JSZip 3.10.2 (lib/jszip.min.js)
+   Copyright (c) 2009-2016 Stuart Knightley and contributors
+   JSZip is dual-licensed (MIT or GPLv3); it is used here under the MIT license.
+   https://github.com/Stuk/jszip
+
+3. pako 1.0.11 (included inside lib/jszip.min.js)
+   Copyright (C) 2014-2017 by Vitaly Puzrin and Andrei Tuputcyn
+   License: MIT   https://github.com/nodeca/pako
+   (pako also contains zlib-derived code, (C) 1995-2013 Jean-loup Gailly and Mark Adler, zlib license.)
