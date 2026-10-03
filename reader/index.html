@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book Reader</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon-reader.ico" sizes="48x48">
+<link rel="icon" href="favicon-reader.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-reader.png" type="image/png" sizes="96x96"></head>
+<body>
+<header>
+  <button id="open">Open</button>
+  <span id="title">Book Reader</span>
+  <button id="smaller" title="Smaller text">A−</button>
+  <button id="bigger" title="Larger text">A+</button>
+  <button id="font" title="Switch typeface">Serif</button>
+  <button id="fontFile" title="Load your own font file (.ttf, .otf, .woff, .woff2)">Font file</button>
+  <button id="theme" title="Switch theme">Dark</button>
+  <button id="btnToc">Contents</button>
+  <button id="btnNotes">Notes</button>
+  <button id="btnInfo" title="About this reader">Info</button>
+  <input type="file" id="file" hidden accept=".epub,.fb2,.zip,.txt,.pdf,.html,.htm,.xhtml,.md,.log">
+  <input type="file" id="imp" hidden accept=".json">
+  <input type="file" id="fontInput" hidden accept=".ttf,.otf,.woff,.woff2">
+</header>
+
+<main id="view" tabindex="0">
+  <div id="book"><p class="hint">Open a file or drop it here.<br>EPUB, FB2, FB2.ZIP, PDF, TXT, HTML, MD</p></div>
+</main>
+
+<footer>
+  <button id="prev">‹ Prev</button>
+  <button id="back" hidden>↩ Back</button>
+  <span id="status" title="Click to jump"></span>
+  <button id="next">Next ›</button>
+</footer>
+
+<div id="fn" hidden></div>
+
+<aside id="panel" hidden>
+  <div class="bar"><b id="panelTitle"></b><button id="close">Close</button></div>
+  <div id="tocList"></div>
+  <div id="infoBox" hidden>
+    <p><b>Book Reader</b> is a small, minimalist book reader. It runs entirely in your browser: your files are never uploaded anywhere.</p>
+    <p>Formats: EPUB, FB2, FB2.ZIP, PDF, TXT, HTML, MD. Footnotes open in a popup; Back returns after a link jump.</p>
+    <p>Notes: select text (optional), press Notes, write and add. Export and import notes as a JSON file. Notes, reading position and settings are kept in this browser.</p>
+    <p>Keys: ← → previous / next section or page, Esc closes panels.</p>
+    <p>Main site: <a href="https://dontaz.com" target="_blank" rel="noopener">dontaz.com</a></p>
+    <p class="small">Uses pdf.js (Apache-2.0) and JSZip (MIT). See <a href="https://dontaz.com/reader/lib/THIRD-PARTY-LICENSES.txt" target="_blank" rel="noopener">THIRD-PARTY-LICENSES.txt</a>.</p>
+    <div class="row"><button id="rmFont" hidden>Remove custom font</button></div>
+  </div>
+  <div id="notesBox">
+    <div id="quote"></div>
+    <textarea id="noteText" placeholder="Write a note…"></textarea>
+    <button id="save">Add note</button>
+    <div id="noteList"></div>
+    <div class="row"><button id="exp">Export notes</button><button id="impBtn">Import notes</button></div>
+  </div>
+</aside>
+
+<script src="lib/jszip.min.js"></script>
+<script src="lib/pdf.min.js"></script>
+<script src="lib/pdf.worker.blob.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
