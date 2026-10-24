@@ -42,6 +42,12 @@ const NEWS = [
         categories: ["Сайты", "Игры"]
     },
     {
+        date: "2026-10-18",
+        title: "Новый инструмент: Таймер и секундомер (Timer & Stopwatch)",
+        description: '<a href="https://dontaz.com/timer" target="_blank" rel="noopener">dontaz.com/timer</a>',
+        categories: ["Сайты", "Инструменты"]
+    },
+    {
         date: "2026-10-20",
         title: "Новая игра на сайте: 2048",
         description: '<a href="https://dontaz.com/games/2048" target="_blank" rel="noopener">dontaz.com/games/2048</a>',
