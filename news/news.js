@@ -30,6 +30,24 @@ const NEWS = [
         categories: ["Планы", "Моды"]
     },
     {
+        date: "2026-10-24",
+        title: "Обновление для главной страницы сайта",
+        description: 'Улучшены шрифты. Улучшен дизайн сайта на смартфонах и компьютеров с небольшими экранами. <a href="https://dontaz.com/" target="_blank" rel="noopener">dontaz.com</a>',
+        categories: ["Сайты"]
+    },
+    {
+        date: "2026-10-23",
+        title: "Новая игра на сайте: шахматы",
+        description: '<a href="https://dontaz.com/games/chess" target="_blank" rel="noopener">dontaz.com/games/chess</a>',
+        categories: ["Сайты", "Игры"]
+    },
+    {
+        date: "2026-10-20",
+        title: "Новая игра на сайте: 2048",
+        description: '<a href="https://dontaz.com/games/2048" target="_blank" rel="noopener">dontaz.com/games/2048</a>',
+        categories: ["Сайты", "Игры"]
+    },
+    {
         date: "2026-10-19",
         title: "Новая страница на сайте: Новости моих проектов",
         description: '<a href="https://dontaz.com/news" target="_blank" rel="noopener">dontaz.com/news</a> / <a href="https://dontaz.github.io/news" target="_blank" rel="noopener">dontaz.github.io/news</a>',
@@ -40,6 +58,12 @@ const NEWS = [
         title: "Новый инструмент: Шпаргалка с Alt кодами (Alt Codes Cheat Sheet)",
         description: '<a href="https://dontaz.com/alt-codes" target="_blank" rel="noopener">dontaz.com/alt-codes</a> / <a href="https://dontaz.github.io/alt-codes" target="_blank" rel="noopener">dontaz.github.io/alt-codes</a>',
         categories: ["Сайты", "Инструменты"]
+    },
+    {
+        date: "2026-10-18",
+        title: "Обновление для главной страницы сайта",
+        description: 'Добавлены различные визуальные темы, выбрать можно в правом-верхнем углу сайта. <a href="https://dontaz.com/" target="_blank" rel="noopener">dontaz.com</a>',
+        categories: ["Сайты"]
     },
     {
         date: "2026-10-10",
