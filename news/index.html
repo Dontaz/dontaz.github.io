@@ -11,6 +11,19 @@
 </head>
 
 <style>
+    @font-face {
+        font-family: 'Montserrat';
+        src: url('/fonts/Montserrat-Variable.woff2') format('woff2');
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'JetBrains Mono';
+        src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+        font-weight: 100 800;
+        font-display: swap;
+    }
     :root {
         color-scheme: dark;
 
@@ -34,9 +47,9 @@
         --accent:   var(--blue);
         --radius:   10px;
 
-        --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+        --font: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
                 "Helvetica Neue", Arial, sans-serif;
-        --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     }
 
     * { box-sizing: border-box; }
