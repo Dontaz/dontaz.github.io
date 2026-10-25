@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dontaz HUB</title>
+<meta name="description" content="Dontaz HUB with links">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" type="image/png" sizes="96x96">
+
+<script>
+    try { var t = localStorage.getItem('dontaz-theme'); if (t) document.documentElement.setAttribute('data-theme', t); }
+    catch (e) {}
+</script>
+
+<style>
+    @font-face {
+        font-family: 'Montserrat';
+        src: url('/fonts/Montserrat-Variable.woff2') format('woff2');
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'JetBrains Mono';
+        src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+        font-weight: 100 800;
+        font-display: swap;
+    }
+    :root {
+        color-scheme: dark;
+
+        --bg:      #0e0f11;
+        --surface: #15171a;
+        --surface-h:#191c20;
+        --border:  #24272c;
+        --border-h:#3a3f47;
+        --text:    #e7e9ec;
+        --muted:   #8b9096;
+        --faint:   #5f646b;
+        --accent:  #6ea8fe;
+        --shadow:  0 12px 32px rgba(0,0,0,.45);
+        --radius:  10px;
+
+        --font: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+                "Helvetica Neue", Arial, sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    html[data-theme="latte"] {
+        color-scheme: light;
+        --bg:      #eff1f5;
+        --surface: #e6e9ef;
+        --surface-h:#ccd0da;
+        --border:  #bcc0cc;
+        --border-h:#acb0be;
+        --text:    #4c4f69;
+        --muted:   #6c6f85;
+        --faint:   #9ca0b0;
+        --accent:  #1e66f5;
+        --shadow:  0 12px 32px rgba(76,79,105,.16);
+    }
+
+    html[data-theme="frappe"] {
+        --bg:      #303446;
+        --surface: #292c3c;
+        --surface-h:#414559;
+        --border:  #414559;
+        --border-h:#626880;
+        --text:    #c6d0f5;
+        --muted:   #a5adce;
+        --faint:   #737994;
+        --accent:  #8caaee;
+        --shadow:  0 12px 32px rgba(0,0,0,.4);
+    }
+
+    html[data-theme="macchiato"] {
+        --bg:      #24273a;
+        --surface: #1e2030;
+        --surface-h:#363a4f;
+        --border:  #363a4f;
+        --border-h:#5b6078;
+        --text:    #cad3f5;
+        --muted:   #a5adcb;
+        --faint:   #6e738d;
+        --accent:  #8aadf4;
+        --shadow:  0 12px 32px rgba(0,0,0,.42);
+    }
+
+    html[data-theme="mocha"] {
+        --bg:      #1e1e2e;
+        --surface: #181825;
+        --surface-h:#313244;
+        --border:  #313244;
+        --border-h:#585b70;
+        --text:    #cdd6f4;
+        --muted:   #a6adc8;
+        --faint:   #7f849c;
+        --accent:  #89b4fa;
+        --shadow:  0 12px 32px rgba(0,0,0,.42);
+    }
+
+    .burger { display: none; }
+    .nav-panel { display: flex; align-items: baseline; gap: 18px; }
+
+    * { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+        margin: 0;
+        padding: 56px 24px 80px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        font-size: 15px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        transition: background .2s ease, color .2s ease;
+    }
+
+    .wrap { max-width: 880px; margin: 0 auto; }
+
+    header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 8px;
+    }
+
+    h1 {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+    }
+
+    h1 .dot {
+        color: var(--accent);
+        animation: blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+        0%, 45%, 100% { opacity: 1; }
+        50%, 95% { opacity: .25; }
+    }
+
+    .head-right {
+        display: flex;
+        align-items: baseline;
+        gap: 18px;
+    }
+
+    .theme { position: relative; }
+
+    .theme-trigger {
+        padding: 0;
+        background: none;
+        border: 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--muted);
+        cursor: pointer;
+        transition: color .15s ease;
+    }
+
+    .theme-trigger:hover,
+    .theme-trigger:focus-visible {
+        color: var(--text);
+        outline: none;
+    }
+
+    .theme-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        z-index: 20;
+        min-width: 176px;
+        padding: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-4px);
+        transition: opacity .15s ease, transform .15s ease, visibility .15s;
+    }
+
+    .theme-menu.on {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .theme-group {
+        display: block;
+        padding: 8px 9px 4px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--faint);
+    }
+
+    .theme-group:first-child { padding-top: 4px; }
+
+    .theme-opt {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 7px 9px;
+        background: none;
+        border: 0;
+        border-radius: 7px;
+        font-family: var(--font);
+        font-size: 13.5px;
+        text-align: left;
+        color: var(--muted);
+        cursor: pointer;
+        transition: background .12s ease, color .12s ease;
+    }
+
+    .theme-opt:hover,
+    .theme-opt:focus-visible {
+        background: var(--surface-h);
+        color: var(--text);
+        outline: none;
+    }
+
+    .theme-opt[aria-checked="true"] { color: var(--text); }
+
+    .theme-opt::after {
+        content: "\2713";
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--accent);
+        opacity: 0;
+    }
+
+    .theme-opt[aria-checked="true"]::after { opacity: 1; }
+
+    .counter {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    .head-link {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color .15s ease;
+    }
+    .head-link:hover,
+    .head-link:focus-visible { color: var(--text); outline: none; }
+
+    .tagline {
+        margin: 0 0 32px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .search {
+        position: relative;
+        margin-bottom: 28px;
+    }
+
+    .search input {
+        width: 100%;
+        padding: 11px 40px 11px 14px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text);
+        font: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color .15s ease, background .15s ease;
+    }
+
+    .search input::placeholder { color: var(--faint); }
+
+    .search input:focus {
+        border-color: var(--border-h);
+        background: var(--surface-h);
+    }
+
+    .search kbd {
+        position: absolute;
+        top: 50%;
+        right: 11px;
+        transform: translateY(-50%);
+        padding: 2px 6px;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        pointer-events: none;
+    }
+
+    h2 {
+        margin: 36px 0 14px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    h2:first-of-type { margin-top: 0; }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 10px;
+    }
+
+    .card {
+        display: block;
+        padding: 15px 16px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: inherit;
+        transition: border-color .15s ease, background .15s ease, transform .15s ease;
+    }
+
+    .card:hover,
+    .card:focus-visible {
+        background: var(--surface-h);
+        border-color: var(--border-h);
+        transform: translateY(-1px);
+        outline: none;
+    }
+
+    .card .name {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .card .name .arrow {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 13px;
+        opacity: 0;
+        transform: translateX(-3px);
+        transition: opacity .15s ease, transform .15s ease;
+    }
+
+    .card:hover .arrow,
+    .card:focus-visible .arrow {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .card .desc {
+        margin-top: 3px;
+        font-size: 13px;
+        color: var(--muted);
+    }
+
+    .card .host {
+        display: block;
+        margin-top: 9px;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--faint);
+    }
+
+    footer {
+        margin-top: 44px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--faint);
+    }
+
+    .empty {
+        display: none;
+        padding: 28px 0;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .empty.on { display: block; }
+
+    @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; }
+        h1 .dot { animation: none !important; }
+    }
+
+    @media (max-width: 520px) {
+        body { padding: 36px 16px 60px; }
+        .grid { grid-template-columns: 1fr; }
+        .head-right { gap: 12px; }
+        .head-right { position: relative; align-items: center; }
+
+        .burger {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            width: 38px;
+            height: 36px;
+            padding: 0 10px;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color .15s ease;
+        }
+        .burger:hover, .burger:focus-visible { border-color: var(--border-h); outline: none; }
+        .burger span {
+            display: block;
+            height: 2px;
+            background: var(--muted);
+            border-radius: 2px;
+            transition: transform .2s ease, opacity .2s ease;
+        }
+        .burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+        .burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+        .nav-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            z-index: 30;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 14px;
+            min-width: 200px;
+            padding: 14px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .nav-panel.open { display: flex; }
+        .nav-panel .head-link,
+        .nav-panel .theme-trigger {
+            display: block;
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 7px;
+            text-align: left;
+            font-size: 14px;
+            color: var(--muted);
+            transition: background .12s ease, color .12s ease;
+        }
+        .nav-panel .head-link:hover,
+        .nav-panel .head-link:focus-visible,
+        .nav-panel .theme-trigger:hover,
+        .nav-panel .theme-trigger:focus-visible {
+            background: var(--surface-h);
+            color: var(--text);
+            outline: none;
+        }
+
+        .nav-panel .theme { width: 100%; }
+        .nav-panel .theme-menu {
+            position: static;
+            margin-top: 6px;
+            box-shadow: none;
+            min-width: 0;
+            width: 100%;
+            transform: none;
+        }
+        .nav-panel .theme-menu:not(.on) { display: none; }
+        .nav-panel .theme-menu.on { display: block; }
+
+        .nav-panel .counter { padding: 8px 10px 0; }
+    }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+    <header>
+        <h1>DONTAZ/HUB<span class="dot">.</span></h1>
+        <div class="head-right">
+            <button class="burger" id="burger" type="button" aria-label="Меню"
+                aria-expanded="false" aria-controls="navPanel">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-panel" id="navPanel">
+                <a class="head-link" href="/news" aria-label="News / Новости">news ⬗</a>
+                <div class="theme" id="theme">
+                    <button class="theme-trigger" id="themeTrigger" type="button"
+                        aria-haspopup="true" aria-expanded="false">change theme ▼
+                    </button>
+                    <div class="theme-menu" id="themeMenu" role="menu" aria-labelledby="themeTrigger">
+                        <span class="theme-group">Site</span>
+                        <button class="theme-opt" type="button" role="menuitemradio"
+                            aria-checked="true" data-theme="">Default
+                        </button>
+                        <span class="theme-group">Catppuccin</span>
+                        <button class="theme-opt" type="button" role="menuitemradio"
+                            aria-checked="false" data-theme="latte">Latte
+                        </button>
+                        <button class="theme-opt" type="button" role="menuitemradio"
+                            aria-checked="false" data-theme="frappe">Frappé
+                        </button>
+                        <button class="theme-opt" type="button" role="menuitemradio"
+                            aria-checked="false" data-theme="macchiato">Macchiato
+                        </button>
+                        <button class="theme-opt" type="button" role="menuitemradio"
+                            aria-checked="false" data-theme="mocha">Mocha
+                        </button>
+                    </div>
+                </div>
+                <span class="counter" id="counter"></span>
+            </div>
+        </div>
+    </header>
+
+    <p class="tagline">Start typing to filter</p>
+
+    <div class="search">
+        <input id="filter" type="search" placeholder="Search by name, description, domain…"
+            autocomplete="off" spellcheck="false" aria-label="Filter links">
+        <kbd>/</kbd>
+    </div>
+
+    <div class="empty" id="empty">No results found.</div>
+
+    <h2>Support me / Поддержать меня</h2>
+        <div class="grid">
+
+            <a class="card" href="https://boosty.to/dontaz" target="_blank" rel="noopener">
+                <span class="name">💲 Boosty</span>
+                <span class="desc"></span>
+                <span class="host">boosty.to/dontaz</span>
+            </a>
+
+            <a class="card" href="https://www.donationalerts.com/r/dontaz" target="_blank" rel="noopener">
+                <span class="name">💲 DonationAlerts</span>
+                <span class="desc"></span>
+                <span class="host">donationalerts.com/r/dontaz</span>
+            </a>
+
+        </div>
+
+
+    <h2>Tools / Инструменты</h2>
+        <div class="grid">
+
+            <a class="card" href="https://dontaz.com/knowledge-base" target="_blank" rel="noopener">
+                <span class="name">📚 Knowledge base / База знаний</span>
+                <span class="desc">A knowledge base with recommended reading and information sources on various topics / База знаний с рекомендуемой литературой и источниками информации по различным темам</span>
+                <span class="host">dontaz.com/knowledge-base</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/simple-chart-builder" target="_blank" rel="noopener">
+                <span class="name">📊 Simple Chart Builder / Конструктор графиков</span>
+                <span class="desc">A simple chart builder / Простой конструктор графиков</span>
+                <span class="host">dontaz.com/simple-chart-builder</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/randomizer" target="_blank" rel="noopener">
+                <span class="name">🎲 Randomizer / Генератор случайных чисел и строк</span>
+                <span class="desc">The system supports generating numbers and lines from files in the following formats: «.tsv, .tab, .csv, .txt.» / Поддерживается генерация чисел и строчек из файлов в форматах «.tsv, .tab, .csv, .txt».</span>
+                <span class="host">dontaz.com/randomizer</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/qr-generator" target="_blank" rel="noopener">
+                <span class="name">🔳 QR Code Generator  / Генератор QR кодов</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/qr-generator</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/reader" target="_blank" rel="noopener">
+                <span class="name">📖 Book Reader  / Читалка книг</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/reader</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/alt-codes" target="_blank" rel="noopener">
+                <span class="name">♥︎ Alt Codes  / Alt коды</span>
+                <span class="desc">Alt Codes Cheat Sheet / Шпаргалка с Alt кодами</span>
+                <span class="host">dontaz.com/alt-codes</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/timer" target="_blank" rel="noopener">
+                <span class="name">⏰ Timer & Stopwatch / Таймер & Секундомер</span>
+                <span class="host">dontaz.com/timer</span>
+            </a>
+
+        </div>
+
+
+    <h2>About me / Обо мне</h2>
+        <div class="grid">
+
+            <a class="card" href="https://dontaz.com/personal-page" target="_blank" rel="noopener">
+                <span class="name">ℹ️ My Personal Page / Моя личная страница</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/personal-page</span>
+            </a>
+
+            <a class="card" href="https://github.com/Dontaz" target="_blank" rel="noopener">
+                <span class="name">🐈‍⬛ My GitHub Profile / Мой GitHub профиль</span>
+                <span class="desc"></span>
+                <span class="host">github.com/Dontaz</span>
+            </a>
+
+            <a class="card" href="https://www.youtube.com/@Dontaz" target="_blank" rel="noopener">
+                <span class="name">▶️ My YouTube Profile / Мой YouTube профиль</span>
+                <span class="desc"></span>
+                <span class="host">youtube.com/@Dontaz</span>
+            </a>
+
+            <a class="card" href="https://steamcommunity.com/id/dontaz/" target="_blank" rel="noopener">
+                <span class="name">🎮 My Steam Profile / Мой Steam профиль</span>
+                <span class="desc"></span>
+                <span class="host">steamcommunity.com/id/dontaz</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/top" target="_blank" rel="noopener">
+                <span class="name">🥇 My Tier Lists / Мои оценки (игры и фильмы)</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/top</span>
+            </a>
+
+        </div>
+
+
+    <h2>Mods / Моды</h2>
+        <div class="grid">
+
+            <a class="card" href="https://dontaz.com/mods/the-midnight-walk" target="_blank" rel="noopener">
+                <span class="name">📥 «The Midnight Walk» RU mod / Русификатор для «The Midnight Walk»</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/mods/the-midnight-walk</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/mods/wanderstop" target="_blank" rel="noopener">
+                <span class="name">📥 «Wanderstop» RU mod / Русификатор для «Wanderstop»</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/mods/wanderstop</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/mods/tukoni-fk" target="_blank" rel="noopener">
+                <span class="name">📥 «Tukoni: Forest Keepers» RU mod / Русификатор для «Tukoni: Forest Keepers»</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/mods/tukoni-fk</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/mods/catfall-demo" target="_blank" rel="noopener">
+                <span class="name">📥 «Catfall Demo» RU mod / Русификатор для «Catfall Demo»</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/mods/catfall-demo</span>
+            </a>
+
+        </div>
+
+    <h2>Games / Игры</h2>
+        <div class="grid">
+
+            <a class="card" href="https://dontaz.com/games/chess" target="_blank" rel="noopener">
+                <span class="name">♞ Chess / Шахматы</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/games/chess</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/games/2048" target="_blank" rel="noopener">
+                <span class="name">🎮 2048</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/games/2048</span>
+            </a>
+
+        </div>
+
+
+    <footer>
+        <span>Dontaz/HUB · ≽^•⩊•^≼</span>
+        <span id="stamp"></span>
+    </footer>
+
+</div>
+
+<script>
+    const input   = document.getElementById('filter');
+    const cards   = Array.from(document.querySelectorAll('.card'));
+    const sections= Array.from(document.querySelectorAll('h2'));
+    const grids   = Array.from(document.querySelectorAll('.grid'));
+    const empty   = document.getElementById('empty');
+    const counter = document.getElementById('counter');
+
+    counter.textContent = cards.length + ' links';
+    document.getElementById('stamp').textContent =
+        new Date().toLocaleDateString('en-CA');
+
+    function applyFilter() {
+        const q = input.value.trim().toLowerCase();
+        let shown = 0;
+
+    cards.forEach(card => {
+        const hit = !q || card.textContent.toLowerCase().includes(q);
+        card.style.display = hit ? '' : 'none';
+        if (hit) shown++;
+    });
+
+    grids.forEach((grid, i) => {
+        const any = Array.from(grid.querySelectorAll('.card'))
+                        .some(c => c.style.display !== 'none');
+        const head = grid.previousElementSibling;
+        grid.style.display = any ? '' : 'none';
+        if (head && head.tagName === 'H2') head.style.display = any ? '' : 'none';
+    });
+
+    empty.classList.toggle('on', shown === 0);
+    counter.textContent = (q ? shown + ' of ' : '') + cards.length + ' links';
+  }
+
+    input.addEventListener('input', applyFilter);
+
+    document.addEventListener('keydown', e => {
+        if (e.key === '/' && document.activeElement !== input) {
+            e.preventDefault();
+            input.focus();
+        }
+        if (e.key === 'Escape' && document.activeElement === input) {
+            input.value = '';
+            applyFilter();
+            input.blur();
+        }
+        });
+
+    const root       = document.documentElement;
+    const themeBox   = document.getElementById('theme');
+    const trigger    = document.getElementById('themeTrigger');
+    const menu       = document.getElementById('themeMenu');
+    const options    = Array.from(menu.querySelectorAll('.theme-opt'));
+    const STORE_KEY  = 'dontaz-theme';
+
+    function markActive(name) {
+        options.forEach(opt => {
+            opt.setAttribute('aria-checked',
+                opt.dataset.theme === name ? 'true' : 'false');
+        });
+    }
+
+    function setTheme(name) {
+        if (name) root.setAttribute('data-theme', name);
+        else root.removeAttribute('data-theme');
+        markActive(name);
+        try { localStorage.setItem(STORE_KEY, name); } catch (e) {}
+    }
+
+    function openMenu() {
+        menu.classList.add('on');
+        trigger.setAttribute('aria-expanded', 'true');
+        const active = options.find(o => o.getAttribute('aria-checked') === 'true') || options[0];
+        active.focus();
+    }
+
+    function closeMenu(refocus) {
+        menu.classList.remove('on');
+        trigger.setAttribute('aria-expanded', 'false');
+        if (refocus) trigger.focus();
+    }
+
+    markActive(root.getAttribute('data-theme') || '');
+
+    trigger.addEventListener('click', e => {
+        e.stopPropagation();
+        if (menu.classList.contains('on')) closeMenu(false);
+        else openMenu();
+    });
+
+    options.forEach(opt => {
+        opt.addEventListener('click', () => {
+            setTheme(opt.dataset.theme);
+            closeMenu(true);
+        });
+    });
+
+    menu.addEventListener('keydown', e => {
+        const i = options.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const next = e.key === 'ArrowDown'
+                ? (i + 1) % options.length
+                : (i - 1 + options.length) % options.length;
+            options[next].focus();
+        }
+    });
+
+    document.addEventListener('click', e => {
+        if (!themeBox.contains(e.target)) closeMenu(false);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && menu.classList.contains('on')) closeMenu(true);
+    });
+
+    const burger   = document.getElementById('burger');
+    const navPanel = document.getElementById('navPanel');
+
+    function setNav(open) {
+        navPanel.classList.toggle('open', open);
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    burger.addEventListener('click', e => {
+        e.stopPropagation();
+        setNav(!navPanel.classList.contains('open'));
+    });
+
+    document.addEventListener('click', e => {
+        if (!navPanel.contains(e.target) && e.target !== burger) setNav(false);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && navPanel.classList.contains('open')) {
+            setNav(false);
+            burger.focus();
+        }
+    });
+</script>
+</body>
+</html>
