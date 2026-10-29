@@ -30,6 +30,12 @@ const NEWS = [
         categories: ["Планы", "Моды"]
     },
     {
+        date: "2026-10-29",
+        title: "Улучшение иконок всех страниц на сайтах",
+        description: 'Исправление, улучшение, изменение и оптимизация иконок станиц на сайтах. Это коснулось основной страницы, /knowledge-base, /news, /personal-page, /reader, /timer, /top, /top/games, /games/chess, /games/2048, /alt-codes. <a href="https://dontaz.com/" target="_blank" rel="noopener">dontaz.com</a> / <a href="https://dontaz.github.io" target="_blank" rel="noopener">dontaz.github.io</a>',
+        categories: ["Сайты"]
+    },
+    {
         date: "2026-10-24",
         title: "Обновление для главной страницы сайта",
         description: 'Улучшены шрифты. Улучшен дизайн сайта на смартфонах и компьютеров с небольшими экранами. <a href="https://dontaz.com/" target="_blank" rel="noopener">dontaz.com</a>',
