@@ -12,22 +12,28 @@ const NEWS = [
         categories: ["Планы", "Моды"]
     },
     {
+        date: "2027-02-25",
+        title: "Новая страница на сайте: Tier List (Movies)",
+        description: 'Сделать Tier List — список просмотренных мною фильмов, мультфильмов, сериалов с моими оценками <a href="https://dontaz.com/top/movies" target="_blank" rel="noopener">dontaz.com/top/movies</a> (<a href="https://dontaz.com/top" target="_blank" rel="noopener">dontaz.com/top</a>)',
+        categories: ["Планы", "Сайты"]
+    },
+    {
         date: "2027-01-10",
         title: "Обновление русификатора для игры «Wanderstop» (Версия 1.09)",
         description: "Отредактировать все строки диалогов персонажа Nana и с Nana; Отредактировать все строки диалогов персонажа Zenith и с Zenith.",
         categories: ["Планы", "Моды"]
     },
     {
-        date: "2026-12-25",
-        title: "Новая страница на сайте: Tier List (Movies)",
-        description: 'Сделать Tier List — список просмотренных мною фильмов, мультфильмов, сериалов с моими оценками <a href="https://dontaz.com/top/movies" target="_blank" rel="noopener">dontaz.com/top/movies</a> (<a href="https://dontaz.com/top" target="_blank" rel="noopener">dontaz.com/top</a>)',
-        categories: ["Планы", "Сайты"]
-    },
-    {
-        date: "2026-11-10",
+        date: "2026-11-16",
         title: "Обновление русификатора для игры «Wanderstop» (Версия 1.08)",
         description: "Отредактировать все строки диалогов персонажа Ren и с Ren; Отредактировать все строки диалогов персонажа Rando и с Rando.",
         categories: ["Планы", "Моды"]
+    },
+    {
+        date: "2026-11-05",
+        title: "Сделать новый русификатор для игры «Gloomy Eyes»",
+        description: "Инструменты подготовлены, шрифты сделаны и тестовый перевод некоторых глав уже готов, из-за движка Unity перевод делать сложнее, поэтому неизвестно, сколько это займёт времени. Дата приблизительная.",
+        categories: ["Планы","Моды"]
     },
     {
         date: "2026-10-29",
