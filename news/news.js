@@ -44,7 +44,7 @@ const NEWS = [
     {
         date: "2026-10-24",
         title: "Обновление для главной страницы сайта",
-        description: 'Улучшены шрифты. Улучшен дизайн сайта на смартфонах и компьютеров с небольшими экранами. <a href="https://dontaz.com/" target="_blank" rel="noopener">dontaz.com</a>',
+        description: 'Улучшены шрифты. Улучшен дизайн сайта на смартфонах и компьютерах с небольшими экранами. <a href="https://dontaz.com/" target="_blank" rel="noopener">dontaz.com</a>',
         categories: ["Сайты"]
     },
     {
