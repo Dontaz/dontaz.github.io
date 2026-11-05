@@ -48,6 +48,19 @@
         --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     }
 
+    html[data-theme="ristretto"] {
+        --bg:      #1F0E04;
+        --surface: #2B1006;
+        --surface-h:#5B1A09;
+        --border:  #431307;
+        --border-h:#932C0D;
+        --text:    #FCE4BE;
+        --muted:   #BB9B7E;
+        --faint:   #8E7961;
+        --accent:  #ED7B35;
+        --shadow:  0 12px 32px rgba(0,0,0,.5);
+    }
+    
     html[data-theme="latte"] {
         color-scheme: light;
         --bg:      #eff1f5;
@@ -513,6 +526,9 @@
                         <button class="theme-opt" type="button" role="menuitemradio"
                             aria-checked="true" data-theme="">Default
                         </button>
+                        <button class="theme-opt" type="button" role="menuitemradio"
+                            aria-checked="false" data-theme="ristretto">Ristretto
+                        </button>
                         <span class="theme-group">Catppuccin</span>
                         <button class="theme-opt" type="button" role="menuitemradio"
                             aria-checked="false" data-theme="latte">Latte
@@ -651,6 +667,12 @@
                 <span class="name">📥 «The Midnight Walk» RU mod / Русификатор для «The Midnight Walk»</span>
                 <span class="desc"></span>
                 <span class="host">dontaz.com/mods/the-midnight-walk</span>
+            </a>
+
+            <a class="card" href="https://dontaz.com/mods/gloomy-eyes" target="_blank" rel="noopener">
+                <span class="name">📥 «Gloomy Eyes» RU mod / Русификатор для «Gloomy Eyes»</span>
+                <span class="desc"></span>
+                <span class="host">dontaz.com/mods/gloomy-eyes</span>
             </a>
 
             <a class="card" href="https://dontaz.com/mods/wanderstop" target="_blank" rel="noopener">
