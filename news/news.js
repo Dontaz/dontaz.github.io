@@ -32,12 +32,7 @@ const NEWS = [
     {
         date: "2026-11-06",
         title: "Новый русификатор для игры «Gloomy Eyes» (Версия 1.0)",
-        categories: ["Моды"]
-    },
-    {
-        date: "2026-11-05",
-        title: "Русификатор для игры «Gloomy Eyes»",
-        description: "Закончил перевод всего текста в игре.",
+        description: 'Скачать можно тут <a href="https://dontaz.com/mods/gloomy-eyes" target="_blank" rel="noopener">dontaz.com/mods/gloomy-eyes</a> или тут <a href="https://github.com/Dontaz/GloomyEyes-RU" target="_blank" rel="noopener">github.com/Dontaz/GloomyEyes-RU</a>',
         categories: ["Моды"]
     },
     {
