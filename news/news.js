@@ -30,6 +30,12 @@ const NEWS = [
         categories: ["Планы", "Моды"]
     },
     {
+        date: "2026-11-17",
+        title: "Улучшение персональной страницы",
+        description: 'Повышена стабильность и скорость загрузки сайта. <a href="https://dontaz.com/personal-page" target="_blank" rel="noopener">dontaz.com/personal-page</a> / <a href="https://dontaz.github.io/personal-page" target="_blank" rel="noopener">dontaz.github.io/personal-page</a>',
+        categories: ["Сайты"]
+    },
+    {
         date: "2026-11-13",
         title: "Новый инструмент: Тест декодера изображений (Image Support Test)",
         description: 'Проверьте, какие форматы изображений декодирует ваш браузер. Локальный тест, мгновенный результат и проверка собственного файла. Ничего не отправляется на сервер. Найти можно тут: <a href="https://dontaz.com/image-support" target="_blank" rel="noopener">dontaz.com/image-support</a>',
@@ -138,7 +144,7 @@ const NEWS = [
     {
         date: "2026-09-22",
         title: "Новый инструмент: Randomizer",
-        description: '<a href="https://dontaz.com/randomizer" target="_blank" rel="noopener">dontaz.com/randomizer</a> / <a href="https://dontaz.github.io/randomizer" target="_blank" rel="noopener">dontaz.github.io/randomizer</a>',
+        description: 'Генератор случайных чисел. Найти можно тут: <a href="https://dontaz.com/randomizer" target="_blank" rel="noopener">dontaz.com/randomizer</a> / <a href="https://dontaz.github.io/randomizer" target="_blank" rel="noopener">dontaz.github.io/randomizer</a>',
         categories: ["Сайты", "Инструменты"]
     },
     {
