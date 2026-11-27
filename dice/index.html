@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dontaz DICE</title>
+<meta name="description" content="Dice roller for D&D and board games: d4, d6, d8, d10, d12, d20, d100 and custom dice">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" type="image/png" sizes="96x96">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<script>
+    try { var t = localStorage.getItem('dice-theme'); if (t) document.documentElement.setAttribute('data-theme', t); }
+    catch (e) {}
+</script>
+
+<style>
+    @font-face {
+        font-family: 'Montserrat';
+        src: url('/fonts/Montserrat-Variable.woff2') format('woff2');
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'JetBrains Mono';
+        src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+        font-weight: 100 800;
+        font-display: swap;
+    }
+
+    :root {
+        color-scheme: dark;
+
+        --bg:      #0e0f11;
+        --surface: #15171a;
+        --surface-h:#191c20;
+        --border:  #24272c;
+        --border-h:#3a3f47;
+        --text:    #e7e9ec;
+        --muted:   #8b9096;
+        --faint:   #5f646b;
+        --accent:  #6ea8fe;
+        --good:    #6fcf97;
+        --bad:     #f27d7d;
+        --shadow:  0 12px 32px rgba(0,0,0,.45);
+        --radius:  10px;
+
+        --font: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+                "Helvetica Neue", Arial, sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    html[data-theme="ristretto"] {
+        --bg:#1F0E04; --surface:#2B1006; --surface-h:#5B1A09; --border:#431307; --border-h:#932C0D;
+        --text:#FCE4BE; --muted:#BB9B7E; --faint:#8E7961; --accent:#ED7B35;
+        --good:#a6d189; --bad:#e78284; --shadow:0 12px 32px rgba(0,0,0,.5);
+    }
+    html[data-theme="latte"] {
+        color-scheme: light;
+        --bg:#eff1f5; --surface:#e6e9ef; --surface-h:#ccd0da; --border:#bcc0cc; --border-h:#acb0be;
+        --text:#4c4f69; --muted:#6c6f85; --faint:#9ca0b0; --accent:#1e66f5;
+        --good:#40a02b; --bad:#d20f39; --shadow:0 12px 32px rgba(76,79,105,.16);
+    }
+    html[data-theme="frappe"] {
+        --bg:#303446; --surface:#292c3c; --surface-h:#414559; --border:#414559; --border-h:#626880;
+        --text:#c6d0f5; --muted:#a5adce; --faint:#737994; --accent:#8caaee;
+        --good:#a6d189; --bad:#e78284; --shadow:0 12px 32px rgba(0,0,0,.4);
+    }
+    html[data-theme="macchiato"] {
+        --bg:#24273a; --surface:#1e2030; --surface-h:#363a4f; --border:#363a4f; --border-h:#5b6078;
+        --text:#cad3f5; --muted:#a5adcb; --faint:#6e738d; --accent:#8aadf4;
+        --good:#a6da95; --bad:#ed8796; --shadow:0 12px 32px rgba(0,0,0,.42);
+    }
+    html[data-theme="mocha"] {
+        --bg:#1e1e2e; --surface:#181825; --surface-h:#313244; --border:#313244; --border-h:#585b70;
+        --text:#cdd6f4; --muted:#a6adc8; --faint:#7f849c; --accent:#89b4fa;
+        --good:#a6e3a1; --bad:#f38ba8; --shadow:0 12px 32px rgba(0,0,0,.42);
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+        margin: 0;
+        padding: 56px 24px 80px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        font-size: 15px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        transition: background .2s ease, color .2s ease;
+    }
+
+    button, input { touch-action: manipulation; }
+
+    .wrap { max-width: 880px; margin: 0 auto; }
+
+    header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 8px;
+    }
+
+    h1 {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+    }
+    h1 a { color: inherit; text-decoration: none; transition: color .15s ease; }
+    h1 a:hover, h1 a:focus-visible { color: var(--accent); outline: none; }
+    h1 .dot { color: var(--accent); animation: blink 1.4s ease-in-out infinite; }
+    @keyframes blink { 0%,45%,100% { opacity: 1; } 50%,95% { opacity: .25; } }
+
+    .head-right { display: flex; align-items: baseline; gap: 18px; }
+
+    .dropdown { position: relative; }
+    .trigger {
+        padding: 0; background: none; border: 0;
+        font-family: var(--mono); font-size: 12px; color: var(--muted);
+        cursor: pointer; transition: color .15s ease;
+    }
+    .trigger:hover, .trigger:focus-visible { color: var(--text); outline: none; }
+
+    .menu {
+        position: absolute; top: calc(100% + 10px); right: 0; z-index: 20;
+        min-width: 176px; padding: 6px;
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); box-shadow: var(--shadow);
+        opacity: 0; visibility: hidden; transform: translateY(-4px);
+        transition: opacity .15s ease, transform .15s ease, visibility .15s;
+    }
+    .menu.on { opacity: 1; visibility: visible; transform: translateY(0); }
+
+    .menu-group {
+        display: block; padding: 8px 9px 4px;
+        font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+        text-transform: uppercase; color: var(--faint);
+    }
+    .menu-group:first-child { padding-top: 4px; }
+
+    .menu-opt {
+        display: flex; align-items: center; gap: 10px; width: 100%;
+        padding: 7px 9px; background: none; border: 0; border-radius: 7px;
+        font-family: var(--font); font-size: 13.5px; text-align: left;
+        color: var(--muted); cursor: pointer;
+        transition: background .12s ease, color .12s ease;
+    }
+    .menu-opt:hover, .menu-opt:focus-visible { background: var(--surface-h); color: var(--text); outline: none; }
+    .menu-opt[aria-checked="true"] { color: var(--text); }
+    .menu-opt::after { content: "\2713"; margin-left: auto; font-size: 12px; color: var(--accent); opacity: 0; }
+    .menu-opt[aria-checked="true"]::after { opacity: 1; }
+
+    .tagline { margin: 0 0 32px; color: var(--muted); font-size: 14px; }
+
+    .section-head {
+        display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+        margin: 36px 0 14px;
+    }
+    .tagline + .section-head { margin-top: 0; }
+    h2 {
+        margin: 0;
+        font-size: 14px; font-weight: 600; letter-spacing: .13em;
+        text-transform: uppercase; color: var(--muted);
+    }
+
+    .link-btn {
+        padding: 0; background: none; border: 0;
+        font-family: var(--mono); font-size: 12px; color: var(--muted);
+        cursor: pointer; transition: color .15s ease;
+    }
+    .link-btn:hover:not([disabled]), .link-btn:focus-visible { color: var(--bad); outline: none; }
+    .link-btn[disabled] { opacity: .4; cursor: default; }
+
+    .picker {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+        gap: 10px;
+    }
+
+    .card {
+        display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+        padding: 13px 14px;
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: inherit; font: inherit; text-align: left; cursor: pointer;
+        transition: border-color .15s ease, background .15s ease, transform .15s ease;
+    }
+    .card:hover, .card:focus-visible {
+        background: var(--surface-h); border-color: var(--border-h);
+        transform: translateY(-1px); outline: none;
+    }
+    .card[aria-pressed="true"] { border-color: var(--accent); background: var(--surface-h); }
+    .card .name { font-family: var(--mono); font-weight: 600; font-size: 16px; }
+    .card[aria-pressed="true"] .name { color: var(--accent); }
+    .card .desc { font-size: 12px; color: var(--muted); }
+
+    .custom {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px;
+        margin-top: 10px; padding: 12px 14px;
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius);
+        transition: border-color .15s ease;
+    }
+    .custom.active { border-color: var(--accent); }
+    .custom-label {
+        font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+        text-transform: uppercase; color: var(--muted);
+    }
+    .custom.active .custom-label { color: var(--accent); }
+    .custom-row { display: flex; align-items: center; gap: 8px; }
+    .custom-prefix { font-family: var(--mono); font-weight: 600; color: var(--muted); }
+    .custom input {
+        width: 92px; padding: 8px 10px;
+        background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+        color: var(--text); font-family: var(--mono); font-size: 14px; outline: none;
+        transition: border-color .15s ease, background .15s ease;
+    }
+    .custom input:focus { border-color: var(--border-h); background: var(--surface-h); }
+    .custom input[aria-invalid="true"] { border-color: var(--bad); }
+    .custom input[disabled] { opacity: .5; }
+    .custom-msg { flex-basis: 100%; font-size: 12px; color: var(--faint); }
+    .custom-msg.error { color: var(--bad); }
+
+    .stage {
+        display: flex; flex-direction: column; align-items: center; gap: 18px;
+        padding: 36px 16px 28px;
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow-x: clip;
+    }
+
+    .die-btn {
+        position: relative;
+        display: grid; place-items: center;
+        width: 220px; height: 220px;
+        padding: 0; background: none; border: 0; color: var(--accent);
+        cursor: pointer; perspective: 700px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .die-btn:focus-visible { outline: 1px dashed var(--border-h); outline-offset: 6px; border-radius: var(--radius); }
+    .die-btn[disabled] { cursor: progress; }
+
+    .die {
+        position: relative; width: 100%; height: 100%;
+        display: grid; place-items: center;
+        filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+        transition: transform .2s ease;
+    }
+    .die-btn:not([disabled]):hover .die { transform: scale(1.04) rotate(-2deg); }
+
+    .die svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .die .shape {
+        fill: var(--surface-h); stroke: currentColor; stroke-width: 2.4;
+        stroke-linejoin: round; transition: stroke .2s ease;
+    }
+    .die .edge { fill: none; stroke: currentColor; stroke-width: 1; stroke-linejoin: round; opacity: .35; }
+    .die .pip { fill: var(--text); }
+
+    .value {
+        position: relative;
+        font-family: var(--mono); font-weight: 600;
+        font-size: 64px; line-height: 1; color: var(--text);
+        transform: translateY(var(--dy, 0));
+    }
+    .value.small { font-size: 46px; }
+    .value.pips { display: none; }
+
+    .die.rolling { animation: tumble var(--roll-ms, 1300ms) cubic-bezier(.25,.6,.35,1) both; }
+    .die[data-anim="spin"].rolling   { animation: spin   var(--roll-ms, 1300ms) cubic-bezier(.15,.7,.2,1) both; }
+    .die[data-anim="flip"].rolling   { animation: flip   var(--roll-ms, 1300ms) cubic-bezier(.4,0,.25,1) both; }
+    .die[data-anim="bounce"].rolling { animation: bounce var(--roll-ms, 1300ms) linear both; }
+    .die[data-anim="shake"].rolling  { animation: shake  var(--roll-ms, 1300ms) linear both; }
+    .die[data-anim="drop"].rolling   { animation: drop   var(--roll-ms, 1300ms) linear both; }
+    .die[data-anim="roll"].rolling   { animation: roll   var(--roll-ms, 1300ms) cubic-bezier(.2,.6,.3,1) both; }
+    .die.rolling .shape { stroke: var(--text); }
+    .die.landed { animation: land .5s cubic-bezier(.3,1.6,.5,1) backwards; }
+
+    @keyframes tumble {
+        0%   { transform: translate(0,0) rotate(0) scale(1); }
+        10%  { transform: translate(-26px,-70px) rotate(-100deg) scale(1.08); }
+        24%  { transform: translate(30px,0) rotate(190deg) scale(.96); }
+        38%  { transform: translate(24px,-46px) rotate(360deg) scale(1.05); }
+        52%  { transform: translate(-22px,0) rotate(520deg) scale(.97); }
+        66%  { transform: translate(-12px,-22px) rotate(640deg) scale(1.02); }
+        80%  { transform: translate(8px,0) rotate(700deg) scale(.99); }
+        100% { transform: translate(0,0) rotate(720deg) scale(1); }
+    }
+    @keyframes spin {
+        0%   { transform: rotate(0); }
+        100% { transform: rotate(1080deg); }
+    }
+    @keyframes flip {
+        0%   { transform: translateY(0) rotateX(0) rotateY(0) scale(1); }
+        50%  { transform: translateY(-56px) rotateX(180deg) rotateY(540deg) scale(1.1); }
+        100% { transform: translateY(0) rotateX(360deg) rotateY(1080deg) scale(1); }
+    }
+    @keyframes bounce {
+        0%   { transform: translateY(0) scale(1,1);          animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        14%  { transform: translateY(-84px) scale(.96,1.05); animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        28%  { transform: translateY(0) scale(1.14,.86);     animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        42%  { transform: translateY(-52px) scale(.98,1.03); animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        56%  { transform: translateY(0) scale(1.09,.92);     animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        68%  { transform: translateY(-26px) scale(.99,1.02); animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        79%  { transform: translateY(0) scale(1.05,.96);     animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        88%  { transform: translateY(-9px) scale(1,1);       animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        95%  { transform: translateY(0) scale(1.02,.98);     animation-timing-function: ease-out; }
+        100% { transform: translateY(0) scale(1,1); }
+    }
+    @keyframes shake {
+        0%   { transform: translateX(0) rotate(0); }
+        6%   { transform: translateX(-22px) rotate(-8deg); }
+        12%  { transform: translateX(22px) rotate(8deg); }
+        18%  { transform: translateX(-20px) rotate(-7deg); }
+        24%  { transform: translateX(20px) rotate(7deg); }
+        30%  { transform: translateX(-17px) rotate(-6deg); }
+        36%  { transform: translateX(17px) rotate(6deg); }
+        42%  { transform: translateX(-14px) rotate(-5deg); }
+        48%  { transform: translateX(14px) rotate(5deg); }
+        54%  { transform: translateX(-11px) rotate(-4deg); }
+        60%  { transform: translateX(11px) rotate(4deg); }
+        68%  { transform: translateX(-8px) rotate(-3deg); }
+        76%  { transform: translateX(8px) rotate(3deg); }
+        84%  { transform: translateX(-4px) rotate(-1.5deg); }
+        92%  { transform: translateX(4px) rotate(1.5deg); }
+        100% { transform: translateX(0) rotate(0); }
+    }
+    @keyframes drop {
+        0%   { transform: translateY(-92px) rotate(-240deg) scale(.7); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.9,.6); }
+        38%  { transform: translateY(0) rotate(0) scale(1.12,.88);     opacity: 1; animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        54%  { transform: translateY(-30px) rotate(28deg) scale(1,1);  opacity: 1; animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        68%  { transform: translateY(0) rotate(-10deg) scale(1.06,.94); opacity: 1; animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        82%  { transform: translateY(-9px) rotate(4deg) scale(1,1);    opacity: 1; animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        100% { transform: translateY(0) rotate(0) scale(1,1);          opacity: 1; }
+    }
+    @keyframes roll {
+        0%   { transform: translateX(-104px) rotate(-720deg); }
+        100% { transform: translateX(0) rotate(0); }
+    }
+    @keyframes land {
+        0%   { transform: scale(.88); }
+        60%  { transform: scale(1.07); }
+        100% { transform: scale(1); }
+    }
+
+    .die.crit .shape { stroke: var(--good); }
+    .die.fail .shape { stroke: var(--bad); }
+    .die.crit .value { color: var(--good); }
+    .die.fail .value { color: var(--bad); }
+
+    .status {
+        min-height: 22px;
+        font-family: var(--mono); font-size: 12px; color: var(--muted);
+        text-align: center;
+    }
+    .status b { color: var(--text); font-weight: 600; }
+
+    .btn {
+        padding: 10px 22px;
+        background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+        color: var(--text); font-family: var(--mono); font-size: 13px; cursor: pointer;
+        transition: border-color .15s ease, background .15s ease;
+    }
+    .btn:hover:not([disabled]), .btn:focus-visible { border-color: var(--accent); background: var(--surface-h); outline: none; }
+    .btn[disabled] { opacity: .5; cursor: progress; }
+    .btn kbd {
+        margin-left: 8px; padding: 2px 6px;
+        border: 1px solid var(--border); border-radius: 5px;
+        font-family: var(--mono); font-size: 11px; color: var(--muted);
+    }
+    .custom .btn { padding: 8px 16px; }
+
+    .history {
+        display: flex; flex-wrap: wrap; gap: 8px;
+        margin: 0; padding: 0; list-style: none; min-height: 34px;
+    }
+    .history li {
+        padding: 6px 10px;
+        background: var(--surface); border: 1px solid var(--border); border-radius: 7px;
+        font-family: var(--mono); font-size: 12px; color: var(--muted);
+    }
+    .history li b { color: var(--text); font-weight: 600; margin-left: 4px; }
+    .history li.crit b { color: var(--good); }
+    .history li.fail b { color: var(--bad); }
+    .history .empty { border-style: dashed; color: var(--faint); }
+
+    footer {
+        margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--border);
+        font-family: var(--mono); font-size: 11px; color: var(--faint);
+    }
+    footer a { color: inherit; text-decoration: none; transition: color .15s ease; }
+    footer a:hover, footer a:focus-visible { color: var(--text); outline: none; }
+
+    @media (hover: none), (max-width: 520px) {
+        .btn kbd { display: none; }
+    }
+
+    @media (max-width: 520px) {
+        body { padding: 32px 16px 56px; }
+        header { flex-wrap: wrap; row-gap: 12px; }
+        .head-right { width: 100%; justify-content: space-between; }
+        #themeDropdown .menu { left: 0; right: auto; }
+        .picker { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+        .card { padding: 11px 12px; }
+        .die-btn { width: 190px; height: 190px; }
+        .stage { padding: 32px 12px 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; }
+        h1 .dot { animation: none !important; }
+        .die.rolling, .die.landed { animation: none !important; }
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+    <header>
+        <h1><a href="https://dontaz.com">DONTAZ</a>/DICE<span class="dot">.</span></h1>
+        <div class="head-right">
+            <div class="dropdown" id="themeDropdown">
+                <button class="trigger" type="button" aria-haspopup="true" aria-expanded="false">change theme &#9660;</button>
+                <div class="menu" role="menu">
+                    <span class="menu-group">Site</span>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="true" data-value="">Default</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="ristretto">Ristretto</button>
+                    <span class="menu-group">Catppuccin</span>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="latte">Latte</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="frappe">Frapp&eacute;</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="macchiato">Macchiato</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="mocha">Mocha</button>
+                </div>
+            </div>
+            <div class="dropdown" id="animDropdown">
+                <button class="trigger" type="button" aria-haspopup="true" aria-expanded="false">change animation &#9660;</button>
+                <div class="menu" role="menu">
+                    <span class="menu-group">Roll animation</span>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="true" data-value="tumble">Tumble</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="spin">Spin</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="flip">Flip</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="bounce">Bounce</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="shake">Shake</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="drop">Drop</button>
+                    <button class="menu-opt" type="button" role="menuitemradio" aria-checked="false" data-value="roll">Roll</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <p class="tagline">Pick a die, press it to roll.</p>
+
+    <div class="section-head"><h2>Die</h2></div>
+    <div class="picker" id="picker" role="group" aria-label="Choose a die"></div>
+
+    <form class="custom" id="customForm" novalidate>
+        <label class="custom-label" for="customSides">Custom die</label>
+        <div class="custom-row">
+            <span class="custom-prefix">d</span>
+            <input id="customSides" type="number" inputmode="numeric" min="2" max="1000" step="1" value="99" autocomplete="off" aria-describedby="customMsg">
+            <button class="btn" id="customBtn" type="submit">Select</button>
+        </div>
+        <span class="custom-msg" id="customMsg" role="status">Any whole number of sides from 2 to 1000</span>
+    </form>
+
+    <div class="section-head"><h2>Roll</h2></div>
+    <div class="stage">
+        <button class="die-btn" id="dieBtn" type="button" aria-label="Roll the die">
+            <div class="die" id="die">
+                <svg id="dieSvg" viewBox="0 0 100 100" aria-hidden="true"></svg>
+                <span class="value" id="value">?</span>
+            </div>
+        </button>
+        <div class="status" id="status" role="status" aria-live="polite">Press the die to roll</div>
+        <button class="btn" id="rollBtn" type="button">Roll<kbd>Space</kbd></button>
+    </div>
+
+    <div class="section-head">
+        <h2>History</h2>
+        <button class="link-btn" id="clearBtn" type="button">Clear history</button>
+    </div>
+    <ul class="history" id="history"></ul>
+
+    <footer>
+        <a href="https://dontaz.com">dontaz.com</a>
+    </footer>
+
+</div>
+
+<script>
+(function () {
+    const MIN_SIDES = 2;
+    const MAX_SIDES = 1000;
+    const HISTORY_LIMIT = 12;
+    const THEME_KEY = 'dice-theme';
+    const ANIM_KEY = 'dice-anim';
+    const HISTORY_KEY = 'dice-history';
+    const ANIMS = ['tumble', 'spin', 'flip', 'bounce', 'shake', 'drop', 'roll'];
+
+    const DICE = [
+        { sides: 4,   label: 'd4',   desc: 'Tetrahedron' },
+        { sides: 6,   label: 'd6',   desc: 'Classic' },
+        { sides: 8,   label: 'd8',   desc: 'Octahedron' },
+        { sides: 10,  label: 'd10',  desc: 'Decahedron' },
+        { sides: 12,  label: 'd12',  desc: 'Dodecahedron' },
+        { sides: 20,  label: 'd20',  desc: 'D&D standard' },
+        { sides: 100, label: 'd100', desc: 'Percentile' }
+    ];
+
+    const poly = (n, r, rot) => Array.from({ length: n }, (_, i) => {
+        const a = rot + i * 2 * Math.PI / n;
+        return [(50 + r * Math.cos(a)).toFixed(1), (50 + r * Math.sin(a)).toFixed(1)].join(',');
+    }).join(' ');
+
+    const SHAPES = {
+        4:   { svg: '<polygon class="shape" points="50,8 95,88 5,88"/><polyline class="edge" points="50,8 50,62 5,88 50,62 95,88"/>', dy: '14px' },
+        6:   { svg: '<rect class="shape" x="10" y="10" width="80" height="80" rx="14"/>', dy: '0px' },
+        8:   { svg: '<polygon class="shape" points="50,4 94,50 50,96 6,50"/><polyline class="edge" points="6,50 94,50"/>', dy: '0px' },
+        10:  { svg: '<polygon class="shape" points="50,4 93,40 50,96 7,40"/><polyline class="edge" points="7,40 50,52 93,40 50,52 50,96"/>', dy: '2px' },
+        12:  { svg: '<polygon class="shape" points="' + poly(5, 46, -Math.PI / 2) + '"/><polygon class="edge" points="' + poly(5, 23, Math.PI / 2) + '"/>', dy: '3px' },
+        20:  { svg: '<polygon class="shape" points="' + poly(6, 46, -Math.PI / 2) + '"/><polygon class="edge" points="' + poly(3, 46, -Math.PI / 2) + '"/><polygon class="edge" points="' + poly(3, 46, Math.PI / 2) + '"/>', dy: '0px' },
+        100: { svg: '<polygon class="shape" points="50,4 93,40 50,96 7,40"/><polyline class="edge" points="7,40 50,52 93,40 50,52 50,96"/>', dy: '2px' }
+    };
+
+    const CUSTOM_SHAPE = {
+        svg: '<polygon class="shape" points="' + poly(8, 46, -Math.PI / 2 + Math.PI / 8) + '"/><polygon class="edge" points="' + poly(8, 24, -Math.PI / 2 + Math.PI / 8) + '"/>',
+        dy: '0px'
+    };
+
+    const PIPS = {
+        1: [[50,50]],
+        2: [[30,30],[70,70]],
+        3: [[30,30],[50,50],[70,70]],
+        4: [[30,30],[70,30],[30,70],[70,70]],
+        5: [[30,30],[70,30],[50,50],[30,70],[70,70]],
+        6: [[30,28],[70,28],[30,50],[70,50],[30,72],[70,72]]
+    };
+
+    const $ = id => document.getElementById(id);
+    const picker = $('picker'), die = $('die'), dieSvg = $('dieSvg'), valueEl = $('value'),
+          statusEl = $('status'), dieBtn = $('dieBtn'), rollBtn = $('rollBtn'),
+          historyEl = $('history'), clearBtn = $('clearBtn'),
+          customForm = $('customForm'), customInput = $('customSides'),
+          customBtn = $('customBtn'), customMsg = $('customMsg');
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function storeGet(key) {
+        try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function storeSet(key, value) {
+        try { localStorage.setItem(key, value); } catch (e) {}
+    }
+    function storeRemove(key) {
+        try { localStorage.removeItem(key); } catch (e) {}
+    }
+
+    function loadHistory() {
+        try {
+            const data = JSON.parse(storeGet(HISTORY_KEY));
+            if (!Array.isArray(data)) return [];
+            return data
+                .filter(h => h && typeof h.label === 'string' && /^d\d{1,4}$/.test(h.label) &&
+                             Number.isInteger(h.value) && h.value >= 1)
+                .slice(0, HISTORY_LIMIT)
+                .map(h => ({ label: h.label, value: h.value, crit: h.crit === true, fail: h.fail === true }));
+        } catch (e) {
+            return [];
+        }
+    }
+
+    const history = loadHistory();
+    let current = DICE[5];
+    let rolling = false;
+    let animName = ANIMS.includes(storeGet(ANIM_KEY)) ? storeGet(ANIM_KEY) : 'tumble';
+
+    function randInt(max) {
+        const range = 0x100000000;
+        const limit = range - (range % max);
+        const buf = new Uint32Array(1);
+        do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
+        return (buf[0] % max) + 1;
+    }
+
+    function pipsSvg(n) {
+        return PIPS[n].map(p => '<circle class="pip" cx="' + p[0] + '" cy="' + p[1] + '" r="7.5"/>').join('');
+    }
+
+    function usesPips() {
+        return !current.custom && current.sides === 6;
+    }
+
+    function show(n) {
+        if (usesPips()) {
+            valueEl.classList.add('pips');
+            dieSvg.querySelectorAll('.pip').forEach(e => e.remove());
+            dieSvg.insertAdjacentHTML('beforeend', pipsSvg(n));
+        } else {
+            valueEl.textContent = n;
+            valueEl.classList.toggle('small', String(n).length > 2);
+        }
+    }
+
+    function drawDie() {
+        const shape = current.custom ? CUSTOM_SHAPE : SHAPES[current.sides];
+        dieSvg.innerHTML = shape.svg;
+        die.style.setProperty('--dy', shape.dy);
+        valueEl.style.setProperty('--dy', shape.dy);
+        die.classList.remove('crit', 'fail', 'rolling', 'landed');
+        valueEl.classList.remove('pips', 'small');
+        valueEl.textContent = '?';
+        statusEl.textContent = 'Press the die to roll';
+    }
+
+    function selectDie(d) {
+        current = d;
+        picker.querySelectorAll('.card').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.sides === String(d.sides) && !d.custom)));
+        customForm.classList.toggle('active', Boolean(d.custom));
+        drawDie();
+    }
+
+    function buildPicker() {
+        DICE.forEach(d => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'card';
+            b.dataset.sides = d.sides;
+            b.setAttribute('aria-pressed', String(d === current));
+            const name = document.createElement('span');
+            name.className = 'name';
+            name.textContent = d.label;
+            const desc = document.createElement('span');
+            desc.className = 'desc';
+            desc.textContent = d.desc;
+            b.append(name, desc);
+            b.addEventListener('click', () => {
+                if (rolling) return;
+                selectDie(d);
+            });
+            picker.appendChild(b);
+        });
+    }
+
+    function setCustomMessage(text, isError) {
+        customMsg.textContent = text;
+        customMsg.classList.toggle('error', isError);
+        customInput.setAttribute('aria-invalid', String(isError));
+    }
+
+    customForm.addEventListener('submit', e => {
+        e.preventDefault();
+        if (rolling) return;
+        const n = Number(customInput.value.trim());
+        if (customInput.value.trim() === '' || !Number.isInteger(n) || n < MIN_SIDES || n > MAX_SIDES) {
+            setCustomMessage('Enter a whole number from ' + MIN_SIDES + ' to ' + MAX_SIDES, true);
+            return;
+        }
+        setCustomMessage('Custom d' + n + ' selected', false);
+        selectDie({ sides: n, label: 'd' + n, custom: true });
+    });
+
+    function renderHistory() {
+        historyEl.replaceChildren();
+        clearBtn.disabled = history.length === 0;
+        if (!history.length) {
+            const li = document.createElement('li');
+            li.className = 'empty';
+            li.textContent = 'No rolls yet';
+            historyEl.appendChild(li);
+            return;
+        }
+        history.forEach(h => {
+            const li = document.createElement('li');
+            if (h.crit) li.className = 'crit';
+            if (h.fail) li.className = 'fail';
+            const b = document.createElement('b');
+            b.textContent = h.value;
+            li.append(h.label, b);
+            historyEl.appendChild(li);
+        });
+    }
+
+    function saveHistory() {
+        storeSet(HISTORY_KEY, JSON.stringify(history));
+    }
+
+    clearBtn.addEventListener('click', () => {
+        history.length = 0;
+        storeRemove(HISTORY_KEY);
+        renderHistory();
+    });
+
+    function setBusy(busy) {
+        rolling = busy;
+        dieBtn.disabled = busy;
+        rollBtn.disabled = busy;
+        customInput.disabled = busy;
+        customBtn.disabled = busy;
+    }
+
+    function roll() {
+        if (rolling) return;
+        setBusy(true);
+
+        const rolled = current;
+        const result = randInt(rolled.sides);
+        const duration = reduceMotion.matches ? 250 : 1300;
+
+        die.classList.remove('crit', 'fail', 'landed', 'rolling');
+        void die.offsetWidth;
+        die.dataset.anim = animName;
+        die.style.setProperty('--roll-ms', duration + 'ms');
+        die.classList.add('rolling');
+        statusEl.textContent = 'Rolling\u2026';
+
+        const start = performance.now();
+        let lastShown = 0;
+        let nextTick = 0;
+
+        function frame(now) {
+            const t = Math.min((now - start) / duration, 1);
+            if (now >= nextTick && t < 1) {
+                let n;
+                do { n = randInt(rolled.sides); } while (n === lastShown && rolled.sides > 1);
+                lastShown = n;
+                show(n);
+                nextTick = now + 45 + t * t * 260;
+            }
+            if (t < 1) { requestAnimationFrame(frame); return; }
+            finish();
+        }
+
+        function finish() {
+            show(result);
+            die.classList.remove('rolling');
+            void die.offsetWidth;
+            die.classList.add('landed');
+
+            const crit = rolled.sides === 20 && result === 20;
+            const fail = rolled.sides === 20 && result === 1;
+            die.classList.toggle('crit', crit);
+            die.classList.toggle('fail', fail);
+
+            statusEl.innerHTML = rolled.label + ' &rarr; <b>' + result + '</b>' +
+                (crit ? ' &middot; natural 20' : fail ? ' &middot; natural 1' : '');
+
+            history.unshift({ label: rolled.label, value: result, crit, fail });
+            if (history.length > HISTORY_LIMIT) history.length = HISTORY_LIMIT;
+            saveHistory();
+            renderHistory();
+            setBusy(false);
+        }
+
+        requestAnimationFrame(frame);
+    }
+
+    dieBtn.addEventListener('click', roll);
+    rollBtn.addEventListener('click', roll);
+    document.addEventListener('keydown', e => {
+        if (e.code !== 'Space' || e.repeat) return;
+        const tag = document.activeElement && document.activeElement.tagName;
+        if (tag === 'BUTTON' || tag === 'INPUT' || tag === 'A') return;
+        e.preventDefault();
+        roll();
+    });
+
+    const dropdowns = [];
+
+    function initDropdown(root, onPick) {
+        const trigger = root.querySelector('.trigger');
+        const menu = root.querySelector('.menu');
+        const options = Array.from(menu.querySelectorAll('.menu-opt'));
+        const api = {
+            root,
+            close() {
+                menu.classList.remove('on');
+                trigger.setAttribute('aria-expanded', 'false');
+            },
+            mark(value) {
+                options.forEach(o => o.setAttribute('aria-checked', String(o.dataset.value === value)));
+            }
+        };
+        trigger.addEventListener('click', e => {
+            e.stopPropagation();
+            const open = !menu.classList.contains('on');
+            dropdowns.forEach(d => d.close());
+            if (open) {
+                menu.classList.add('on');
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+        });
+        options.forEach(o => o.addEventListener('click', () => {
+            onPick(o.dataset.value);
+            api.close();
+        }));
+        dropdowns.push(api);
+        return api;
+    }
+
+    document.addEventListener('click', e => {
+        dropdowns.forEach(d => { if (!d.root.contains(e.target)) d.close(); });
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') dropdowns.forEach(d => d.close());
+    });
+
+    const themeMenu = initDropdown($('themeDropdown'), value => {
+        if (value) document.documentElement.setAttribute('data-theme', value);
+        else document.documentElement.removeAttribute('data-theme');
+        if (value) storeSet(THEME_KEY, value); else storeRemove(THEME_KEY);
+        themeMenu.mark(value);
+    });
+    themeMenu.mark(document.documentElement.getAttribute('data-theme') || '');
+
+    const animMenu = initDropdown($('animDropdown'), value => {
+        if (!ANIMS.includes(value)) return;
+        animName = value;
+        storeSet(ANIM_KEY, value);
+        animMenu.mark(value);
+    });
+    animMenu.mark(animName);
+
+    buildPicker();
+    drawDie();
+    renderHistory();
+})();
+</script>
+</body>
+</html>
