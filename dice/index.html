@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dontaz DICE</title>
-<meta name="description" content="Dice roller for D&D and board games: d4, d6, d8, d10, d12, d20, d100 and custom dice">
+<meta name="description" content="Dice roller for D&D and board games: d4, d6, d8, d10, d12, d20, d100, custom dice and multiple dice at once">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.png" type="image/png" sizes="96x96">
@@ -202,32 +202,68 @@
     .card[aria-pressed="true"] .name { color: var(--accent); }
     .card .desc { font-size: 12px; color: var(--muted); }
 
-    .custom {
+    .panel {
         display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px;
         margin-top: 10px; padding: 12px 14px;
         background: var(--surface); border: 1px solid var(--border);
         border-radius: var(--radius);
         transition: border-color .15s ease;
     }
-    .custom.active { border-color: var(--accent); }
-    .custom-label {
+    .panel.active { border-color: var(--accent); }
+    .panel-label {
         font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
         text-transform: uppercase; color: var(--muted);
     }
-    .custom.active .custom-label { color: var(--accent); }
-    .custom-row { display: flex; align-items: center; gap: 8px; }
-    .custom-prefix { font-family: var(--mono); font-weight: 600; color: var(--muted); }
-    .custom input {
+    .panel.active .panel-label { color: var(--accent); }
+    .panel-row { display: flex; align-items: center; gap: 8px; }
+    .panel-prefix { font-family: var(--mono); font-weight: 600; color: var(--muted); }
+    .panel input[type="number"] {
         width: 92px; padding: 8px 10px;
         background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
         color: var(--text); font-family: var(--mono); font-size: 14px; outline: none;
         transition: border-color .15s ease, background .15s ease;
     }
-    .custom input:focus { border-color: var(--border-h); background: var(--surface-h); }
-    .custom input[aria-invalid="true"] { border-color: var(--bad); }
-    .custom input[disabled] { opacity: .5; }
-    .custom-msg { flex-basis: 100%; font-size: 12px; color: var(--faint); }
-    .custom-msg.error { color: var(--bad); }
+    .panel input[type="number"]:focus { border-color: var(--border-h); background: var(--surface-h); }
+    .panel input[aria-invalid="true"] { border-color: var(--bad); }
+    .panel input[disabled] { opacity: .5; }
+    .panel-msg { flex-basis: 100%; font-size: 12px; color: var(--faint); }
+    .panel-msg.error { color: var(--bad); }
+
+    .count-head {
+        flex-basis: 100%;
+        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .count-head input[type="number"] { width: 76px; text-align: center; }
+
+    .range {
+        flex-basis: 100%;
+        -webkit-appearance: none; appearance: none;
+        width: 100%; height: 32px; margin: 0; padding: 0;
+        background: transparent; cursor: pointer;
+        --pct: 0%;
+    }
+    .range:focus { outline: none; }
+    .range::-webkit-slider-runnable-track {
+        height: 6px; border-radius: 3px;
+        background: linear-gradient(to right, var(--accent) var(--pct), var(--border-h) var(--pct));
+    }
+    .range::-moz-range-track { height: 6px; border-radius: 3px; background: var(--border-h); }
+    .range::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--accent); }
+    .range::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none;
+        width: 22px; height: 22px; margin-top: -8px;
+        border-radius: 50%; border: 2px solid var(--accent); background: var(--text);
+        transition: transform .15s ease;
+    }
+    .range::-moz-range-thumb {
+        width: 18px; height: 18px;
+        border-radius: 50%; border: 2px solid var(--accent); background: var(--text);
+    }
+    .range:hover:not([disabled])::-webkit-slider-thumb,
+    .range:focus-visible::-webkit-slider-thumb { transform: scale(1.12); }
+    .range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px var(--surface-h); }
+    .range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px var(--surface-h); }
+    .range[disabled] { opacity: .5; cursor: progress; }
 
     .stage {
         display: flex; flex-direction: column; align-items: center; gap: 18px;
@@ -237,60 +273,75 @@
         overflow-x: clip;
     }
 
-    .die-btn {
-        position: relative;
-        display: grid; place-items: center;
-        width: 220px; height: 220px;
+    .tray-btn {
+        display: block; width: 100%;
         padding: 0; background: none; border: 0; color: var(--accent);
-        cursor: pointer; perspective: 700px;
+        font: inherit; cursor: pointer;
         -webkit-tap-highlight-color: transparent;
     }
-    .die-btn:focus-visible { outline: 1px dashed var(--border-h); outline-offset: 6px; border-radius: var(--radius); }
-    .die-btn[disabled] { cursor: progress; }
+    .tray-btn:focus-visible { outline: 1px dashed var(--border-h); outline-offset: 6px; border-radius: var(--radius); }
+    .tray-btn[disabled] { cursor: progress; }
 
-    .die {
-        position: relative; width: 100%; height: 100%;
+    .tray {
+        --size: 220px;
+        --k: 1;
+        --dy: 0;
+        display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
+        gap: calc(var(--size) * .12);
+        min-height: var(--size);
+    }
+
+    .cube {
+        position: relative; flex: none;
         display: grid; place-items: center;
-        filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+        width: var(--size); height: var(--size);
+        filter: drop-shadow(0 calc(var(--k) * 10px) calc(var(--k) * 18px) rgba(0,0,0,.35));
         transition: transform .2s ease;
     }
-    .die-btn:not([disabled]):hover .die { transform: scale(1.04) rotate(-2deg); }
+    .tray.dense .cube { filter: none; }
+    .tray-btn:not([disabled]):hover .cube { transform: scale(1.04) rotate(-2deg); }
 
-    .die svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-    .die .shape {
+    .cube svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .cube .shape {
         fill: var(--surface-h); stroke: currentColor; stroke-width: 2.4;
         stroke-linejoin: round; transition: stroke .2s ease;
     }
-    .die .edge { fill: none; stroke: currentColor; stroke-width: 1; stroke-linejoin: round; opacity: .35; }
-    .die .pip { fill: var(--text); }
+    .cube .edge { fill: none; stroke: currentColor; stroke-width: 1; stroke-linejoin: round; opacity: .35; }
+    .cube .pip { fill: var(--text); }
 
     .value {
         position: relative;
         font-family: var(--mono); font-weight: 600;
-        font-size: 64px; line-height: 1; color: var(--text);
-        transform: translateY(var(--dy, 0));
+        font-size: calc(var(--size) * .29); line-height: 1; color: var(--text);
+        transform: translateY(calc(var(--dy) * var(--k) * 1px));
     }
-    .value.small { font-size: 46px; }
+    .value.small { font-size: calc(var(--size) * .21); }
     .value.pips { display: none; }
 
-    .die.rolling { animation: tumble var(--roll-ms, 1300ms) cubic-bezier(.25,.6,.35,1) both; }
-    .die[data-anim="spin"].rolling   { animation: spin   var(--roll-ms, 1300ms) cubic-bezier(.15,.7,.2,1) both; }
-    .die[data-anim="flip"].rolling   { animation: flip   var(--roll-ms, 1300ms) cubic-bezier(.4,0,.25,1) both; }
-    .die[data-anim="bounce"].rolling { animation: bounce var(--roll-ms, 1300ms) linear both; }
-    .die[data-anim="shake"].rolling  { animation: shake  var(--roll-ms, 1300ms) linear both; }
-    .die[data-anim="drop"].rolling   { animation: drop   var(--roll-ms, 1300ms) linear both; }
-    .die[data-anim="roll"].rolling   { animation: roll   var(--roll-ms, 1300ms) cubic-bezier(.2,.6,.3,1) both; }
-    .die.rolling .shape { stroke: var(--text); }
-    .die.landed { animation: land .5s cubic-bezier(.3,1.6,.5,1) backwards; }
+    .tray.rolling .cube {
+        animation-name: tumble;
+        animation-duration: var(--roll-ms, 1300ms);
+        animation-timing-function: cubic-bezier(.25,.6,.35,1);
+        animation-fill-mode: both;
+        animation-delay: var(--delay, 0ms);
+    }
+    .tray.rolling[data-anim="spin"] .cube   { animation-name: spin;   animation-timing-function: cubic-bezier(.15,.7,.2,1); }
+    .tray.rolling[data-anim="flip"] .cube   { animation-name: flip;   animation-timing-function: cubic-bezier(.4,0,.25,1); }
+    .tray.rolling[data-anim="bounce"] .cube { animation-name: bounce; animation-timing-function: linear; }
+    .tray.rolling[data-anim="shake"] .cube  { animation-name: shake;  animation-timing-function: linear; }
+    .tray.rolling[data-anim="drop"] .cube   { animation-name: drop;   animation-timing-function: linear; }
+    .tray.rolling[data-anim="roll"] .cube   { animation-name: roll;   animation-timing-function: cubic-bezier(.2,.6,.3,1); }
+    .tray.rolling .shape { stroke: var(--text); }
+    .tray.landed .cube { animation: land .5s cubic-bezier(.3,1.6,.5,1) backwards; }
 
     @keyframes tumble {
         0%   { transform: translate(0,0) rotate(0) scale(1); }
-        10%  { transform: translate(-26px,-70px) rotate(-100deg) scale(1.08); }
-        24%  { transform: translate(30px,0) rotate(190deg) scale(.96); }
-        38%  { transform: translate(24px,-46px) rotate(360deg) scale(1.05); }
-        52%  { transform: translate(-22px,0) rotate(520deg) scale(.97); }
-        66%  { transform: translate(-12px,-22px) rotate(640deg) scale(1.02); }
-        80%  { transform: translate(8px,0) rotate(700deg) scale(.99); }
+        10%  { transform: translate(calc(var(--k) * -26px), calc(var(--k) * -70px)) rotate(-100deg) scale(1.08); }
+        24%  { transform: translate(calc(var(--k) * 30px), 0) rotate(190deg) scale(.96); }
+        38%  { transform: translate(calc(var(--k) * 24px), calc(var(--k) * -46px)) rotate(360deg) scale(1.05); }
+        52%  { transform: translate(calc(var(--k) * -22px), 0) rotate(520deg) scale(.97); }
+        66%  { transform: translate(calc(var(--k) * -12px), calc(var(--k) * -22px)) rotate(640deg) scale(1.02); }
+        80%  { transform: translate(calc(var(--k) * 8px), 0) rotate(700deg) scale(.99); }
         100% { transform: translate(0,0) rotate(720deg) scale(1); }
     }
     @keyframes spin {
@@ -298,50 +349,50 @@
         100% { transform: rotate(1080deg); }
     }
     @keyframes flip {
-        0%   { transform: translateY(0) rotateX(0) rotateY(0) scale(1); }
-        50%  { transform: translateY(-56px) rotateX(180deg) rotateY(540deg) scale(1.1); }
-        100% { transform: translateY(0) rotateX(360deg) rotateY(1080deg) scale(1); }
+        0%   { transform: perspective(700px) translateY(0) rotateX(0) rotateY(0) scale(1); }
+        50%  { transform: perspective(700px) translateY(calc(var(--k) * -56px)) rotateX(180deg) rotateY(540deg) scale(1.1); }
+        100% { transform: perspective(700px) translateY(0) rotateX(360deg) rotateY(1080deg) scale(1); }
     }
     @keyframes bounce {
-        0%   { transform: translateY(0) scale(1,1);          animation-timing-function: cubic-bezier(.2,.7,.4,1); }
-        14%  { transform: translateY(-84px) scale(.96,1.05); animation-timing-function: cubic-bezier(.6,0,.9,.5); }
-        28%  { transform: translateY(0) scale(1.14,.86);     animation-timing-function: cubic-bezier(.2,.7,.4,1); }
-        42%  { transform: translateY(-52px) scale(.98,1.03); animation-timing-function: cubic-bezier(.6,0,.9,.5); }
-        56%  { transform: translateY(0) scale(1.09,.92);     animation-timing-function: cubic-bezier(.2,.7,.4,1); }
-        68%  { transform: translateY(-26px) scale(.99,1.02); animation-timing-function: cubic-bezier(.6,0,.9,.5); }
-        79%  { transform: translateY(0) scale(1.05,.96);     animation-timing-function: cubic-bezier(.2,.7,.4,1); }
-        88%  { transform: translateY(-9px) scale(1,1);       animation-timing-function: cubic-bezier(.6,0,.9,.5); }
-        95%  { transform: translateY(0) scale(1.02,.98);     animation-timing-function: ease-out; }
+        0%   { transform: translateY(0) scale(1,1);                                animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        14%  { transform: translateY(calc(var(--k) * -84px)) scale(.96,1.05);      animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        28%  { transform: translateY(0) scale(1.14,.86);                           animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        42%  { transform: translateY(calc(var(--k) * -52px)) scale(.98,1.03);      animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        56%  { transform: translateY(0) scale(1.09,.92);                           animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        68%  { transform: translateY(calc(var(--k) * -26px)) scale(.99,1.02);      animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        79%  { transform: translateY(0) scale(1.05,.96);                           animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        88%  { transform: translateY(calc(var(--k) * -9px)) scale(1,1);            animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        95%  { transform: translateY(0) scale(1.02,.98);                           animation-timing-function: ease-out; }
         100% { transform: translateY(0) scale(1,1); }
     }
     @keyframes shake {
         0%   { transform: translateX(0) rotate(0); }
-        6%   { transform: translateX(-22px) rotate(-8deg); }
-        12%  { transform: translateX(22px) rotate(8deg); }
-        18%  { transform: translateX(-20px) rotate(-7deg); }
-        24%  { transform: translateX(20px) rotate(7deg); }
-        30%  { transform: translateX(-17px) rotate(-6deg); }
-        36%  { transform: translateX(17px) rotate(6deg); }
-        42%  { transform: translateX(-14px) rotate(-5deg); }
-        48%  { transform: translateX(14px) rotate(5deg); }
-        54%  { transform: translateX(-11px) rotate(-4deg); }
-        60%  { transform: translateX(11px) rotate(4deg); }
-        68%  { transform: translateX(-8px) rotate(-3deg); }
-        76%  { transform: translateX(8px) rotate(3deg); }
-        84%  { transform: translateX(-4px) rotate(-1.5deg); }
-        92%  { transform: translateX(4px) rotate(1.5deg); }
+        6%   { transform: translateX(calc(var(--k) * -22px)) rotate(-8deg); }
+        12%  { transform: translateX(calc(var(--k) * 22px)) rotate(8deg); }
+        18%  { transform: translateX(calc(var(--k) * -20px)) rotate(-7deg); }
+        24%  { transform: translateX(calc(var(--k) * 20px)) rotate(7deg); }
+        30%  { transform: translateX(calc(var(--k) * -17px)) rotate(-6deg); }
+        36%  { transform: translateX(calc(var(--k) * 17px)) rotate(6deg); }
+        42%  { transform: translateX(calc(var(--k) * -14px)) rotate(-5deg); }
+        48%  { transform: translateX(calc(var(--k) * 14px)) rotate(5deg); }
+        54%  { transform: translateX(calc(var(--k) * -11px)) rotate(-4deg); }
+        60%  { transform: translateX(calc(var(--k) * 11px)) rotate(4deg); }
+        68%  { transform: translateX(calc(var(--k) * -8px)) rotate(-3deg); }
+        76%  { transform: translateX(calc(var(--k) * 8px)) rotate(3deg); }
+        84%  { transform: translateX(calc(var(--k) * -4px)) rotate(-1.5deg); }
+        92%  { transform: translateX(calc(var(--k) * 4px)) rotate(1.5deg); }
         100% { transform: translateX(0) rotate(0); }
     }
     @keyframes drop {
-        0%   { transform: translateY(-92px) rotate(-240deg) scale(.7); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.9,.6); }
-        38%  { transform: translateY(0) rotate(0) scale(1.12,.88);     opacity: 1; animation-timing-function: cubic-bezier(.2,.7,.4,1); }
-        54%  { transform: translateY(-30px) rotate(28deg) scale(1,1);  opacity: 1; animation-timing-function: cubic-bezier(.6,0,.9,.5); }
-        68%  { transform: translateY(0) rotate(-10deg) scale(1.06,.94); opacity: 1; animation-timing-function: cubic-bezier(.2,.7,.4,1); }
-        82%  { transform: translateY(-9px) rotate(4deg) scale(1,1);    opacity: 1; animation-timing-function: cubic-bezier(.6,0,.9,.5); }
-        100% { transform: translateY(0) rotate(0) scale(1,1);          opacity: 1; }
+        0%   { transform: translateY(calc(var(--k) * -92px)) rotate(-240deg) scale(.7); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.9,.6); }
+        38%  { transform: translateY(0) rotate(0) scale(1.12,.88);                      opacity: 1; animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        54%  { transform: translateY(calc(var(--k) * -30px)) rotate(28deg) scale(1,1);  opacity: 1; animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        68%  { transform: translateY(0) rotate(-10deg) scale(1.06,.94);                 opacity: 1; animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+        82%  { transform: translateY(calc(var(--k) * -9px)) rotate(4deg) scale(1,1);    opacity: 1; animation-timing-function: cubic-bezier(.6,0,.9,.5); }
+        100% { transform: translateY(0) rotate(0) scale(1,1);                           opacity: 1; }
     }
     @keyframes roll {
-        0%   { transform: translateX(-104px) rotate(-720deg); }
+        0%   { transform: translateX(calc(var(--k) * -104px)) rotate(-720deg); }
         100% { transform: translateX(0) rotate(0); }
     }
     @keyframes land {
@@ -350,15 +401,15 @@
         100% { transform: scale(1); }
     }
 
-    .die.crit .shape { stroke: var(--good); }
-    .die.fail .shape { stroke: var(--bad); }
-    .die.crit .value { color: var(--good); }
-    .die.fail .value { color: var(--bad); }
+    .cube.crit .shape { stroke: var(--good); }
+    .cube.fail .shape { stroke: var(--bad); }
+    .cube.crit .value { color: var(--good); }
+    .cube.fail .value { color: var(--bad); }
 
     .status {
         min-height: 22px;
         font-family: var(--mono); font-size: 12px; color: var(--muted);
-        text-align: center;
+        text-align: center; overflow-wrap: anywhere;
     }
     .status b { color: var(--text); font-weight: 600; }
 
@@ -375,7 +426,7 @@
         border: 1px solid var(--border); border-radius: 5px;
         font-family: var(--mono); font-size: 11px; color: var(--muted);
     }
-    .custom .btn { padding: 8px 16px; }
+    .panel .btn { padding: 8px 16px; }
 
     .history {
         display: flex; flex-wrap: wrap; gap: 8px;
@@ -409,14 +460,13 @@
         #themeDropdown .menu { left: 0; right: auto; }
         .picker { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
         .card { padding: 11px 12px; }
-        .die-btn { width: 190px; height: 190px; }
         .stage { padding: 32px 12px 24px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
         * { transition: none !important; }
         h1 .dot { animation: none !important; }
-        .die.rolling, .die.landed { animation: none !important; }
+        .tray.rolling .cube, .tray.landed .cube { animation: none !important; }
     }
 </style>
 </head>
@@ -454,30 +504,35 @@
             </div>
         </div>
     </header>
-    <p class="tagline">Pick a die, press it to roll.</p>
+    <p class="tagline">Pick dice, choose how many, press to roll.</p>
 
-    <div class="section-head"><h2>Die</h2></div>
-    <div class="picker" id="picker" role="group" aria-label="Choose a die"></div>
+    <div class="section-head"><h2>Dice</h2></div>
+    <div class="picker" id="picker" role="group" aria-label="Choose dice type"></div>
 
-    <form class="custom" id="customForm" novalidate>
-        <label class="custom-label" for="customSides">Custom die</label>
-        <div class="custom-row">
-            <span class="custom-prefix">d</span>
+    <form class="panel" id="customForm" novalidate>
+        <label class="panel-label" for="customSides">Custom dice</label>
+        <div class="panel-row">
+            <span class="panel-prefix">d</span>
             <input id="customSides" type="number" inputmode="numeric" min="2" max="1000" step="1" value="99" autocomplete="off" aria-describedby="customMsg">
             <button class="btn" id="customBtn" type="submit">Select</button>
         </div>
-        <span class="custom-msg" id="customMsg" role="status">Any whole number of sides from 2 to 1000</span>
+        <span class="panel-msg" id="customMsg" role="status">Any whole number of sides from 2 to 1000</span>
     </form>
+
+    <div class="panel" id="countPanel">
+        <div class="count-head">
+            <label class="panel-label" for="countRange">Number of dice</label>
+            <input id="countNum" type="number" inputmode="numeric" min="1" max="100" step="1" value="1" autocomplete="off" aria-label="Number of dice, exact value">
+        </div>
+        <input class="range" id="countRange" type="range" min="1" max="100" step="1" value="1">
+    </div>
 
     <div class="section-head"><h2>Roll</h2></div>
     <div class="stage">
-        <button class="die-btn" id="dieBtn" type="button" aria-label="Roll the die">
-            <div class="die" id="die">
-                <svg id="dieSvg" viewBox="0 0 100 100" aria-hidden="true"></svg>
-                <span class="value" id="value">?</span>
-            </div>
+        <button class="tray-btn" id="trayBtn" type="button" aria-label="Roll the dice">
+            <span class="tray" id="tray"></span>
         </button>
-        <div class="status" id="status" role="status" aria-live="polite">Press the die to roll</div>
+        <div class="status" id="status" role="status" aria-live="polite">Press the dice to roll</div>
         <button class="btn" id="rollBtn" type="button">Roll<kbd>Space</kbd></button>
     </div>
 
@@ -497,11 +552,17 @@
 (function () {
     const MIN_SIDES = 2;
     const MAX_SIDES = 1000;
+    const MIN_COUNT = 1;
+    const MAX_COUNT = 100;
     const HISTORY_LIMIT = 12;
+    const DENSE_FROM = 13;
+    const LIST_UP_TO = 12;
+    const STAGGER_MS = 240;
     const THEME_KEY = 'dice-theme';
     const ANIM_KEY = 'dice-anim';
     const HISTORY_KEY = 'dice-history';
     const ANIMS = ['tumble', 'spin', 'flip', 'bounce', 'shake', 'drop', 'roll'];
+    const SVG_NS = 'http://www.w3.org/2000/svg';
 
     const DICE = [
         { sides: 4,   label: 'd4',   desc: 'Tetrahedron' },
@@ -519,18 +580,18 @@
     }).join(' ');
 
     const SHAPES = {
-        4:   { svg: '<polygon class="shape" points="50,8 95,88 5,88"/><polyline class="edge" points="50,8 50,62 5,88 50,62 95,88"/>', dy: '14px' },
-        6:   { svg: '<rect class="shape" x="10" y="10" width="80" height="80" rx="14"/>', dy: '0px' },
-        8:   { svg: '<polygon class="shape" points="50,4 94,50 50,96 6,50"/><polyline class="edge" points="6,50 94,50"/>', dy: '0px' },
-        10:  { svg: '<polygon class="shape" points="50,4 93,40 50,96 7,40"/><polyline class="edge" points="7,40 50,52 93,40 50,52 50,96"/>', dy: '2px' },
-        12:  { svg: '<polygon class="shape" points="' + poly(5, 46, -Math.PI / 2) + '"/><polygon class="edge" points="' + poly(5, 23, Math.PI / 2) + '"/>', dy: '3px' },
-        20:  { svg: '<polygon class="shape" points="' + poly(6, 46, -Math.PI / 2) + '"/><polygon class="edge" points="' + poly(3, 46, -Math.PI / 2) + '"/><polygon class="edge" points="' + poly(3, 46, Math.PI / 2) + '"/>', dy: '0px' },
-        100: { svg: '<polygon class="shape" points="50,4 93,40 50,96 7,40"/><polyline class="edge" points="7,40 50,52 93,40 50,52 50,96"/>', dy: '2px' }
+        4:   { svg: '<polygon class="shape" points="50,8 95,88 5,88"/><polyline class="edge" points="50,8 50,62 5,88 50,62 95,88"/>', dy: 14 },
+        6:   { svg: '<rect class="shape" x="10" y="10" width="80" height="80" rx="14"/>', dy: 0 },
+        8:   { svg: '<polygon class="shape" points="50,4 94,50 50,96 6,50"/><polyline class="edge" points="6,50 94,50"/>', dy: 0 },
+        10:  { svg: '<polygon class="shape" points="50,4 93,40 50,96 7,40"/><polyline class="edge" points="7,40 50,52 93,40 50,52 50,96"/>', dy: 2 },
+        12:  { svg: '<polygon class="shape" points="' + poly(5, 46, -Math.PI / 2) + '"/><polygon class="edge" points="' + poly(5, 23, Math.PI / 2) + '"/>', dy: 3 },
+        20:  { svg: '<polygon class="shape" points="' + poly(6, 46, -Math.PI / 2) + '"/><polygon class="edge" points="' + poly(3, 46, -Math.PI / 2) + '"/><polygon class="edge" points="' + poly(3, 46, Math.PI / 2) + '"/>', dy: 0 },
+        100: { svg: '<polygon class="shape" points="50,4 93,40 50,96 7,40"/><polyline class="edge" points="7,40 50,52 93,40 50,52 50,96"/>', dy: 2 }
     };
 
     const CUSTOM_SHAPE = {
         svg: '<polygon class="shape" points="' + poly(8, 46, -Math.PI / 2 + Math.PI / 8) + '"/><polygon class="edge" points="' + poly(8, 24, -Math.PI / 2 + Math.PI / 8) + '"/>',
-        dy: '0px'
+        dy: 0
     };
 
     const PIPS = {
@@ -543,13 +604,15 @@
     };
 
     const $ = id => document.getElementById(id);
-    const picker = $('picker'), die = $('die'), dieSvg = $('dieSvg'), valueEl = $('value'),
-          statusEl = $('status'), dieBtn = $('dieBtn'), rollBtn = $('rollBtn'),
+    const picker = $('picker'), tray = $('tray'), statusEl = $('status'),
+          trayBtn = $('trayBtn'), rollBtn = $('rollBtn'),
           historyEl = $('history'), clearBtn = $('clearBtn'),
           customForm = $('customForm'), customInput = $('customSides'),
-          customBtn = $('customBtn'), customMsg = $('customMsg');
+          customBtn = $('customBtn'), customMsg = $('customMsg'),
+          countRange = $('countRange'), countNum = $('countNum');
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const narrow = window.matchMedia('(max-width: 520px)');
 
     function storeGet(key) {
         try { return localStorage.getItem(key); } catch (e) { return null; }
@@ -561,15 +624,24 @@
         try { localStorage.removeItem(key); } catch (e) {}
     }
 
+    function validRolls(rolls) {
+        return Array.isArray(rolls) && rolls.length >= 2 && rolls.length <= MAX_COUNT &&
+               rolls.every(r => Number.isInteger(r) && r >= 1);
+    }
+
     function loadHistory() {
         try {
             const data = JSON.parse(storeGet(HISTORY_KEY));
             if (!Array.isArray(data)) return [];
             return data
-                .filter(h => h && typeof h.label === 'string' && /^d\d{1,4}$/.test(h.label) &&
+                .filter(h => h && typeof h.label === 'string' && /^(?:[1-9]\d{0,2})?d\d{1,4}$/.test(h.label) &&
                              Number.isInteger(h.value) && h.value >= 1)
                 .slice(0, HISTORY_LIMIT)
-                .map(h => ({ label: h.label, value: h.value, crit: h.crit === true, fail: h.fail === true }));
+                .map(h => {
+                    const item = { label: h.label, value: h.value, crit: h.crit === true, fail: h.fail === true };
+                    if (validRolls(h.rolls)) item.rolls = h.rolls;
+                    return item;
+                });
         } catch (e) {
             return [];
         }
@@ -577,6 +649,8 @@
 
     const history = loadHistory();
     let current = DICE[5];
+    let count = MIN_COUNT;
+    let cubes = [];
     let rolling = false;
     let animName = ANIMS.includes(storeGet(ANIM_KEY)) ? storeGet(ANIM_KEY) : 'tumble';
 
@@ -588,41 +662,66 @@
         return (buf[0] % max) + 1;
     }
 
-    function pipsSvg(n) {
-        return PIPS[n].map(p => '<circle class="pip" cx="' + p[0] + '" cy="' + p[1] + '" r="7.5"/>').join('');
-    }
-
     function usesPips() {
         return !current.custom && current.sides === 6;
     }
 
-    function show(n) {
+    function show(cube, n) {
         if (usesPips()) {
-            valueEl.classList.add('pips');
-            dieSvg.querySelectorAll('.pip').forEach(e => e.remove());
-            dieSvg.insertAdjacentHTML('beforeend', pipsSvg(n));
+            cube.value.classList.add('pips');
+            cube.svg.querySelectorAll('.pip').forEach(e => e.remove());
+            PIPS[n].forEach(p => {
+                const c = document.createElementNS(SVG_NS, 'circle');
+                c.setAttribute('class', 'pip');
+                c.setAttribute('cx', p[0]);
+                c.setAttribute('cy', p[1]);
+                c.setAttribute('r', 7.5);
+                cube.svg.appendChild(c);
+            });
         } else {
-            valueEl.textContent = n;
-            valueEl.classList.toggle('small', String(n).length > 2);
+            cube.value.textContent = n;
+            cube.value.classList.toggle('small', String(n).length > 2);
         }
     }
 
-    function drawDie() {
-        const shape = current.custom ? CUSTOM_SHAPE : SHAPES[current.sides];
-        dieSvg.innerHTML = shape.svg;
-        die.style.setProperty('--dy', shape.dy);
-        valueEl.style.setProperty('--dy', shape.dy);
-        die.classList.remove('crit', 'fail', 'rolling', 'landed');
-        valueEl.classList.remove('pips', 'small');
-        valueEl.textContent = '?';
-        statusEl.textContent = 'Press the die to roll';
+    function sizeFor(n) {
+        return 200;
     }
 
-    function selectDie(d) {
+    function applyLayout() {
+        const size = Math.round(sizeFor(count) * (narrow.matches ? 0.86 : 1));
+        tray.style.setProperty('--size', size + 'px');
+        tray.style.setProperty('--k', (size / 220).toFixed(4));
+        tray.classList.toggle('dense', count >= DENSE_FROM);
+    }
+
+    function drawTray() {
+        const shape = current.custom ? CUSTOM_SHAPE : SHAPES[current.sides];
+        tray.classList.remove('rolling', 'landed');
+        tray.style.setProperty('--dy', shape.dy);
+        applyLayout();
+        cubes = Array.from({ length: count }, () => {
+            const el = document.createElement('span');
+            el.className = 'cube';
+            const svg = document.createElementNS(SVG_NS, 'svg');
+            svg.setAttribute('viewBox', '0 0 100 100');
+            svg.setAttribute('aria-hidden', 'true');
+            svg.innerHTML = shape.svg;
+            const value = document.createElement('span');
+            value.className = 'value';
+            value.textContent = '?';
+            el.append(svg, value);
+            return { el, svg, value };
+        });
+        tray.replaceChildren(...cubes.map(c => c.el));
+        statusEl.textContent = 'Press the dice to roll';
+    }
+
+    function selectDice(d) {
         current = d;
         picker.querySelectorAll('.card').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.sides === String(d.sides) && !d.custom)));
         customForm.classList.toggle('active', Boolean(d.custom));
-        drawDie();
+        drawTray();
     }
 
     function buildPicker() {
@@ -641,7 +740,7 @@
             b.append(name, desc);
             b.addEventListener('click', () => {
                 if (rolling) return;
-                selectDie(d);
+                selectDice(d);
             });
             picker.appendChild(b);
         });
@@ -662,8 +761,62 @@
             return;
         }
         setCustomMessage('Custom d' + n + ' selected', false);
-        selectDie({ sides: n, label: 'd' + n, custom: true });
+        selectDice({ sides: n, label: 'd' + n, custom: true });
     });
+
+    function paintRange() {
+        const pct = (count - MIN_COUNT) / (MAX_COUNT - MIN_COUNT) * 100;
+        countRange.style.setProperty('--pct', pct + '%');
+    }
+
+    function setCount(n) {
+        if (n === count) return;
+        count = n;
+        paintRange();
+        drawTray();
+    }
+
+    countRange.addEventListener('input', () => {
+        if (rolling) return;
+        const n = Number(countRange.value);
+        countNum.value = n;
+        setCount(n);
+    });
+
+    countNum.addEventListener('input', () => {
+        if (rolling) return;
+        const raw = countNum.value.trim();
+        const n = Number(raw);
+        if (raw !== '' && Number.isInteger(n) && n >= MIN_COUNT && n <= MAX_COUNT) {
+            countRange.value = n;
+            setCount(n);
+        }
+    });
+
+    function commitCount() {
+        const raw = countNum.value.trim();
+        const n = Number(raw);
+        if (raw === '' || !Number.isInteger(n)) {
+            countNum.value = count;
+            return;
+        }
+        const clamped = Math.min(MAX_COUNT, Math.max(MIN_COUNT, n));
+        countNum.value = clamped;
+        countRange.value = clamped;
+        setCount(clamped);
+    }
+
+    countNum.addEventListener('change', commitCount);
+    countNum.addEventListener('blur', commitCount);
+    countNum.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            commitCount();
+            countNum.blur();
+        }
+    });
+
+    narrow.addEventListener('change', applyLayout);
 
     function renderHistory() {
         historyEl.replaceChildren();
@@ -679,6 +832,7 @@
             const li = document.createElement('li');
             if (h.crit) li.className = 'crit';
             if (h.fail) li.className = 'fail';
+            if (h.rolls) li.title = h.rolls.join(' + ');
             const b = document.createElement('b');
             b.textContent = h.value;
             li.append(h.label, b);
@@ -698,10 +852,12 @@
 
     function setBusy(busy) {
         rolling = busy;
-        dieBtn.disabled = busy;
+        trayBtn.disabled = busy;
         rollBtn.disabled = busy;
         customInput.disabled = busy;
         customBtn.disabled = busy;
+        countRange.disabled = busy;
+        countNum.disabled = busy;
     }
 
     function roll() {
@@ -709,27 +865,39 @@
         setBusy(true);
 
         const rolled = current;
-        const result = randInt(rolled.sides);
+        const n = count;
+        const sides = rolled.sides;
+        const label = n > 1 ? n + rolled.label : rolled.label;
+        const results = Array.from({ length: n }, () => randInt(sides));
         const duration = reduceMotion.matches ? 250 : 1300;
+        const stagger = reduceMotion.matches || n === 1 ? 0 : STAGGER_MS;
+        const total = duration + stagger;
+        const rolledCubes = cubes;
 
-        die.classList.remove('crit', 'fail', 'landed', 'rolling');
-        void die.offsetWidth;
-        die.dataset.anim = animName;
-        die.style.setProperty('--roll-ms', duration + 'ms');
-        die.classList.add('rolling');
+        rolledCubes.forEach((c, i) => {
+            c.el.classList.remove('crit', 'fail');
+            c.el.style.setProperty('--delay', (n > 1 ? Math.round(i * stagger / (n - 1)) : 0) + 'ms');
+        });
+        tray.classList.remove('landed', 'rolling');
+        void tray.offsetWidth;
+        tray.dataset.anim = animName;
+        tray.style.setProperty('--roll-ms', duration + 'ms');
+        tray.classList.add('rolling');
         statusEl.textContent = 'Rolling\u2026';
 
         const start = performance.now();
-        let lastShown = 0;
+        const lastShown = new Array(n).fill(0);
         let nextTick = 0;
 
         function frame(now) {
-            const t = Math.min((now - start) / duration, 1);
+            const t = Math.min((now - start) / total, 1);
             if (now >= nextTick && t < 1) {
-                let n;
-                do { n = randInt(rolled.sides); } while (n === lastShown && rolled.sides > 1);
-                lastShown = n;
-                show(n);
+                rolledCubes.forEach((c, i) => {
+                    let v;
+                    do { v = randInt(sides); } while (v === lastShown[i] && sides > 1);
+                    lastShown[i] = v;
+                    show(c, v);
+                });
                 nextTick = now + 45 + t * t * 260;
             }
             if (t < 1) { requestAnimationFrame(frame); return; }
@@ -737,20 +905,30 @@
         }
 
         function finish() {
-            show(result);
-            die.classList.remove('rolling');
-            void die.offsetWidth;
-            die.classList.add('landed');
+            rolledCubes.forEach((c, i) => {
+                show(c, results[i]);
+                if (sides === 20) {
+                    c.el.classList.toggle('crit', results[i] === 20);
+                    c.el.classList.toggle('fail', results[i] === 1);
+                }
+            });
+            tray.classList.remove('rolling');
+            void tray.offsetWidth;
+            tray.classList.add('landed');
 
-            const crit = rolled.sides === 20 && result === 20;
-            const fail = rolled.sides === 20 && result === 1;
-            die.classList.toggle('crit', crit);
-            die.classList.toggle('fail', fail);
+            const sum = results.reduce((a, b) => a + b, 0);
+            const crit = n === 1 && sides === 20 && results[0] === 20;
+            const fail = n === 1 && sides === 20 && results[0] === 1;
 
-            statusEl.innerHTML = rolled.label + ' &rarr; <b>' + result + '</b>' +
-                (crit ? ' &middot; natural 20' : fail ? ' &middot; natural 1' : '');
+            let detail = '';
+            if (n === 1) detail = crit ? ' &middot; natural 20' : fail ? ' &middot; natural 1' : '';
+            else if (n <= LIST_UP_TO) detail = ' &middot; ' + results.join(' + ');
+            else detail = ' &middot; min ' + Math.min(...results) + ' &middot; max ' + Math.max(...results);
+            statusEl.innerHTML = label + ' &rarr; <b>' + sum + '</b>' + detail;
 
-            history.unshift({ label: rolled.label, value: result, crit, fail });
+            const item = { label, value: sum, crit, fail };
+            if (n > 1) item.rolls = results;
+            history.unshift(item);
             if (history.length > HISTORY_LIMIT) history.length = HISTORY_LIMIT;
             saveHistory();
             renderHistory();
@@ -760,7 +938,7 @@
         requestAnimationFrame(frame);
     }
 
-    dieBtn.addEventListener('click', roll);
+    trayBtn.addEventListener('click', roll);
     rollBtn.addEventListener('click', roll);
     document.addEventListener('keydown', e => {
         if (e.code !== 'Space' || e.repeat) return;
@@ -827,7 +1005,8 @@
     animMenu.mark(animName);
 
     buildPicker();
-    drawDie();
+    paintRange();
+    drawTray();
     renderHistory();
 })();
 </script>
