@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Which video formats and codecs does your browser support? / dontaz.com</title>
+<meta name="description" content="Check which video containers, video codecs and audio codecs your browser can play: H.264, HEVC, AV1, VP9, MKV, MOV, HLS, Opus, FLAC and more. Results appear instantly and nothing is sent to a server.">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" type="image/png" sizes="96x96">
+<style>
+@font-face{font-family:'Montserrat';src:url('/fonts/Montserrat-Variable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:'JetBrains Mono';src:url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');font-weight:100 800;font-style:normal;font-display:swap}
+
+:root{
+  color-scheme:light;
+  --font:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;
+  --radius:12px;
+  --bg:#eff1f5;
+  --panel:#e6e9ef;
+  --inset:#dce0e8;
+  --text:#4c4f69;
+  --muted:#5c5f77;
+  --line:#ccd0da;
+  --line-hi:#acb0be;
+  --accent:#1e66f5;
+  --ok:#40a02b;
+  --warn:#df8e1d;
+  --bad:#d20f39;
+  --ok-bg:color-mix(in srgb,#40a02b 22%,#e6e9ef);
+  --ok-ink:#4c4f69;
+  --ok-line:color-mix(in srgb,#40a02b 55%,transparent);
+  --warn-bg:color-mix(in srgb,#df8e1d 24%,#e6e9ef);
+  --warn-ink:#4c4f69;
+  --warn-line:color-mix(in srgb,#df8e1d 60%,transparent);
+  --bad-bg:color-mix(in srgb,#d20f39 18%,#e6e9ef);
+  --bad-ink:#4c4f69;
+  --bad-line:color-mix(in srgb,#d20f39 50%,transparent);
+}
+
+@media (prefers-color-scheme:dark){
+  :root{
+    color-scheme:dark;
+    --bg:#1f0e04;
+    --panel:#431307;
+    --inset:color-mix(in srgb,#1f0e04 60%,#431307);
+    --text:#fce4be;
+    --muted:color-mix(in srgb,#fce4be 64%,#431307);
+    --line:color-mix(in srgb,#fce4be 16%,transparent);
+    --line-hi:color-mix(in srgb,#fce4be 32%,transparent);
+    --accent:#ed7b35;
+    --ok:#F5D183;
+    --warn:#ed7b35;
+    --bad:#932c0d;
+    --ok-bg:#F5D183;
+    --ok-ink:#1f0e04;
+    --ok-line:#F5D183;
+    --warn-bg:#ed7b35;
+    --warn-ink:#1f0e04;
+    --warn-line:#ed7b35;
+    --bad-bg:#932c0d;
+    --bad-ink:#fce4be;
+    --bad-line:#932c0d;
+  }
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;padding:40px 24px 72px;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto}
+
+header{margin:0 0 6px}
+h1{margin:0;font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.3}
+h1 a{color:inherit;text-decoration:none;transition:color .15s ease}
+h1 a:hover{color:var(--accent)}
+h1 a:focus-visible{color:var(--accent);outline:2px solid var(--accent);outline-offset:4px;border-radius:2px}
+h1 .dot{color:var(--accent);animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{0%,45%,100%{opacity:1}50%,95%{opacity:.25}}
+.lede{margin:0 0 26px;max-width:64ch;color:var(--muted);font-size:14px}
+
+.summary{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 30px;padding:14px 16px;background:var(--panel);border:2px solid var(--line);border-radius:var(--radius)}
+.count{display:flex;align-items:baseline;gap:8px;font-size:22px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1.2}
+#okcount{min-width:2ch;text-align:right}
+.count small{font-size:13.5px;font-weight:400;color:var(--muted)}
+.bar{flex:1 1 220px;min-width:120px;height:7px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;width:0;height:100%;background:var(--ok);border-radius:99px;transition:width .45s ease}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.status{flex:1 0 100%;margin:0;color:var(--muted);font-size:13.5px}
+button{font:inherit;font-size:13.5px;font-weight:500;padding:8px 14px;border-radius:9px;border:2px solid var(--line-hi);background:transparent;color:var(--text);cursor:pointer;transition:border-color .15s ease,background-color .15s ease}
+button:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button[aria-disabled="true"],button[aria-disabled="true"]:hover{opacity:.45;cursor:default;border-color:var(--line-hi);background:transparent}
+
+section{margin:0 0 28px}
+.block{margin:0 0 40px}
+.sec-title{margin:0 0 12px;font-size:17px;font-weight:650;letter-spacing:-.01em;line-height:1.3}
+.group-title{margin:0 0 12px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(232px,1fr))}
+.card{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:11px 12px;background:var(--panel);border:2px solid var(--line);border-radius:var(--radius);transition:border-color .2s ease}
+.card[data-state="ok"]{border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
+.card[data-state="bad"]{border-color:color-mix(in srgb,var(--bad) 55%,var(--line))}
+.thumb{position:relative;flex:none;width:56px;height:56px;border-radius:9px;overflow:hidden;background:var(--inset)}
+.thumb canvas{display:block;width:100%;height:100%}
+.thumb.ph::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font-size:18px;font-weight:600;color:var(--muted);background:var(--inset)}
+.thumb.ph.aud::after{content:"\266A";font-size:22px}
+.body{display:flex;flex:1 1 0;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+.name{font-size:15px;font-weight:640;letter-spacing:-.01em;line-height:1.3}
+.sub{margin-top:-4px;font-family:var(--mono);font-size:11px;line-height:1.3;color:var(--muted)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border:1px solid transparent;border-radius:999px;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.badge.ok{background:var(--ok-bg);border-color:var(--ok-line);color:var(--ok-ink)}
+.badge.warn{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn-ink)}
+.badge.bad{background:var(--bad-bg);border-color:var(--bad-line);color:var(--bad-ink)}
+.badge.pending{border-color:var(--line-hi);color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.help{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;padding:0;border-radius:50%;font-family:var(--mono);font-size:11px;font-weight:600;line-height:1}
+.help[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+.info{flex:1 0 100%;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--muted)}
+.info p{margin:0 0 6px}
+.info p:last-child{margin:0}
+.info b{color:var(--text);font-weight:600}
+.info .file{font-family:var(--mono);font-size:11px;word-break:break-all}
+
+.panel{padding:16px;background:var(--panel);border:2px solid var(--line);border-radius:var(--radius)}
+.panel h3{margin:0 0 8px;font-size:15px;font-weight:640}
+.panel p{margin:0;color:var(--muted);font-size:13.5px}
+.drop{position:relative;display:flex;align-items:center;justify-content:center;margin-top:12px;min-height:104px;padding:18px 16px;border:2px dashed var(--line-hi);border-radius:11px;color:var(--muted);font-size:13.5px;text-align:center;cursor:pointer;transition:border-color .15s ease,background-color .15s ease}
+.drop:hover,.drop.hot,.drop:focus-within{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.verdict{margin-top:12px;font-size:13.5px;line-height:1.5}
+.verdict:empty{margin-top:0}
+.verdict dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:8px 0 0;font-size:12.5px}
+.verdict dt{color:var(--muted)}
+.verdict dd{margin:0;font-family:var(--mono);word-break:break-all}
+pre{margin:0;padding:12px;max-height:232px;overflow:auto;background:var(--inset);border:2px solid var(--line);border-radius:10px;font-family:var(--mono);font-size:12px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.noscript{margin:0 0 18px;padding:12px 14px;background:var(--bad-bg);border:1px solid var(--bad-line);border-radius:10px;color:var(--bad-ink);font-size:13.5px}
+
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+footer{margin-top:34px;padding-top:16px;border-top:2px solid var(--line);font-family:var(--mono);font-size:13px}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover,footer a:focus-visible{color:var(--accent);text-decoration:underline;text-underline-offset:.22em;outline:none}
+
+@media (max-width:600px){
+  body{padding:20px 14px 56px}
+  h1{font-size:19px;letter-spacing:.1em}
+  .summary{padding:12px}
+  .count{font-size:20px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<noscript><style>.js-only{display:none!important}</style></noscript>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><a href="https://dontaz.com">Dontaz</a>/video-support<span class="dot">.</span></h1>
+  </header>
+  <p class="lede">Which video formats and codecs can this browser play? The page loads one tiny sample file per format and shows the result on that format’s card below. You can also check a file of your own. Nothing is sent to a server.</p>
+
+  <noscript><div class="noscript">The check runs entirely in your browser, so JavaScript has to be enabled. Turn it on and reload the page.</div></noscript>
+
+  <main>
+    <section class="block js-only" aria-labelledby="test-title">
+      <h2 class="sec-title" id="test-title">Format test</h2>
+      <div class="summary">
+        <div class="count"><span id="okcount">0</span><small>of <span id="total">32</span> formats supported</small></div>
+        <div class="bar" role="progressbar" aria-label="Share of supported formats" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="barfill"></i></div>
+        <div class="actions">
+          <button id="rerun" type="button">Run the test again</button>
+          <button id="copy" type="button" aria-disabled="true">Copy report</button>
+        </div>
+        <p class="status" id="status">Checking 0 of 32…</p>
+      </div>
+      <div id="groups"></div>
+      <div class="panel">
+        <h3>Text report</h3>
+        <pre id="report">The report appears when the test finishes.</pre>
+      </div>
+    </section>
+
+    <section class="block js-only" id="filecheck" aria-labelledby="file-title">
+      <h2 class="sec-title" id="file-title">Check your own file</h2>
+      <div class="panel">
+        <p>Pick, drop or paste a video or audio file up to 2 GB. The page tells whether this browser plays it and shows its container, codecs, duration, dimensions and time to the first frame.</p>
+        <label class="drop" id="drop">
+          <input type="file" accept="video/*,audio/*,.mkv,.mov,.ts,.m2ts,.avi,.flv,.wmv,.asf,.mpg,.mpeg,.3gp,.3g2,.ogv,.opus,.flac,.m4a,.m3u8" id="file">
+          Drag a file here, click to choose, or paste with Ctrl+V / ⌘V
+        </label>
+        <div class="verdict" id="verdict" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <p class="sr-only" id="announce" role="status"></p>
+
+  <footer><a href="https://dontaz.com">dontaz.com</a></footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const BASE = "samples/";
+  const ITEMS = [
+    {id:"h264", title:"H.264 / AVC", sub:"MP4", group:0, kind:"video", file:"h264.mp4",
+      info:"The most widely supported video codec: every current browser plays it, usually with hardware decoding. The sample is High profile, 8-bit 4:2:0, 128×128. A Supported result does not guarantee that other profiles, levels, 10-bit or 4:4:4 H.264 will play."},
+    {id:"hevc", title:"H.265 / HEVC", sub:"MP4", group:0, kind:"video", file:"hevc.mp4",
+      info:"Successor of H.264 with better compression. Support depends on the operating system and on a hardware decoder being present, and it differs between Chrome, Edge, Firefox and Safari. The sample is Main profile, 8-bit."},
+    {id:"vp9", title:"VP9", sub:"WebM", group:0, kind:"video", file:"vp9.webm",
+      info:"Open, royalty-free codec from Google, used by YouTube. Current Chrome, Edge and Firefox play it; Safari support depends on its version and the device. The sample is Profile 0, 8-bit, in WebM."},
+    {id:"av1", title:"AV1", sub:"MP4", group:0, kind:"video", file:"av1.mp4",
+      info:"Open, royalty-free codec from the Alliance for Open Media with better compression than VP9. Chrome, Edge and Firefox can decode it in software; Safari generally needs a device with a hardware AV1 decoder. The sample is Main profile, 8-bit, in MP4."},
+    {id:"vp8", title:"VP8", sub:"WebM", group:0, kind:"video", file:"vp8.webm",
+      info:"Older open codec of the WebM project, also used in WebRTC. Chrome, Edge and Firefox play it from files; Safari support for VP8 files varies by version. The sample is in WebM."},
+    {id:"theora", title:"Theora", sub:"Ogg", group:0, kind:"video", file:"theora.ogv",
+      info:"Old open codec in Ogg, mostly obsolete. It has been dropped from recent Chromium-based browsers, Firefox has kept it, and Safari does not support it. The sample is an .ogv file."},
+    {id:"hevc10", title:"HEVC 10-bit", sub:"MP4 · Main 10", group:1, kind:"video", file:"hevc10.mp4",
+      info:"HEVC Main 10 (10-bit), the usual format of HDR video. It generally needs a hardware decoder with 10-bit support, so a browser that plays 8-bit HEVC can still fail here."},
+    {id:"av110", title:"AV1 10-bit", sub:"MP4", group:1, kind:"video", file:"av1_10.mp4",
+      info:"AV1 Main profile, 10-bit. Software decoders in Chrome, Edge and Firefox can handle it; devices without hardware AV1 decoding play it with higher CPU load."},
+    {id:"vp910", title:"VP9 10-bit", sub:"WebM · Profile 2", group:1, kind:"video", file:"vp9_10.webm",
+      info:"VP9 Profile 2 (10-bit), used for HDR on YouTube. It is usually available wherever VP9 works, but some devices have no 10-bit VP9 decoding."},
+    {id:"prores", title:"Apple ProRes", sub:"MOV · 422 HQ", group:1, kind:"video", file:"prores.mov",
+      info:"Apple's professional editing codec (ProRes 422 HQ in a MOV container). Safari on macOS plays it; elsewhere support depends on the browser and the operating system."},
+    {id:"mp4", title:"MP4", sub:"ISO BMFF · H.264", group:2, kind:"video", file:"h264.mp4",
+      info:"The most compatible container (ISO BMFF). This card tests H.264 in MP4, so Not supported means that combination fails, not necessarily that the browser cannot read MP4 at all. MP4 can also carry HEVC, AV1, VP9, AAC, Opus and FLAC."},
+    {id:"webm", title:"WebM", sub:"Matroska subset · VP9", group:2, kind:"video", file:"vp9.webm",
+      info:"Open container derived from Matroska, designed for the web. This card tests VP9 in WebM. WebM normally holds VP8, VP9 or AV1 video with Vorbis or Opus audio."},
+    {id:"ogg", title:"Ogg", sub:"Vorbis audio", group:2, kind:"audio", file:"vorbis.ogg",
+      info:"Open container for audio and video. This card tests Vorbis audio in Ogg; Ogg can also hold Opus, FLAC and Theora. Safari's Ogg support is limited."},
+    {id:"mov", title:"MOV", sub:"QuickTime · H.264", group:2, kind:"video", file:"h264.mov",
+      info:"QuickTime container from Apple, close to MP4. This card tests H.264 in MOV. Browsers usually play MOV only when its contents are MP4-compatible; QuickTime-only codecs such as ProRes need Safari on macOS."},
+    {id:"mkv", title:"Matroska", sub:"MKV · H.264", group:2, kind:"video", file:"h264.mkv",
+      info:"Flexible open container for many video, audio and subtitle tracks. It is not an official web format, so support is browser-specific: Chromium-based browsers often play it, Firefox and Safari generally do not. This card tests H.264 in MKV."},
+    {id:"ts", title:"MPEG-TS", sub:"TS · H.264", group:2, kind:"video", file:"h264.ts",
+      info:"MPEG transport stream, the segment format of classic HLS and of broadcast. Browsers rarely play standalone .ts files; the HLS card is the better test for streaming. This card tests H.264 in a bare TS file."},
+    {id:"3gp", title:"3GPP", sub:"3GP · H.264", group:2, kind:"video", file:"h264.3gp",
+      info:"Mobile container from the MP4 family, used by older phones. It is usually read when it holds H.264 and AAC. This card tests H.264 in 3GP."},
+    {id:"flv", title:"FLV", sub:"Flash Video · H.264", group:2, kind:"video", file:"h264.flv",
+      info:"Flash Video, obsolete since Flash ended. Browsers do not play it natively; players such as flv.js repackage it through Media Source. This card tests H.264 in FLV."},
+    {id:"hls", title:"HLS", sub:"M3U8 · H.264 in TS", group:2, kind:"video", file:"hls/index.m3u8",
+      info:"HTTP Live Streaming playlist (.m3u8), not a single video file. Safari and recent Chromium-based browsers can play it natively; other browsers need a script such as hls.js. This card tests a 1-second playlist with one H.264 TS segment, and a missing segment file is not reported separately."},
+    {id:"avi", title:"AVI", sub:"MPEG-4 Part 2", group:3, kind:"video", file:"mpeg4.avi",
+      info:"Legacy Microsoft container. Major browsers do not support it. This card tests MPEG-4 Part 2 (Xvid) in AVI."},
+    {id:"mpeg1", title:"MPEG-1", sub:"MPG", group:3, kind:"video", file:"mpeg1.mpg",
+      info:"Early 1990s video codec in an MPEG program stream (.mpg). Major browsers do not play it natively."},
+    {id:"wmv", title:"WMV", sub:"ASF · WMV2", group:3, kind:"video", file:"wmv2.wmv",
+      info:"Windows Media Video 8 (WMV2) in an ASF container. Not supported by the major current browsers."},
+    {id:"aac", title:"AAC", sub:"M4A", group:4, kind:"audio", file:"aac.m4a",
+      info:"The most common lossy audio codec in MP4 and M4A; all major browsers play it. The sample is AAC-LC, 96 kbps."},
+    {id:"mp3", title:"MP3", sub:"MP3", group:4, kind:"audio", file:"mp3.mp3",
+      info:"The most widespread lossy audio format; every major browser plays it. The sample is 96 kbps."},
+    {id:"opusogg", title:"Opus", sub:"Ogg", group:4, kind:"audio", file:"opus.ogg",
+      info:"Modern, efficient open audio codec. Chrome, Edge and Firefox play Opus in Ogg; Safari support depends on its version. The sample is 64 kbps."},
+    {id:"opuswebm", title:"Opus", sub:"WebM", group:4, kind:"audio", file:"opus.webm",
+      info:"Opus in a WebM container. Chrome, Edge and Firefox play it; Safari support depends on its version. The sample is 64 kbps."},
+    {id:"vorbis", title:"Vorbis", sub:"Ogg", group:4, kind:"audio", file:"vorbis.ogg",
+      info:"Older open audio codec, mostly replaced by Opus. Chrome, Edge and Firefox play Ogg Vorbis; Safari support depends on its version."},
+    {id:"flac", title:"FLAC", sub:"FLAC", group:4, kind:"audio", file:"flac.flac",
+      info:"Lossless audio codec. Current major browsers play .flac files."},
+    {id:"wav", title:"WAV", sub:"PCM 16-bit", group:4, kind:"audio", file:"wav.wav",
+      info:"Uncompressed PCM audio in a WAV file, supported everywhere. The sample is 16-bit PCM at 48 kHz."},
+    {id:"alac", title:"ALAC", sub:"M4A", group:4, kind:"audio", file:"alac.m4a",
+      info:"Apple Lossless in an M4A file. Safari plays it; other browsers generally do not."},
+    {id:"ac3", title:"AC-3", sub:"MP4", group:4, kind:"audio", file:"ac3.mp4",
+      info:"Dolby Digital surround audio. Support is limited and depends on the browser and platform; Safari typically plays it. The sample is stereo AC-3 in an MP4 container without video."},
+    {id:"eac3", title:"E-AC-3", sub:"MP4", group:4, kind:"audio", file:"eac3.mp4",
+      info:"Dolby Digital Plus, the same family as AC-3 with the same limited, platform-dependent support. The sample is E-AC-3 in an MP4 container without video."}
+  ];
+  const GROUPS = ["Popular", "High bit depth and pro", "Containers", "Legacy", "Audio"];
+  const EXPECT = [[220, 40, 40], [40, 190, 70], [40, 70, 220], [240, 200, 40]];
+  const TOL = 56;
+  const TIMEOUT = 8000;
+  const FILE_TIMEOUT = 30000;
+  const CONCURRENCY = 4;
+  const MAX_MB = 2048;
+  const EXT = {
+    mp4: "MP4", m4v: "MP4", mov: "MOV", "3gp": "3GPP", "3g2": "3GPP", m4a: "M4A", mkv: "Matroska", webm: "WebM",
+    ogv: "Ogg", ogg: "Ogg", oga: "Ogg", opus: "Ogg", ts: "MPEG-TS", m2ts: "MPEG-TS", mts: "MPEG-TS", avi: "AVI",
+    flv: "FLV", wmv: "ASF/WMV", asf: "ASF/WMV", mpg: "MPEG-PS", mpeg: "MPEG-PS", mp3: "MP3", flac: "FLAC",
+    wav: "WAV", aac: "AAC (ADTS)", m3u8: "HLS"
+  };
+  const FAMILY = { MP4: "iso", MOV: "iso", "3GPP": "iso", M4A: "iso", Matroska: "mkv", WebM: "mkv" };
+  const NOT_MEDIA = { PDF: "a PDF document", ZIP: "a ZIP archive or an Office document", Image: "an image" };
+  const CONTAINER_CARD = { MP4: "mp4", WebM: "webm", Ogg: "ogg", MOV: "mov", Matroska: "mkv", "3GPP": "3gp", "MPEG-TS": "ts", FLV: "flv" };
+  const CODECS = {
+    h264: { name: "H.264 / AVC", test: ['video/mp4; codecs="avc1.640028"'] },
+    hevc: { name: "H.265 / HEVC", test: ['video/mp4; codecs="hvc1.1.6.L93.B0"'] },
+    av1: { name: "AV1", test: ['video/mp4; codecs="av01.0.05M.08"'] },
+    vp9: { name: "VP9", test: ['video/webm; codecs="vp09.00.10.08"'] },
+    vp8: { name: "VP8", test: ['video/webm; codecs="vp8"'] },
+    mpeg4: { name: "MPEG-4 Part 2", test: ['video/mp4; codecs="mp4v.20.9"'] },
+    prores: { name: "Apple ProRes", test: ['video/quicktime; codecs="apch"', 'video/mp4; codecs="apch"'] },
+    dolby: { name: "Dolby Vision", test: ['video/mp4; codecs="dvh1.08.06"'] },
+    theora: { name: "Theora", test: ['video/ogg; codecs="theora"'] },
+    aac: { name: "AAC", test: ['audio/mp4; codecs="mp4a.40.2"'] },
+    mp3: { name: "MP3", test: ["audio/mpeg"] },
+    opus: { name: "Opus", test: ['audio/webm; codecs="opus"', 'audio/ogg; codecs="opus"'] },
+    vorbis: { name: "Vorbis", test: ['audio/ogg; codecs="vorbis"', 'audio/webm; codecs="vorbis"'] },
+    flac: { name: "FLAC", test: ["audio/flac", 'audio/mp4; codecs="flac"'] },
+    alac: { name: "ALAC", test: ['audio/mp4; codecs="alac"'] },
+    ac3: { name: "AC-3", test: ['audio/mp4; codecs="ac-3"'] },
+    eac3: { name: "E-AC-3", test: ['audio/mp4; codecs="ec-3"'] },
+    pcm: { name: "PCM", test: ["audio/wav"] },
+    mpeg2: { name: "MPEG-2 video", test: ["video/mpeg"] },
+    h263: { name: "H.263", test: [] },
+    vp6: { name: "VP6", test: [] },
+    mjpeg: { name: "Motion JPEG", test: [] },
+    adpcm: { name: "ADPCM", test: [] }
+  };
+  const AVI_VIDEO = {
+    H264: "h264", X264: "h264", AVC1: "h264", HEVC: "hevc", HVC1: "hevc", FMP4: "mpeg4", XVID: "mpeg4", DIVX: "mpeg4",
+    DX50: "mpeg4", MP4V: "mpeg4", MPG4: "mpeg4", MJPG: "mjpeg", MPG2: "mpeg2", VP80: "vp8", VP90: "vp9", AV01: "av1"
+  };
+  const AVI_AUDIO = { 1: "pcm", 2: "adpcm", 85: "mp3", 255: "aac", 5632: "aac", 8192: "ac3", 8193: "aac" };
+  const FLV_VIDEO = { 2: "h263", 4: "vp6", 5: "vp6", 7: "h264", 12: "hevc" };
+  const FLV_AUDIO = { 0: "pcm", 1: "adpcm", 2: "mp3", 3: "pcm", 10: "aac" };
+  const TS_TYPES = { 1: "mpeg2", 2: "mpeg2", 3: "mp3", 4: "mp3", 15: "aac", 17: "aac", 27: "h264", 36: "hevc", 129: "ac3", 135: "eac3" };
+  const MP4_TAGS = {
+    avc1: "h264", avc3: "h264", hvc1: "hevc", hev1: "hevc", dvh1: "dolby", dvhe: "dolby", av01: "av1", vp09: "vp9",
+    mp4v: "mpeg4", apch: "prores", apcn: "prores", apcs: "prores", apco: "prores", ap4h: "prores", ap4x: "prores",
+    mp4a: "aac", "ac-3": "ac3", "ec-3": "eac3", Opus: "opus", fLaC: "flac", alac: "alac", ".mp3": "mp3"
+  };
+  const MKV_IDS = [
+    ["V_VP8", "vp8"], ["V_VP9", "vp9"], ["V_AV1", "av1"], ["V_MPEG4/ISO/AVC", "h264"], ["V_MPEGH/ISO/HEVC", "hevc"],
+    ["V_MPEG4/ISO/ASP", "mpeg4"], ["V_THEORA", "theora"], ["A_OPUS", "opus"], ["A_VORBIS", "vorbis"], ["A_AAC", "aac"],
+    ["A_AC3", "ac3"], ["A_EAC3", "eac3"], ["A_FLAC", "flac"], ["A_MPEG/L3", "mp3"], ["A_PCM", "pcm"]
+  ];
+  const MP4_NESTED = { trak: 1, mdia: 1, minf: 1, stbl: 1 };
+  const MOOV_LIMIT = 64 * 1048576;
+  const probe = document.createElement("video");
+
+  const $ = (s, r) => (r || document).querySelector(s);
+  const esc = s => {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  };
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 32;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  const results = new Map();
+
+  function medianColor(x, y) {
+    const d = ctx.getImageData(x - 1, y - 1, 3, 3).data;
+    const ch = [[], [], []];
+    for (let i = 0; i < d.length; i += 4) {
+      ch[0].push(d[i]);
+      ch[1].push(d[i + 1]);
+      ch[2].push(d[i + 2]);
+    }
+    return ch.map(a => a.sort((p, q) => p - q)[a.length >> 1]);
+  }
+
+  function readQuadrants(el) {
+    ctx.clearRect(0, 0, 32, 32);
+    ctx.drawImage(el, 0, 0, 32, 32);
+    return [medianColor(8, 8), medianColor(24, 8), medianColor(8, 24), medianColor(24, 24)];
+  }
+
+  const near = (a, b) => a.every((v, i) => Math.abs(v - b[i]) <= TOL);
+  const matches = quads => quads.every((c, i) => near(c, EXPECT[i]));
+
+  function seekTo(el, t) {
+    return new Promise(resolve => {
+      const done = () => {
+        clearTimeout(timer);
+        el.removeEventListener("seeked", done);
+        resolve();
+      };
+      const timer = setTimeout(done, 2000);
+      el.addEventListener("seeked", done);
+      try {
+        el.currentTime = t;
+      } catch (e) {
+        done();
+      }
+    });
+  }
+
+  async function readFrame(el) {
+    let quads = readQuadrants(el);
+    if (matches(quads)) return quads;
+    await seekTo(el, 0.2);
+    for (let i = 0; i < 4; i++) {
+      quads = readQuadrants(el);
+      if (matches(quads)) return quads;
+      await new Promise(r => setTimeout(r, 250));
+    }
+    return quads;
+  }
+
+  function release(el) {
+    el.pause();
+    el.removeAttribute("src");
+    el.load();
+  }
+
+  function load(uri, kind, timeout) {
+    return new Promise(resolve => {
+      const el = document.createElement(kind === "audio" ? "audio" : "video");
+      const start = performance.now();
+      let done = false;
+      const finish = (ok, why) => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        el.pause();
+        resolve({ ok, el, why, ms: performance.now() - start });
+      };
+      const timer = setTimeout(() => finish(false, "timeout"), timeout || TIMEOUT);
+      el.muted = true;
+      el.defaultMuted = true;
+      el.preload = "auto";
+      el.setAttribute("playsinline", "");
+      el.addEventListener("loadeddata", () => finish(true, "load"));
+      el.addEventListener("error", () => finish(false, "error"));
+      el.src = uri;
+      const p = el.play();
+      if (p && p.catch) p.catch(() => {});
+    });
+  }
+
+  function thumbCanvas(el) {
+    const c = document.createElement("canvas");
+    c.width = c.height = 56;
+    c.getContext("2d").drawImage(el, 0, 0, 56, 56);
+    return c;
+  }
+
+  async function probeStatus(uri) {
+    if (location.protocol === "file:") return { status: -1, type: "" };
+    try {
+      const resp = await fetch(uri, { method: "HEAD", cache: "no-store" });
+      return { status: resp.status, type: resp.headers.get("content-type") || "" };
+    } catch (e) {
+      return { status: 0, type: "" };
+    }
+  }
+
+  function reasonText(f, res) {
+    switch (res.why) {
+      case "decoded":
+        return f.kind === "audio"
+          ? "The browser loaded the audio sample. The page checks that it loads, not the decoded sound."
+          : "The browser decoded the sample and its picture matched the reference colors.";
+      case "colors":
+        return "The sample loaded, but its decoded colors differ from the reference, so the decoder or the color conversion may be faulty.";
+      case "canvas":
+        return "The sample loaded, but the page could not read its pixels (the canvas is blocked, which often happens when the page is opened from file://).";
+      case "no-video-track":
+        return "The file loaded but contains no picture.";
+      case "http":
+        return res.status === 404 || res.status === 410
+          ? "The sample file was not found on the server (HTTP " + res.status + "), so this result says nothing about the browser. Check that " + BASE + f.file + " is uploaded."
+          : "The server answered HTTP " + res.status + " for the sample, so this result says nothing about the browser.";
+      case "network":
+        return "The request for " + BASE + f.file + " failed before any answer arrived (offline, blocked or the connection dropped), so this result says nothing about the browser.";
+      case "html":
+        return "The server answered with a web page instead of a media file (often a missing file behind a catch-all redirect), so this result says nothing about the browser. Check that " + BASE + f.file + " is uploaded.";
+      case "timeout":
+        return "The sample did not finish loading within " + TIMEOUT / 1000 + " seconds. Some browsers stall instead of failing on an unsupported format, but a slow server can cause this too.";
+      case "error":
+        return "The browser rejected the sample: its container or codec is not supported, or the sample is damaged.";
+      default:
+        return "";
+    }
+  }
+
+  async function check(f) {
+    const uri = BASE + f.file;
+    const r = await load(uri, f.kind);
+    if (!r.ok) {
+      release(r.el);
+      const probe = await probeStatus(uri);
+      const status = probe.status;
+      if (status >= 400 && status !== 405 && status !== 501) {
+        return { state: "warn", label: status === 404 || status === 410 ? "Sample missing" : "Server error", why: "http", status };
+      }
+      if (status === 0) return { state: "warn", label: "Network error", why: "network" };
+      if (status > 0 && /^text\/html/i.test(probe.type)) return { state: "warn", label: "Not a media file", why: "html", status };
+      if (r.why === "timeout") return { state: "warn", label: "Timed out", why: "timeout" };
+      return { state: "bad", label: "Not supported", why: r.why, status };
+    }
+    if (f.kind === "audio") {
+      release(r.el);
+      return { state: "ok", label: "Supported", why: "decoded" };
+    }
+    if (!r.el.videoWidth) {
+      release(r.el);
+      return { state: "warn", label: "No picture", why: "no-video-track" };
+    }
+    let quads;
+    try {
+      quads = await readFrame(r.el);
+    } catch (e) {
+      release(r.el);
+      return { state: "warn", label: "No pixel access", why: "canvas" };
+    }
+    const thumb = thumbCanvas(r.el);
+    release(r.el);
+    return matches(quads)
+      ? { state: "ok", label: "Supported", why: "decoded", thumb }
+      : { state: "warn", label: "Wrong colors", why: "colors", thumb };
+  }
+
+  function cardHTML(f) {
+    return '<article class="card" data-state="pending" id="card-' + f.id + '">' +
+      '<div class="thumb ph' + (f.kind === "audio" ? " aud" : "") + '" id="thumb-' + f.id + '"></div>' +
+      '<div class="body"><div class="name">' + f.title + "</div>" +
+      '<div class="sub">' + f.sub + "</div>" +
+      '<div class="row"><span class="badge pending" id="badge-' + f.id + '">Checking…</span>' +
+      '<button class="help" type="button" aria-expanded="false" aria-controls="info-' + f.id + '" aria-label="About ' + esc(f.title) + " (" + esc(f.sub) + ')">?</button></div></div>' +
+      '<div class="info" id="info-' + f.id + '" hidden>' +
+      "<p>" + esc(f.info) + "</p>" +
+      '<p><b>This browser:</b> <span id="res-' + f.id + '"></span></p>' +
+      '<p class="file">Sample: ' + esc(BASE + f.file) + "</p></div></article>";
+  }
+
+  function groupHTML(title, gi) {
+    const cards = ITEMS.filter(f => f.group === gi).map(cardHTML).join("");
+    return '<section><h3 class="group-title">' + title + '</h3><div class="grid">' + cards + "</div></section>";
+  }
+
+  function paint(f, res) {
+    const card = $("#card-" + f.id), badge = $("#badge-" + f.id), thumb = $("#thumb-" + f.id);
+    card.dataset.state = res.state;
+    badge.className = "badge " + res.state;
+    badge.textContent = res.label;
+    $("#res-" + f.id).textContent = reasonText(f, res);
+    if (res.thumb) {
+      thumb.classList.remove("ph");
+      thumb.replaceChildren(res.thumb);
+    }
+  }
+
+  const tally = state => [...results.values()].filter(r => r.state === state).length;
+  const finishedLine = () => "Test finished: " + tally("ok") + " supported, " + tally("warn") + " not tested, " + tally("bad") + " not supported.";
+
+  function updateSummary() {
+    const ok = tally("ok");
+    const pct = Math.round(ok / ITEMS.length * 100);
+    const done = results.size === ITEMS.length;
+    $("#okcount").textContent = ok;
+    $("#total").textContent = ITEMS.length;
+    $("#barfill").style.width = pct + "%";
+    $(".bar").setAttribute("aria-valuenow", String(pct));
+    $("#status").textContent = done ? finishedLine() : "Checking " + results.size + " of " + ITEMS.length + "…";
+    $("#report").textContent = done ? buildReport() : "The report appears when the test finishes.";
+  }
+
+  function browserName() {
+    const ua = navigator.userAgent;
+    const ver = re => (ua.match(re) || [])[1];
+    let name = "Unknown browser";
+    if (/Edg\//.test(ua)) name = "Edge " + ver(/Edg\/([\d.]+)/);
+    else if (/OPR\//.test(ua)) name = "Opera " + ver(/OPR\/([\d.]+)/);
+    else if (/Firefox\//.test(ua)) name = "Firefox " + ver(/Firefox\/([\d.]+)/);
+    else if (/Chrome\//.test(ua)) name = "Chrome " + ver(/Chrome\/([\d.]+)/);
+    else if (/Safari\//.test(ua)) name = "Safari " + ver(/Version\/([\d.]+)/);
+    return name + " · " + navigator.platform + " · screen " + screen.width + "×" + screen.height;
+  }
+
+  function label(f) {
+    return f.title + " (" + f.sub + ")";
+  }
+
+  function shortReason(f, r) {
+    const url = BASE + f.file;
+    switch (r.why) {
+      case "http": return "HTTP " + r.status + " for " + url + (r.status === 404 || r.status === 410 ? " (file not found on the server)" : " (server error)");
+      case "network": return "request for " + url + " failed before any answer (network error)";
+      case "html": return "HTTP " + r.status + " but the server returned a web page instead of " + url;
+      case "timeout": return "no result within " + TIMEOUT / 1000 + " s for " + url;
+      case "colors": return "sample loaded but decoded colors differ from the reference";
+      case "canvas": return "sample loaded but its pixels could not be read (canvas blocked)";
+      case "no-video-track": return "file loaded but has no picture";
+      default: return "";
+    }
+  }
+
+  function buildReport() {
+    const by = { ok: [], warn: [], bad: [] };
+    const notes = [];
+    ITEMS.forEach(f => {
+      const r = results.get(f.id);
+      by[r.state].push(label(f));
+      if (r.state === "warn") notes.push("- " + label(f) + ": " + r.label.toLowerCase() + ", " + shortReason(f, r));
+    });
+    const line = (head, list) => head + " (" + list.length + "): " + (list.join(", ") || "none");
+    const out = [
+      "Video and audio format support",
+      browserName(),
+      "UA: " + navigator.userAgent,
+      "",
+      line("Supported", by.ok),
+      line("Not supported", by.bad),
+      line("Not tested", by.warn)
+    ];
+    if (by.bad.length) out.push("", "Not supported means the server delivered the sample (HTTP 2xx) and the browser rejected it.");
+    if (notes.length) out.push("", "Why not tested:", ...notes);
+    return out.join("\n");
+  }
+
+  let running = false;
+
+  async function runAll() {
+    if (running) return;
+    running = true;
+    $("#rerun").setAttribute("aria-disabled", "true");
+    $("#copy").setAttribute("aria-disabled", "true");
+    $("#announce").textContent = "";
+    results.clear();
+    ITEMS.forEach(f => {
+      $("#card-" + f.id).dataset.state = "pending";
+      const badge = $("#badge-" + f.id), thumb = $("#thumb-" + f.id);
+      badge.className = "badge pending";
+      badge.textContent = "Checking…";
+      thumb.classList.add("ph");
+      thumb.replaceChildren();
+      $("#res-" + f.id).textContent = "";
+    });
+    updateSummary();
+    const queue = ITEMS.slice();
+    const worker = async () => {
+      while (queue.length) {
+        const f = queue.shift();
+        const res = await check(f);
+        results.set(f.id, res);
+        paint(f, res);
+        updateSummary();
+      }
+    };
+    await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+    running = false;
+    $("#rerun").setAttribute("aria-disabled", "false");
+    $("#copy").setAttribute("aria-disabled", "false");
+    $("#announce").textContent = finishedLine();
+  }
+
+  async function sniff(file) {
+    const b = new Uint8Array(await file.slice(0, 4096).arrayBuffer());
+    const s = String.fromCharCode.apply(null, b);
+    const at = (pos, sig) => s.startsWith(sig, pos);
+    if (at(0, "\x1A\x45\xDF\xA3")) return /webm/.test(s.slice(0, 64)) ? "WebM" : "Matroska";
+    if (at(0, "OggS")) return "Ogg";
+    if (at(0, "RIFF") && at(8, "AVI ")) return "AVI";
+    if (at(0, "RIFF") && at(8, "WAVE")) return "WAV";
+    if (at(0, "RIFF") && at(8, "WEBP")) return "Image";
+    if (at(0, "FLV")) return "FLV";
+    if (at(0, "fLaC")) return "FLAC";
+    if (at(4, "ftyp")) {
+      const brands = s.slice(8, Math.min(s.length, ((b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3]) >>> 0));
+      if (/avi[fs]|hei[cxms]|mif1|msf1/.test(brands)) return "Image";
+      if (/qt  /.test(brands)) return "MOV";
+      if (/3gp|3g2/.test(brands)) return "3GPP";
+      if (/M4A |M4B /.test(brands)) return "M4A";
+      return "MP4";
+    }
+    if (at(0, "ID3")) return "MP3";
+    if (b[0] === 0xFF && (b[1] & 0xF6) === 0xF0) return "AAC (ADTS)";
+    if (b[0] === 0xFF && (b[1] & 0xE0) === 0xE0) return "MP3";
+    if ((b[0] === 0x47 && b[188] === 0x47) || (b[4] === 0x47 && b[196] === 0x47)) return "MPEG-TS";
+    if (at(0, "\x30\x26\xB2\x75")) return "ASF/WMV";
+    if (at(0, "\x00\x00\x01\xBA") || at(0, "\x00\x00\x01\xB3")) return "MPEG-PS";
+    if (/^(\xEF\xBB\xBF)?\s*#EXTM3U/.test(s)) return "HLS";
+    if (at(0, "\xFF\xD8\xFF") || at(0, "\x89PNG") || at(0, "GIF8")) return "Image";
+    if (at(0, "%PDF")) return "PDF";
+    if (at(0, "PK\x03\x04")) return "ZIP";
+    return "";
+  }
+
+  const sizeText = n => n < 1048576 ? (n / 1024).toFixed(1) + " KB" : n < 1073741824 ? (n / 1048576).toFixed(1) + " MB" : (n / 1073741824).toFixed(2) + " GB";
+  const family = k => FAMILY[k] || k;
+  let fileToken = 0;
+
+  function showVerdict(name, text, rows) {
+    $("#verdict").innerHTML = "<strong>" + esc(name) + "</strong> — " + esc(text) +
+      (rows ? "<dl>" + rows.map(p => "<dt>" + p[0] + "</dt><dd>" + esc(p[1]) + "</dd>").join("") + "</dl>" : "");
+  }
+
+  const latin1 = b => {
+    let out = "";
+    for (let i = 0; i < b.length; i += 8192) out += String.fromCharCode.apply(null, b.subarray(i, i + 8192));
+    return out;
+  };
+  const tag4 = (b, i) => String.fromCharCode(b[i], b[i + 1], b[i + 2], b[i + 3]);
+
+  function walkMoov(b, start, end, out) {
+    const dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
+    let p = start;
+    while (p + 8 <= end) {
+      const size = dv.getUint32(p);
+      const type = tag4(b, p + 4);
+      if (size < 8 || p + size > end) return;
+      if (MP4_NESTED[type]) {
+        walkMoov(b, p + 8, p + size, out);
+      } else if (type === "stsd" && p + 16 <= end) {
+        const count = dv.getUint32(p + 12);
+        let q = p + 16;
+        for (let i = 0; i < count && q + 8 <= p + size; i++) {
+          const entry = dv.getUint32(q);
+          if (entry < 8) break;
+          out.push(tag4(b, q + 4));
+          q += entry;
+        }
+      }
+      p += size;
+    }
+  }
+
+  async function mp4Codecs(file) {
+    let pos = 0;
+    for (let n = 0; n < 64 && pos + 8 <= file.size; n++) {
+      const head = new Uint8Array(await file.slice(pos, pos + 16).arrayBuffer());
+      const dv = new DataView(head.buffer);
+      let size = dv.getUint32(0);
+      let hdr = 8;
+      if (size === 1 && head.length >= 16) {
+        size = Number(dv.getBigUint64(8));
+        hdr = 16;
+      } else if (size === 0) {
+        size = file.size - pos;
+      }
+      if (size < hdr) return null;
+      if (tag4(head, 4) === "moov") {
+        if (size > MOOV_LIMIT) return null;
+        const body = new Uint8Array(await file.slice(pos + hdr, pos + size).arrayBuffer());
+        const out = [];
+        walkMoov(body, 0, body.length, out);
+        return out.map(t => MP4_TAGS[t] || "?" + t);
+      }
+      pos += size;
+    }
+    return null;
+  }
+
+  async function mkvCodecs(file) {
+    const text = latin1(new Uint8Array(await file.slice(0, 524288).arrayBuffer()));
+    const out = [];
+    for (const m of text.matchAll(/[VA]_[A-Z0-9_\/]{2,40}/g)) {
+      const hit = MKV_IDS.find(p => m[0].startsWith(p[0]));
+      if (hit && !out.includes(hit[1])) out.push(hit[1]);
+    }
+    return out;
+  }
+
+  async function oggCodecs(file) {
+    const text = latin1(new Uint8Array(await file.slice(0, 16384).arrayBuffer()));
+    const out = [];
+    if (text.includes("\x01vorbis")) out.push("vorbis");
+    if (text.includes("OpusHead")) out.push("opus");
+    if (text.includes("\x80theora")) out.push("theora");
+    if (text.includes("\x7fFLAC")) out.push("flac");
+    return out;
+  }
+
+  async function aviCodecs(file) {
+    const b = new Uint8Array(await file.slice(0, 65536).arrayBuffer());
+    const dv = new DataView(b.buffer);
+    const out = [];
+    for (let i = 0; i + 64 < b.length; i++) {
+      if (tag4(b, i) !== "strh") continue;
+      const type = tag4(b, i + 8);
+      const handler = tag4(b, i + 12).toUpperCase();
+      let j = i + 8 + dv.getUint32(i + 4, true);
+      if (tag4(b, j) !== "strf") continue;
+      if (type === "vids") {
+        const comp = j + 28 <= b.length ? tag4(b, j + 24).toUpperCase() : handler;
+        const key = AVI_VIDEO[comp] || AVI_VIDEO[handler];
+        out.push(key || "?" + (comp.trim() || handler.trim() || "video"));
+      } else if (type === "auds") {
+        const tagId = dv.getUint16(j + 8, true);
+        out.push(AVI_AUDIO[tagId] || "?audio 0x" + tagId.toString(16));
+      }
+    }
+    return out;
+  }
+
+  async function flvCodecs(file) {
+    const b = new Uint8Array(await file.slice(0, 262144).arrayBuffer());
+    const out = [];
+    let video = "", audio = "";
+    if (b[4] & 1) video = "pending";
+    if (b[4] & 4) audio = "pending";
+    let p = 13;
+    for (let n = 0; n < 400 && p + 12 <= b.length && (video === "pending" || audio === "pending"); n++) {
+      const type = b[p];
+      const size = (b[p + 1] << 16) | (b[p + 2] << 8) | b[p + 3];
+      const first = b[p + 11];
+      if (type === 9 && video === "pending") {
+        if (first & 0x80) {
+          const fourcc = tag4(b, p + 12);
+          video = { hvc1: "hevc", av01: "av1", vp09: "vp9" }[fourcc] || "?" + fourcc;
+        } else {
+          video = FLV_VIDEO[first & 15] || "?video codec " + (first & 15);
+        }
+      } else if (type === 8 && audio === "pending") {
+        audio = FLV_AUDIO[first >> 4] || "?audio codec " + (first >> 4);
+      }
+      p += 11 + size + 4;
+    }
+    if (video && video !== "pending") out.push(video);
+    if (audio && audio !== "pending") out.push(audio);
+    return out;
+  }
+
+  async function tsCodecs(file) {
+    const b = new Uint8Array(await file.slice(0, 1048576).arrayBuffer());
+    const size = b[0] === 0x47 && b[188] === 0x47 ? 188 : 192;
+    const off = size === 192 ? 4 : 0;
+    const section = pid => {
+      for (let p = off; p + 188 <= b.length; p += size) {
+        if (b[p] !== 0x47 || (((b[p + 1] & 0x1F) << 8) | b[p + 2]) !== pid || !(b[p + 1] & 0x40)) continue;
+        let q = p + 4;
+        if (b[p + 3] & 0x20) q += 1 + b[q];
+        return { b, start: q + 1 + b[q], end: p + 188 };
+      }
+      return null;
+    };
+    const pat = section(0);
+    if (!pat) return null;
+    const pmtPid = ((b[pat.start + 10] & 0x1F) << 8) | b[pat.start + 11];
+    const pmt = section(pmtPid);
+    if (!pmt) return null;
+    const len = ((b[pmt.start + 1] & 0x0F) << 8) | b[pmt.start + 2];
+    let q = pmt.start + 12 + (((b[pmt.start + 10] & 0x0F) << 8) | b[pmt.start + 11]);
+    const stop = Math.min(pmt.start + 3 + len - 4, pmt.end);
+    const out = [];
+    while (q + 5 <= stop) {
+      const t = b[q];
+      out.push(TS_TYPES[t] || "?stream type 0x" + t.toString(16));
+      q += 5 + (((b[q + 3] & 0x0F) << 8) | b[q + 4]);
+    }
+    return out;
+  }
+
+  async function inspectCodecs(file, kind) {
+    try {
+      if (kind === "AVI") return await aviCodecs(file);
+      if (kind === "FLV") return await flvCodecs(file);
+      if (kind === "MPEG-TS") return await tsCodecs(file);
+      if (kind === "MP4" || kind === "MOV" || kind === "3GPP" || kind === "M4A") return await mp4Codecs(file);
+      if (kind === "WebM" || kind === "Matroska") return await mkvCodecs(file);
+      if (kind === "Ogg") return await oggCodecs(file);
+      const single = { MP3: "mp3", FLAC: "flac", WAV: "pcm", "AAC (ADTS)": "aac" }[kind];
+      return single ? [single] : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function describeCodecs(ids) {
+    const seen = new Set();
+    return ids.filter(id => !seen.has(id) && seen.add(id)).map(id => {
+      if (id[0] === "?") return { name: id.slice(1) + " (unrecognized)", supported: null };
+      const c = CODECS[id];
+      return { name: c.name, supported: c.test.some(t => probe.canPlayType(t) !== "") };
+    });
+  }
+
+  const codecText = list => list.map(c => c.name + (c.supported === null ? "" : c.supported ? " (supported)" : " (not supported)")).join(", ");
+
+  function explain(r, kind, codecs) {
+    const bad = codecs ? codecs.filter(c => c.supported === false).map(c => c.name) : [];
+    if (r.ok) {
+      return "this browser loads and decodes the file." +
+        (bad.length ? " Note: " + bad.join(", ") + (bad.length > 1 ? " are" : " is") + " not supported here, so that track may be missing or silent." : "");
+    }
+    if (NOT_MEDIA[kind]) return "this is " + NOT_MEDIA[kind] + ", not a video or audio file.";
+    if (!kind) return "this isn't a recognized media format, or the file is damaged.";
+    if (bad.length) return "this browser can't play it: " + bad.join(", ") + (bad.length > 1 ? " are" : " is") + " not supported here, which is the likely cause.";
+    if (r.why === "timeout") return "loading didn't finish within " + FILE_TIMEOUT / 1000 + " seconds; the file may be too heavy or damaged.";
+    if (codecs && codecs.length && codecs.every(c => c.supported)) {
+      const card = results.get(CONTAINER_CARD[kind]);
+      return "the codecs inside (" + codecs.map(c => c.name).join(", ") + ") are supported here" +
+        (card && card.state === "bad"
+          ? ", but the " + kind + " card in the format test failed too, so the container itself is probably the problem."
+          : ", so the file likely uses an unsupported profile, level, bit depth or resolution, or is damaged.");
+    }
+    return "this browser can't play this " + kind + " file. Its container or one of its codecs is not supported (compare with the format test above), or the file is damaged. This page could not read the codecs inside this container, so check them with a tool such as MediaInfo: browsers more often reject the codec than the container.";
+  }
+
+  async function testFile(file) {
+    const token = ++fileToken;
+    const ext = ((file.name.match(/\.([a-z0-9]+)$/i) || [])[1] || "").toLowerCase();
+    const extKind = Object.prototype.hasOwnProperty.call(EXT, ext) ? EXT[ext] : "";
+    if (!file.size) return showVerdict(file.name, "the file is empty, so there is nothing to check.");
+    if (file.size > MAX_MB * 1048576) return showVerdict(file.name, "the file is " + sizeText(file.size) + ", and the limit here is " + (MAX_MB / 1024) + " GB.");
+    showVerdict(file.name, "checking…");
+    const sniffed = await sniff(file).catch(() => "");
+    const kind = sniffed || extKind;
+    if (token !== fileToken) return;
+    if (kind === "HLS") {
+      const hlsCard = results.get("hls");
+      const nativeHls = probe.canPlayType("application/vnd.apple.mpegurl") || probe.canPlayType("application/x-mpegURL");
+      showVerdict(file.name, "this is an HLS playlist, not a video file. A playlist points to its segments by relative URLs, which can't be resolved from a local file, so it can't be played here. Use the HLS card in the format test, or pick one of the segment files (.ts or .mp4) instead.", [
+        ["Size", sizeText(file.size)],
+        ["Type", file.type || "not set"],
+        ["Detected container", "HLS playlist"],
+        ["Native HLS here", nativeHls ? "yes" : "no"],
+        ["Media Source (hls.js)", window.MediaSource || window.ManagedMediaSource ? "available" : "not available"],
+        ["HLS sample test", hlsCard ? hlsCard.label : "not finished"]
+      ]);
+      return;
+    }
+    const codecIds = kind && !NOT_MEDIA[kind] ? await inspectCodecs(file, kind) : null;
+    const codecs = codecIds && describeCodecs(codecIds);
+    if (token !== fileToken) return;
+    const url = URL.createObjectURL(file);
+    const r = await load(url, "video", FILE_TIMEOUT);
+    const el = r.el;
+    const width = el.videoWidth, height = el.videoHeight, duration = el.duration;
+    let readable = "yes";
+    if (r.ok && width) {
+      try {
+        ctx.clearRect(0, 0, 32, 32);
+        ctx.drawImage(el, 0, 0, 32, 32);
+        ctx.getImageData(0, 0, 1, 1);
+      } catch (e) {
+        readable = "no (blocked)";
+      }
+    }
+    release(el);
+    URL.revokeObjectURL(url);
+    if (token !== fileToken) return;
+    let text = explain(r, kind, codecs);
+    if (extKind && kind && family(extKind) !== family(kind)) {
+      text += NOT_MEDIA[kind]
+        ? " Its ." + ext + " extension is misleading."
+        : " Note: the extension says ." + ext + ", but the content is " + kind + ".";
+    }
+    const rows = [
+      ["Size", sizeText(file.size)],
+      ["Type", file.type || "not set"],
+      ["Detected container", sniffed || (kind ? kind + " (by extension)" : "not recognized")]
+    ];
+    if (kind && !NOT_MEDIA[kind]) rows.push(["Codecs in file", codecs ? (codecs.length ? codecText(codecs) : "none detected") : "not inspected"]);
+    if (r.ok) {
+      rows.push(
+        ["Duration", isFinite(duration) ? duration.toFixed(2) + " s" : "unknown"],
+        ["Dimensions", width ? width + "×" + height : "audio only"],
+        ["Load + first frame", Math.round(r.ms) + " ms"]
+      );
+      if (width) rows.push(["Pixels readable", readable]);
+    }
+    showVerdict(file.name, text, rows);
+  }
+
+  const drop = $("#drop"), input = $("#file");
+
+  input.addEventListener("change", () => {
+    if (input.files[0]) testFile(input.files[0]);
+  });
+  ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault();
+    drop.classList.add("hot");
+  }));
+  ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault();
+    drop.classList.remove("hot");
+  }));
+  drop.addEventListener("drop", e => {
+    const f = e.dataTransfer.files[0];
+    if (f) testFile(f);
+  });
+
+  document.addEventListener("paste", e => {
+    const f = e.clipboardData && e.clipboardData.files[0];
+    if (!f) return;
+    e.preventDefault();
+    testFile(f);
+    $("#filecheck").scrollIntoView({ block: "nearest" });
+  });
+
+  $("#rerun").addEventListener("click", runAll);
+  $("#copy").addEventListener("click", async () => {
+    const btn = $("#copy");
+    if (btn.getAttribute("aria-disabled") === "true") return;
+    let text = "Copied";
+    try {
+      await navigator.clipboard.writeText($("#report").textContent);
+    } catch (e) {
+      text = "Copy failed";
+    }
+    btn.textContent = text;
+    setTimeout(() => { btn.textContent = "Copy report"; }, 1600);
+  });
+
+  $("#groups").innerHTML = GROUPS.map(groupHTML).join("");
+  $("#groups").addEventListener("click", e => {
+    const btn = e.target.closest(".help");
+    if (!btn) return;
+    const info = document.getElementById(btn.getAttribute("aria-controls"));
+    const open = info.hidden;
+    info.hidden = !open;
+    btn.setAttribute("aria-expanded", String(open));
+  });
+  runAll();
+})();
+</script>
+</body>
+</html>
