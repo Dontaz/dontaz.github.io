@@ -30,6 +30,18 @@ const NEWS = [
         categories: ["Планы", "Моды"]
     },
     {
+        date: "2026-11-27",
+        title: "Новый инструмент: Дайс-роллер (Dice Roller)",
+        description: 'Бросок кубиков для D&D и настольных игр: d4, d6, d8, d10, d12, d20, d100 и кастомные дайсы. Найти можно тут: <a href="https://dontaz.com/dice" target="_blank" rel="noopener">dontaz.com/dice</a>',
+        categories: ["Сайты", "Инструменты"]
+    },
+    {
+        date: "2026-11-26",
+        title: "Новый инструмент: Тест декодера видео (Video Support Test)",
+        description: 'Проверьте, какие форматы видео декодирует ваш браузер. Локальный тест, мгновенный результат и проверка собственного файла. Ничего не отправляется на сервер. Найти можно тут: <a href="https://dontaz.com/video-support" target="_blank" rel="noopener">dontaz.com/video-support</a>',
+        categories: ["Сайты", "Инструменты"]
+    },
+    {
         date: "2026-11-17",
         title: "Улучшение персональной страницы",
         description: 'Повышена стабильность и скорость загрузки сайта. <a href="https://dontaz.com/personal-page" target="_blank" rel="noopener">dontaz.com/personal-page</a> / <a href="https://dontaz.github.io/personal-page" target="_blank" rel="noopener">dontaz.github.io/personal-page</a>',
