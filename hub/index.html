@@ -43,6 +43,8 @@
         --shadow:  0 12px 32px rgba(0,0,0,.45);
         --radius:  10px;
 
+        --wm-strength: .13;
+
         --font: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
                 "Helvetica Neue", Arial, sans-serif;
         --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
@@ -59,6 +61,7 @@
         --faint:   #8E7961;
         --accent:  #ED7B35;
         --shadow:  0 12px 32px rgba(0,0,0,.5);
+        --wm-strength: .14;
     }
     
     html[data-theme="latte"] {
@@ -73,6 +76,7 @@
         --faint:   #9ca0b0;
         --accent:  #1e66f5;
         --shadow:  0 12px 32px rgba(76,79,105,.16);
+        --wm-strength: .17;
     }
 
     html[data-theme="frappe"] {
@@ -122,8 +126,13 @@
     html { -webkit-text-size-adjust: 100%; }
 
     body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-height: 100dvh;
+
         margin: 0;
-        padding: 56px 24px 80px;
+        padding: 56px 24px 0;
         background: var(--bg);
         color: var(--text);
         font-family: var(--font);
@@ -133,7 +142,14 @@
         transition: background .2s ease, color .2s ease;
     }
 
-    .wrap { max-width: 880px; margin: 0 auto; }
+    .wrap {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        width: 100%;
+        max-width: 880px;
+        margin: 0 auto;
+    }
 
     header {
         display: flex;
@@ -405,6 +421,34 @@
         color: var(--faint);
     }
 
+    .wordmark-box {
+        margin-top: auto;
+        padding-top: 28px;
+    }
+
+    .wordmark {
+        display: block;
+        font-family: var(--font);
+        font-weight: 900;
+        font-size: min(calc(21.679vw - 10.406px), 190.775px);
+        line-height: .72;
+        height: .48em;
+        overflow: hidden;
+        white-space: nowrap;
+        letter-spacing: 0;
+        font-kerning: normal;
+        text-transform: uppercase;
+        text-indent: calc(min(1vw - 0.48px, 8.8px) - 0.057em);
+        color: var(--text);
+        opacity: var(--wm-strength, .13);
+        transition: color .2s ease, opacity .2s ease;
+        user-select: none;
+        -webkit-user-select: none;
+        pointer-events: none;
+        -webkit-mask-image: linear-gradient(to bottom, #000 20%, transparent 100%);
+                mask-image: linear-gradient(to bottom, #000 20%, transparent 100%);
+    }
+
     .empty {
         display: none;
         padding: 28px 0;
@@ -420,10 +464,16 @@
     }
 
     @media (max-width: 520px) {
-        body { padding: 36px 16px 60px; }
+        body { padding: 36px 16px 0; }
         .grid { grid-template-columns: 1fr; }
         .head-right { gap: 12px; }
         .head-right { position: relative; align-items: center; }
+
+        .wordmark {
+            font-size: min(calc(21.679vw - 6.937px), 190.775px);
+            text-indent: calc(min(1vw - 0.32px, 8.8px) - 0.057em);
+        }
+        .wordmark-box { padding-top: 20px; }
 
         .burger {
             display: flex;
@@ -501,6 +551,10 @@
         .nav-panel .theme-menu.on { display: block; }
 
         .nav-panel .counter { padding: 8px 10px 0; }
+    }
+
+    @media print {
+        .wordmark-box { display: none; }
     }
 </style>
 </head>
@@ -600,7 +654,7 @@
 
             <a class="card" href="https://dontaz.com/dice" target="_blank" rel="noopener">
                 <span class="name">🎲 Dice Roller / Дайс-роллер</span>
-                <span class="desc">Dice roller for D&D and board games: d4, d6, d8, d10, d12, d20, d100 and custom dice / Бросок кубиков для D&D и настольных игр: d4, d6, d8, d10, d12, d20, d100 и кастомные дайсы</span>
+                <span class="desc">Dice roller for D&amp;D and board games: d4, d6, d8, d10, d12, d20, d100 and custom dice / Бросок кубиков для D&amp;D и настольных игр: d4, d6, d8, d10, d12, d20, d100 и кастомные дайсы</span>
                 <span class="host">dontaz.com/dice</span>
             </a>
 
@@ -635,7 +689,7 @@
             </a>
 
             <a class="card" href="https://dontaz.com/timer" target="_blank" rel="noopener">
-                <span class="name">⏰ Timer & Stopwatch / Таймер & Секундомер</span>
+                <span class="name">⏰ Timer &amp; Stopwatch / Таймер &amp; Секундомер</span>
                 <span class="host">dontaz.com/timer</span>
             </a>
 
@@ -735,6 +789,10 @@
         <span>Dontaz/HUB · ≽^•⩊•^≼</span>
         <span id="stamp"></span>
     </footer>
+
+    <div class="wordmark-box" aria-hidden="true">
+        <div class="wordmark">DONTAZ</div>
+    </div>
 
 </div>
 
@@ -877,6 +935,71 @@
             burger.focus();
         }
     });
+</script>
+<script>
+    (function () {
+        var mark = document.querySelector('.wordmark');
+        if (!mark) return;
+        var box = mark.parentElement;
+        var text = mark.textContent.trim();
+        var ink = null;
+
+        function readInk() {
+            var cs = getComputedStyle(mark);
+            var ref = 600;
+            var pad = Math.ceil(ref * 0.25);
+            var font = cs.fontWeight + ' ' + ref + 'px ' + cs.fontFamily;
+            var cv = document.createElement('canvas');
+            var cx = cv.getContext('2d', { willReadFrequently: true });
+            if (!cx) return null;
+            cx.font = font;
+            cv.width = Math.ceil(pad * 2 + cx.measureText(text).width + ref * 0.2);
+            cv.height = Math.ceil(ref * 1.6);
+            cx.font = font;
+            cx.fillStyle = '#000';
+            cx.textBaseline = 'alphabetic';
+            cx.fillText(text, pad, ref * 1.15);
+            var w = cv.width, h = cv.height, d;
+            try { d = cx.getImageData(0, 0, w, h).data; } catch (e) { return null; }
+            var first = w, last = -1, x, y, a;
+            for (y = 0; y < h; y++) {
+                var off = y * w * 4;
+                for (x = 0; x < w; x++) {
+                    a = d[off + x * 4 + 3];
+                    if (a > 2) {
+                        if (x < first) first = x;
+                        if (x > last) last = x;
+                    }
+                }
+            }
+            if (last < 0) return null;
+            return { left: (first - pad) / ref, right: (last + 1 - pad) / ref };
+        }
+
+        function fit() {
+            if (!ink) ink = readInk();
+            if (!ink) return;
+            var span = ink.right - ink.left;
+            if (!(span > 0)) return;
+            var w = box.clientWidth;
+            if (!w) return;
+            var inset = w * 0.01;
+            var size = (w - inset * 2) / span;
+            mark.style.fontSize = size.toFixed(2) + 'px';
+            mark.style.textIndent = (inset - ink.left * size).toFixed(2) + 'px';
+        }
+
+        fit();
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(function () { ink = null; fit(); });
+        }
+        if (window.ResizeObserver) {
+            new ResizeObserver(fit).observe(box);
+        } else {
+            window.addEventListener('resize', fit);
+            window.addEventListener('orientationchange', fit);
+        }
+    })();
 </script>
 </body>
 </html>
